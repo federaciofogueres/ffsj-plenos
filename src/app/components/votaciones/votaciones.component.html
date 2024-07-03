@@ -1,0 +1,18 @@
+<div class="container">
+    <span>
+        Para poder acceder a la votación de la asamblea, por favor, selecciona qué votación deseas realizar.
+    </span>
+
+    @for (votacion of votaciones; track $index) {
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">{{ votacion.titulo }}</h5>
+                <p class="card-text">{{ votacion.fecha }}</p>
+                <button class="btn btn-primary btn-rojo" (click)="goToVotacion(votacion)">
+                    Votar
+                </button>
+            </div>
+        </div>
+    }
+
+</div>
