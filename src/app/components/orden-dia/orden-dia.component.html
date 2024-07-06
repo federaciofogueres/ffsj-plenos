@@ -1,0 +1,74 @@
+<div class="container">
+    <div class="d-flex flex-column text-center">
+        <span class="h2 m-0 text-center">
+            {{ordenDia.titulo}}
+        </span>
+        <span class="h5 text-center">
+            Orden del día
+        </span>
+    </div>
+    <hr>
+    <div class="puntos-del-dia mb-3">
+        @for (punto of ordenDia.puntos; track $index) {
+            <div class="card my-3">
+                <div class="card-header" (click)="punto.expanded = !punto.expanded">
+                    <span class="h4">
+                        {{$index+1}} - {{ punto.titulo }}
+                    </span>
+                </div>
+                @if (punto.expanded) {
+                    <div class="card-body">
+                        @if (!punto.documentacion && !punto.votacion) {
+                            <span>
+                                No existe información adicional para este punto.
+                            </span>
+                        } @else {
+                            @if (punto.documentacion) {
+                                <div class="d-flex flex-column justify-content-center">
+                                    <span class="mb-2">
+                                        Existe documentación relacionada con este punto. Para consultarla, haga click en el botón 'Ver documentación asociada'
+                                    </span>
+                                    <button class="btn btn-primary">
+                                        Ver documentación asociada
+                                    </button>
+                                </div>
+                                <hr>
+                            }
+                            @if (punto.votacion) {
+                                <div class="d-flex justify-content-between">
+                                    <span>
+                                        <strong>
+                                            Votación del punto
+                                        </strong>
+                                    </span>
+            
+                                    <button class="btn btn-primary px-4">
+                                        Votar
+                                    </button>
+                                </div>
+                                <hr>
+                                <div class="d-flex flex-column">
+                                    <div class="d-flex justify-content-between">
+                                        <span>A favor: {{punto.votacion.votosAFavor}}</span>
+                                        <span>En contra: {{punto.votacion.votosEnContra}}</span>
+                                    </div>
+                                    <br>
+                                    <div class="d-flex justify-content-between">
+                                        <span>Blanco: {{punto.votacion.votosBlanco}}</span>
+                                        @if (punto.votacion.votosNulos !== undefined) {
+                                            <span>Nulos: {{punto.votacion.votosNulos}}</span>
+                                        }
+                                        <span>Abstenciones: {{punto.votacion.abstenciones}}</span>
+                                    </div>
+                                </div>
+                            }
+                        }
+                    </div>
+                }
+            </div>
+        }
+    </div>
+    <span class="h6 m-0">
+        Firmado: {{ordenDia.firma}}
+    </span>
+</div>

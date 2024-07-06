@@ -7,9 +7,9 @@ import { LoginComponent } from './components/login/login.component';
 import { VotacionesComponent } from './components/votaciones/votaciones.component';
 
 export const routes: Routes = [
-    { path: 'asistencia', component: AsistenciaComponent },
+    { path: 'asistencia', component: AsistenciaComponent, canActivate: [AuthGuard] },
     { path: 'votaciones', component: VotacionesComponent, canActivate: [AuthGuard] },
-    { path: 'documentos', component: DocumentosComponent },
+    { path: 'documentos', component: DocumentosComponent, canActivate: [AuthGuard] },
     { path: 'login', component: LoginComponent },
-    { path: '**', component: HomeComponent },
+    { path: '**', component: HomeComponent, canActivate: [AuthGuard] },
 ];
