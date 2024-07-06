@@ -1,1 +1,60 @@
-<p>asistencia works!</p>
+<div class="container">
+    <div class="d-flex flex-column my-3">
+        <span class="h2">
+            Confirma tu asistencia al pleno
+        </span>
+        <span>
+            Para confirmar tu asistencia al pleno, por favor, haz click en el botón 'confirmar asistencia'.
+        </span>
+        <span>
+            Si deseas delegar tu asistencia a otra persona de tu foguera, por favor, haz click en el botón 'delegar asistencia'.
+        </span>
+    </div>
+
+    <div class="d-flex justify-content-between mb-3">
+        <button class="btn btn-primary btn-foc-rojo">
+            Confirmar asistencia
+        </button>
+        <button class="btn btn-primary btn-foc-rojo" (click)="showDelegacionAsistenciaForm = true">
+            Delegar asistencia
+        </button>
+    </div>
+
+    @if (showDelegacionAsistenciaForm) {
+        <div class="formulario">
+            <form [formGroup]="delegacionAsistenciaForm">
+                    
+                <div class="form-group mb-3 text-rojo">
+                  <label for="lema">DNI/NIF</label>
+                  <input type="text" id="lema" placeholder="DNI de la persona a la que le delegas el voto" class="form-control" formControlName="dni" (blur)="dniTouched = true" required [ngClass]="{'is-invalid': delegacionAsistenciaForm.controls['dni'].errors && dniTouched}">
+                  @if (delegacionAsistenciaForm.controls['dni'].errors && dniTouched) {
+                      @if (delegacionAsistenciaForm.controls['dni'].errors['required']) {
+                          <div>
+                              <span class="invalid-field">
+                                  DNI/NIF es requerido.
+                              </span>
+                          </div>
+                      }
+                      @if (delegacionAsistenciaForm.controls['dni'].errors['invalidDni']) {
+                          <div>
+                              <span class="invalid-field">
+                                  El formato del DNI/NIF es incorrecto.
+                              </span>
+                          </div>
+                      }
+                  }
+                </div>
+              
+              </form>
+        </div>
+
+        <button class="btn btn-primary w-100 btn-foc-naranja" [disabled]="!delegacionAsistenciaForm.valid" (click)="delegarAsistencia()">
+            Delegar
+        </button>
+
+        <!-- <div class="d-flex flex-column justify-content-center">
+            <input type="text" class="form-control my-2" placeholder="Nif de la persona delegada">
+        </div> -->
+    }
+
+</div>

@@ -10,6 +10,11 @@ $naranja: #e3741c;
 $rojo: #c4141c;
 $salmon: #dc7c7c;
 
+.invalid-field {
+    color: $rojo;
+    font-size: small;
+}
+
 .text-rojo {
     color: $rojo;
   }
@@ -34,12 +39,6 @@ $salmon: #dc7c7c;
     border-color: white;
 }
 
-.btn-rojo {
-    color: white;
-    background-color: $rojo;
-    border-color: $rojo;
-}
-
 .background-rojo {
     background-color: $rojo !important;
 }
@@ -50,4 +49,22 @@ $salmon: #dc7c7c;
 
 .background-salmon {
     background-color: $salmon;
+}
+
+.btn-foc-rojo {
+    background-color: $rojo;
+    border-color: $rojo;
+    color: white;
+}
+
+.btn-foc-naranja {
+    background-color: $naranja;
+    border-color: $naranja;
+    color: white;
+}
+
+.btn-foc-salmon {
+    background-color: $salmon;
+    border-color: $salmon;
+    color: white;
 }
