@@ -1,24 +1,18 @@
-import { PuntoOrdenDelDia } from "../../api";
+import { Documento, Votacion } from "../../api";
 
 export interface OrdenDiaModel {
     titulo: string;
     firma: string;
-    puntos: PuntoOrdenDelDia[];
+    puntos: PuntoOrdenDiaModel[];
 }
 
 export interface PuntoOrdenDiaModel {
     id: number;
     titulo: string;
     texto?: string;
-    votacion?: ResultadoModel;
-    documentacion: boolean;
+    votacion?: Votacion[];
+    documentacion: Documento[];
     expanded: boolean;
+    idPleno: number;
 }
 
-export interface ResultadoModel {
-    votosAFavor: number;
-    votosEnContra: number;
-    abstenciones: number;
-    votosNulos: number | undefined;
-    votosBlanco: number;
-}

@@ -3,8 +3,8 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { AuthService, FfsjSpinnerComponent } from 'ffsj-web-components';
 import { jwtDecode } from 'jwt-decode';
 import { CookieService } from 'ngx-cookie-service';
-import { AsistenciaService, DocumentosPlenosService, Pleno, PlenoService, PuntoOrdenDelDia, PuntosOrdenDelDiaService, ResponseAsistencias, VotacionesService } from '../../../api';
-import { OrdenDiaModel } from '../../models/orden-dia.model';
+import { AsistenciaService, DocumentosService, Pleno, PlenoService, PuntoOrdenDelDia, PuntosOrdenDelDiaService, ResponseAsistencias, VotacionesService } from '../../../api';
+import { OrdenDiaModel, PuntoOrdenDiaModel } from '../../models/orden-dia.model';
 import { OrdenDiaComponent } from '../orden-dia/orden-dia.component';
 
 @Component({
@@ -41,7 +41,7 @@ export class PlenoComponent {
     private plenoService: PlenoService,
     private asistenciaService: AsistenciaService,
     private puntosOrdenDelDiaService: PuntosOrdenDelDiaService,
-    private documentosService: DocumentosPlenosService,
+    private documentosService: DocumentosService,
     private votacionesService: VotacionesService,
     private cookiesService: CookieService,
     private router: Router,
@@ -96,10 +96,20 @@ export class PlenoComponent {
 
   loadPuntosOrdenDelDia() {
     this.puntosOrdenDelDiaService.puntosOrdenDelDiaIdGet(this.idPleno).subscribe({
-      next: (response: any) => {
+      next: async (response: any) => {
         console.log(response);
         this.puntos = response.puntosOrdenDelDia;
-        this.ordenDia.puntos = this.puntos;
+        this.ordenDia.puntos = response.puntosOrdenDelDia.map((punto: PuntoOrdenDelDia) => ({
+          id: punto.id,
+          titulo: punto.titulo,
+          texto: punto.texto,
+          idPleno: punto.idPleno,
+          expanded: false // Assuming you want to initialize all as not expanded
+        }));
+        for(let punto of this.ordenDia.puntos) {
+          await this.loadInfoFromPunto(punto);
+          console.log(punto);
+        }
         this.loading = false;
       },
       error: (error: any) => {
@@ -109,26 +119,27 @@ export class PlenoComponent {
     });
   }
 
-  loadDocumentos() {
-    this.documentosService.documentosPlenosIdGet(this.idPleno).subscribe({
-      next: (response: any) => {
+  async loadInfoFromPunto(punto: PuntoOrdenDiaModel) {
+    await this.puntosOrdenDelDiaService.puntosOrdenDelDiaIdVotacionesGet(punto.id)
+      .toPromise()
+      .then((response: any) => { // Paso 2: Usar await con toPromise()
+        if (response.status.status === 200) {
+          punto.votacion = response.votaciones;
+        }
         console.log(response);
-      },
-      error: (error: any) => {
+      }).catch((error: any) => {
         console.log('Error:', error);
-      }
-    });
-  }
-
-  loadVotaciones() { 
-    this.votacionesService.votacionesIdGet(this.idPleno).subscribe({
-      next: (response: any) => {
+      });
+    await this.puntosOrdenDelDiaService.puntosOrdenDelDiaIdDocumentosGet(punto.id)
+      .toPromise()
+      .then((response: any) => {
+        if (response.status.status === 200) {
+          punto.documentacion = response.documentos;
+        }
         console.log(response);
-      },
-      error: (error: any) => {
+      }).catch((error: any) => {
         console.log('Error:', error);
-      }
-    });
+      });
   }
 
   getIdUsuario(token: string) {

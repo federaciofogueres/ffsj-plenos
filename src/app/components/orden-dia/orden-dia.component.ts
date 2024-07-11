@@ -65,4 +65,9 @@ export class OrdenDiaComponent {
   //     }
   //   ]
   // };
+
+  ngOnInit() {
+    console.log(this.ordenDia);
+    
+  }
 }

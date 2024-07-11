@@ -17,7 +17,7 @@
                     </span>
                 </div>
                 @if (punto.expanded) {
-                    <!-- <div class="card-body">
+                    <div class="card-body">
                         @if (!punto.documentacion && !punto.votacion) {
                             <span>
                                 No existe información adicional para este punto.
@@ -25,16 +25,35 @@
                         } @else {
                             @if (punto.documentacion) {
                                 <div class="d-flex flex-column justify-content-center">
+                                    <span class="h3">Documentación</span>
                                     <span class="mb-2">
-                                        Existe documentación relacionada con este punto. Para consultarla, haga click en el botón 'Ver documentación asociada'
+                                        Existe documentación relacionada con este punto. Para consultarla, haga click sobre el botón de cada documento
                                     </span>
-                                    <button class="btn btn-primary">
-                                        Ver documentación asociada
-                                    </button>
                                 </div>
                                 <hr>
+                                <div class="d-flex flex-column">
+                                    @for (documento of punto.documentacion; track $index) {
+                                        <div class="w-100 d-flex flex-row justify-content-between my-2 align-items-center">
+                                            <span>
+                                                <i class="bi bi-file-text"></i>
+                                                {{documento.titulo}}
+                                            </span>
+                                            <a href="{{ documento.url }}" target="_blank" class="btn btn-primary px-4"><i class="bi bi-eye-fill me-2"></i>Ver</a>
+                                        </div>
+                                    }
+                                    <hr>
+                                    <br>
+                                </div>
+                            } @else {
+                                <div class="d-flex flex-column mb-3">
+                                    <span class="h3">Documentación</span>
+                                    <span>
+                                        No hay documentación para este punto
+                                    </span>
+                                    <hr>
+                                </div>
                             }
-                            @if (punto.votacion) {
+                            @for (votacion of punto.votacion; track $index) {
                                 <div class="d-flex justify-content-between">
                                     <span>
                                         <strong>
@@ -46,24 +65,27 @@
                                         Votar
                                     </button>
                                 </div>
-                                <hr>
-                                <div class="d-flex flex-column">
+                                <div class="d-flex flex-column mt-3">
                                     <div class="d-flex justify-content-between">
-                                        <span>A favor: {{punto.votacion.votosAFavor}}</span>
-                                        <span>En contra: {{punto.votacion.votosEnContra}}</span>
+                                        <span>A favor: {{votacion.favor}}</span>
+                                        <span>En contra: {{votacion.contra}}</span>
+                                        <span>Blanco: {{votacion.blanco}}</span>
                                     </div>
+                                </div>
+                                @if (!$index) {
+                                    <hr>
                                     <br>
-                                    <div class="d-flex justify-content-between">
-                                        <span>Blanco: {{punto.votacion.votosBlanco}}</span>
-                                        @if (punto.votacion.votosNulos !== undefined) {
-                                            <span>Nulos: {{punto.votacion.votosNulos}}</span>
-                                        }
-                                        <span>Abstenciones: {{punto.votacion.abstenciones}}</span>
-                                    </div>
+                                }
+                            } @empty {
+                                <div class="d-flex flex-column mb-3">
+                                    <span class="h3">Votaciones</span>
+                                    <span>
+                                        No hay votaciones para este punto
+                                    </span>
                                 </div>
                             }
                         }
-                    </div> -->
+                    </div>
                 }
             </div>
         }
