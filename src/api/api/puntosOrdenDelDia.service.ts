@@ -21,7 +21,9 @@ import { Inject, Injectable, Optional } from '@angular/core';
 import { Observable } from 'rxjs';
 
 import { PuntoOrdenDelDia } from '../model/puntoOrdenDelDia';
+import { ResponseDocumentos } from '../model/responseDocumentos';
 import { ResponsePuntosOrdenDelDia } from '../model/responsePuntosOrdenDelDia';
+import { ResponseVotaciones } from '../model/responseVotaciones';
 import { Status } from '../model/status';
 
 import { Configuration } from '../configuration';
@@ -152,6 +154,54 @@ export class PuntosOrdenDelDiaService {
     }
 
     /**
+     * Obtener documentos de un punto del día por ID del punto
+     * 
+     * @param id 
+     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
+     * @param reportProgress flag to report request and response progress.
+     */
+    public puntosOrdenDelDiaIdDocumentosGet(id: number, observe?: 'body', reportProgress?: boolean): Observable<ResponseDocumentos>;
+    public puntosOrdenDelDiaIdDocumentosGet(id: number, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<ResponseDocumentos>>;
+    public puntosOrdenDelDiaIdDocumentosGet(id: number, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<ResponseDocumentos>>;
+    public puntosOrdenDelDiaIdDocumentosGet(id: number, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
+
+        if (id === null || id === undefined) {
+            throw new Error('Required parameter id was null or undefined when calling puntosOrdenDelDiaIdDocumentosGet.');
+        }
+
+        let headers = this.defaultHeaders;
+
+        // authentication (bearerAuth) required
+        if (this.configuration.accessToken) {
+            const accessToken = typeof this.configuration.accessToken === 'function'
+                ? this.configuration.accessToken()
+                : this.configuration.accessToken;
+            headers = headers.set('Authorization', 'Bearer ' + accessToken);
+        }
+        // to determine the Accept header
+        let httpHeaderAccepts: string[] = [
+            'application/json'
+        ];
+        const httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
+        if (httpHeaderAcceptSelected != undefined) {
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
+        }
+
+        // to determine the Content-Type header
+        const consumes: string[] = [
+        ];
+
+        return this.httpClient.request<ResponseDocumentos>('get',`${this.basePath}/puntos_orden_del_dia/${encodeURIComponent(String(id))}/documentos`,
+            {
+                withCredentials: this.configuration.withCredentials,
+                headers: headers,
+                observe: observe,
+                reportProgress: reportProgress
+            }
+        );
+    }
+
+    /**
      * Obtener un punto del orden del día por ID
      * 
      * @param id 
@@ -250,6 +300,54 @@ export class PuntosOrdenDelDiaService {
         return this.httpClient.request<Status>('put',`${this.basePath}/puntos_orden_del_dia/${encodeURIComponent(String(id))}`,
             {
                 body: body,
+                withCredentials: this.configuration.withCredentials,
+                headers: headers,
+                observe: observe,
+                reportProgress: reportProgress
+            }
+        );
+    }
+
+    /**
+     * Obtener votaciones de un punto del día por ID del punto
+     * 
+     * @param id 
+     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
+     * @param reportProgress flag to report request and response progress.
+     */
+    public puntosOrdenDelDiaIdVotacionesGet(id: number, observe?: 'body', reportProgress?: boolean): Observable<ResponseVotaciones>;
+    public puntosOrdenDelDiaIdVotacionesGet(id: number, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<ResponseVotaciones>>;
+    public puntosOrdenDelDiaIdVotacionesGet(id: number, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<ResponseVotaciones>>;
+    public puntosOrdenDelDiaIdVotacionesGet(id: number, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
+
+        if (id === null || id === undefined) {
+            throw new Error('Required parameter id was null or undefined when calling puntosOrdenDelDiaIdVotacionesGet.');
+        }
+
+        let headers = this.defaultHeaders;
+
+        // authentication (bearerAuth) required
+        if (this.configuration.accessToken) {
+            const accessToken = typeof this.configuration.accessToken === 'function'
+                ? this.configuration.accessToken()
+                : this.configuration.accessToken;
+            headers = headers.set('Authorization', 'Bearer ' + accessToken);
+        }
+        // to determine the Accept header
+        let httpHeaderAccepts: string[] = [
+            'application/json'
+        ];
+        const httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
+        if (httpHeaderAcceptSelected != undefined) {
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
+        }
+
+        // to determine the Content-Type header
+        const consumes: string[] = [
+        ];
+
+        return this.httpClient.request<ResponseVotaciones>('get',`${this.basePath}/puntos_orden_del_dia/${encodeURIComponent(String(id))}/votaciones`,
+            {
                 withCredentials: this.configuration.withCredentials,
                 headers: headers,
                 observe: observe,

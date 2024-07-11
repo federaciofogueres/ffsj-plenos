@@ -45,19 +45,19 @@ export class AsistenciaService {
         }
     }
 
-        /**
+    /**
      * @param consumes string[] mime-types
      * @return true: consumes contains 'multipart/form-data', false: otherwise
      */
-        private canConsumeForm(consumes: string[]): boolean {
-            const form = 'multipart/form-data';
-            for (const consume of consumes) {
-                if (form === consume) {
-                    return true;
-                }
+    private canConsumeForm(consumes: string[]): boolean {
+        const form = 'multipart/form-data';
+        for (const consume of consumes) {
+            if (form === consume) {
+                return true;
             }
-            return false;
         }
+        return false;
+    }
 
 
     /**
@@ -242,7 +242,7 @@ export class AsistenciaService {
         const consumes: string[] = [
         ];
 
-        return this.httpClient.request<Asistencia>('get',`${this.basePath}/asistencia/${encodeURIComponent(String(idPleno))}/asociados/${encodeURIComponent(String(idAsociado))}`,
+        return this.httpClient.request<ResponseAsistencias>('get',`${this.basePath}/asistencia/${encodeURIComponent(String(idPleno))}/asociados/${encodeURIComponent(String(idAsociado))}`,
             {
                 withCredentials: this.configuration.withCredentials,
                 headers: headers,
