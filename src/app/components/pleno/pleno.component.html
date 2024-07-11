@@ -1,0 +1,15 @@
+@if (loading) {
+    <lib-ffsj-spinner></lib-ffsj-spinner>
+} @else {
+    <div class="container">
+        <span>
+            Bienvenido y bienvenida al pleno de la Federació de Les Fogueres de Sant Joan.
+        </span>
+    
+        <hr>
+    
+        <app-orden-dia
+            [ordenDia]="ordenDia"
+        ></app-orden-dia>
+    </div>
+}

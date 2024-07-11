@@ -1,7 +1,9 @@
+import { PuntoOrdenDelDia } from "../../api";
+
 export interface OrdenDiaModel {
     titulo: string;
     firma: string;
-    puntos: PuntoOrdenDiaModel[];
+    puntos: PuntoOrdenDelDia[];
 }
 
 export interface PuntoOrdenDiaModel {

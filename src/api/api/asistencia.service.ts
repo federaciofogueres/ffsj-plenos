@@ -45,19 +45,19 @@ export class AsistenciaService {
         }
     }
 
-    /**
+        /**
      * @param consumes string[] mime-types
      * @return true: consumes contains 'multipart/form-data', false: otherwise
      */
-    private canConsumeForm(consumes: string[]): boolean {
-        const form = 'multipart/form-data';
-        for (const consume of consumes) {
-            if (form === consume) {
-                return true;
+        private canConsumeForm(consumes: string[]): boolean {
+            const form = 'multipart/form-data';
+            for (const consume of consumes) {
+                if (form === consume) {
+                    return true;
+                }
             }
+            return false;
         }
-        return false;
-    }
 
 
     /**
@@ -207,9 +207,9 @@ export class AsistenciaService {
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      */
-    public asistenciaIdPlenoAsociadosIdAsociadoGet(idPleno: number, idAsociado: number, observe?: 'body', reportProgress?: boolean): Observable<Asistencia>;
-    public asistenciaIdPlenoAsociadosIdAsociadoGet(idPleno: number, idAsociado: number, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<Asistencia>>;
-    public asistenciaIdPlenoAsociadosIdAsociadoGet(idPleno: number, idAsociado: number, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<Asistencia>>;
+    public asistenciaIdPlenoAsociadosIdAsociadoGet(idPleno: number, idAsociado: number, observe?: 'body', reportProgress?: boolean): Observable<ResponseAsistencias>;
+    public asistenciaIdPlenoAsociadosIdAsociadoGet(idPleno: number, idAsociado: number, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<ResponseAsistencias>>;
+    public asistenciaIdPlenoAsociadosIdAsociadoGet(idPleno: number, idAsociado: number, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<ResponseAsistencias>>;
     public asistenciaIdPlenoAsociadosIdAsociadoGet(idPleno: number, idAsociado: number, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
 
         if (idPleno === null || idPleno === undefined) {

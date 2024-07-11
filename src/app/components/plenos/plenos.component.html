@@ -1,0 +1,15 @@
+@if (loading) {
+    <lib-ffsj-spinner></lib-ffsj-spinner>
+} @else {
+    <div class="container">
+        @for(pleno of plenos; track $index) {
+            <div class="card mb-3" (click)="route.navigateByUrl('/plenos/' + pleno.id)">
+                <div class="card-body">
+                  <h5 class="card-title">{{ pleno.titulo }}</h5>
+                  <p class="card-text">{{ pleno.informacionExtra }}</p>
+                  <p>{{ pleno.fecha }}</p>
+                </div>
+            </div>
+        }
+    </div>
+}

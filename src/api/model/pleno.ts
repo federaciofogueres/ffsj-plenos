@@ -15,4 +15,5 @@ export interface Pleno {
     fecha: Date;
     titulo: string;
     informacionExtra: string;
+    firma: string;
 }

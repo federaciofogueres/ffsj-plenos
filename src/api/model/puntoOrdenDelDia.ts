@@ -15,4 +15,5 @@ export interface PuntoOrdenDelDia {
     titulo: string;
     texto: string;
     idPleno: number;
+    expanded: boolean;
 }
