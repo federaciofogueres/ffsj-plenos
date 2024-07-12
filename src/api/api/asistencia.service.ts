@@ -253,6 +253,59 @@ export class AsistenciaService {
     }
 
     /**
+     * Confirmar una nueva asistencia
+     * 
+     * @param idPleno 
+     * @param idAsociado 
+     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
+     * @param reportProgress flag to report request and response progress.
+     */
+    public asistenciaIdPlenoAsociadosIdAsociadoPost(idPleno: number, idAsociado: number, observe?: 'body', reportProgress?: boolean): Observable<Status>;
+    public asistenciaIdPlenoAsociadosIdAsociadoPost(idPleno: number, idAsociado: number, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<Status>>;
+    public asistenciaIdPlenoAsociadosIdAsociadoPost(idPleno: number, idAsociado: number, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<Status>>;
+    public asistenciaIdPlenoAsociadosIdAsociadoPost(idPleno: number, idAsociado: number, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
+
+        if (idPleno === null || idPleno === undefined) {
+            throw new Error('Required parameter idPleno was null or undefined when calling asistenciaIdPlenoAsociadosIdAsociadoPost.');
+        }
+
+        if (idAsociado === null || idAsociado === undefined) {
+            throw new Error('Required parameter idAsociado was null or undefined when calling asistenciaIdPlenoAsociadosIdAsociadoPost.');
+        }
+
+        let headers = this.defaultHeaders;
+
+        // authentication (bearerAuth) required
+        if (this.configuration.accessToken) {
+            const accessToken = typeof this.configuration.accessToken === 'function'
+                ? this.configuration.accessToken()
+                : this.configuration.accessToken;
+            headers = headers.set('Authorization', 'Bearer ' + accessToken);
+        }
+        // to determine the Accept header
+        let httpHeaderAccepts: string[] = [
+            'application/json'
+        ];
+        const httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
+        if (httpHeaderAcceptSelected != undefined) {
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
+        }
+
+        // to determine the Content-Type header
+        const consumes: string[] = [
+        ];
+
+        return this.httpClient.request<Status>('post',`${this.basePath}/asistencia/${encodeURIComponent(String(idPleno))}/asociados/${encodeURIComponent(String(idAsociado))}`,
+            {
+                withCredentials: this.configuration.withCredentials,
+                headers: headers,
+                observe: observe,
+                reportProgress: reportProgress
+            }
+        );
+    }
+
+    /**
      * Actualizar una asistencia por ID
      * 
      * @param body 
