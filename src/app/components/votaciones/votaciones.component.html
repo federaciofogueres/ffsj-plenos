@@ -1,20 +1,28 @@
-<div class="container">
-    <span>
-        Para poder acceder a la votación de la asamblea, por favor, selecciona qué votación deseas realizar.
-    </span>
-
-    @for (votacion of votaciones; track $index) {
-        <div class="card my-3">
-            <div class="card-body">
-                <h5 class="card-title">{{ votacion.titulo }}</h5>
-                <div class="d-flex justify-content-between">
-                    <p class="card-text">{{ votacion.fecha }}</p>
-                    <button class="btn btn-primary btn-foc-rojo px-4" (click)="goToVotacion(votacion)">
-                        Votar
-                    </button>
+@if(loading) {
+    <lib-ffsj-spinner></lib-ffsj-spinner>
+} @else {
+    <div class="container">
+        <span>
+            Para poder acceder a la votación de la asamblea, por favor, selecciona qué votación deseas realizar.
+        </span>
+    
+        @for (votacion of consultas; track $index) {
+            <div class="card my-3">
+                <div class="card-body">
+                    <h5 class="card-title">{{ votacion.titulo }}</h5>
+                    <div class="d-flex justify-content-between">
+                        <p class="card-text">{{ votacion.fecha }}</p>
+                        <button class="btn btn-primary btn-foc-rojo px-4" (click)="goToVotacion(votacion)">
+                            Votar
+                        </button>
+                    </div>
                 </div>
             </div>
-        </div>
-    }
-
-</div>
+        } @empty {
+            <div class="alert alert-warning" role="alert">
+                No hay votaciones disponibles.
+            </div>
+        }
+    
+    </div>
+}

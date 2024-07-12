@@ -1,7 +1,8 @@
 import { Injectable } from "@angular/core";
 import { CanActivate, Router } from "@angular/router";
 import { AuthService } from "ffsj-web-components";
-import { AsistenciaService, DocumentosPlenosService, DocumentosService, PlenoService, PuntosOrdenDelDiaService, VotacionesService } from "../../api";
+import { AsistenciaService, ConsultasService, DocumentosPlenosService, DocumentosService, PlenoService, PuntosOrdenDelDiaService, VotacionesService } from "../../api";
+import { ConsultasInfoService } from "../services/consultas.service";
 
 @Injectable({
   providedIn: 'root'
@@ -16,7 +17,9 @@ export class AuthGuard implements CanActivate {
     private puntosOrdenDelDiaService: PuntosOrdenDelDiaService,
     private documentosService: DocumentosService,
     private documentosPlenosService: DocumentosPlenosService,
-    private votacionesService: VotacionesService
+    private votacionesService: VotacionesService,
+    private consultasService: ConsultasService,
+    private consultasInfoService: ConsultasInfoService,
   ) {}
 
   canActivate(): boolean {
@@ -28,6 +31,8 @@ export class AuthGuard implements CanActivate {
       this.documentosService.configuration.accessToken = token;
       this.votacionesService.configuration.accessToken = token;
       this.documentosPlenosService.configuration.accessToken = token;
+      this.consultasService.configuration.accessToken = token;
+      this.consultasInfoService.configuration.accessToken = token;
       return true;
     } else {
       this.router.navigate(['/login']);
