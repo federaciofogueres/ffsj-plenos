@@ -1,5 +1,4 @@
 import { Routes } from '@angular/router';
-import { AuthGuard } from 'ffsj-web-components';
 import { AsistenciaComponent } from './components/asistencia/asistencia.component';
 import { DocumentosComponent } from './components/documentos/documentos.component';
 import { HomeComponent } from './components/home/home.component';
@@ -7,6 +6,7 @@ import { LoginComponent } from './components/login/login.component';
 import { PlenoComponent } from './components/pleno/pleno.component';
 import { PlenosComponent } from './components/plenos/plenos.component';
 import { VotacionesComponent } from './components/votaciones/votaciones.component';
+import { AuthGuard } from './guards/auth.guard';
 
 export const routes: Routes = [
     { path: 'plenos/:idPleno', component: PlenoComponent, canActivate: [AuthGuard] },
