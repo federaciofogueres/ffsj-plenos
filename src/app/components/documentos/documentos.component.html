@@ -1,24 +1,33 @@
 <div class="container">
-    @for (documento of documentos; track $index) {
-        <div class="card mb-3">
-          <div class="card-body">
-            <h5 class="card-title">{{ documento.nombre }}</h5>
-            <p class="card-text">{{ documento.descripcion }}</p>
-            <a href="{{ documento.url }}" target="_blank" class="btn btn-primary">Ver Documento</a>
-            <!-- <button class="btn btn-primary" (click)="srcDocument = documento.url">
-                Ver documento
-            </button> -->
-          </div>
-        </div>
-    }
-    <!-- @if (srcDocument) {
-        <div class="pdf-visor">
-            <ngx-extended-pdf-viewer 
-                [src]="srcDocument" 
-                useBrowserLocale="true" 
-                height="80vh"
-            ></ngx-extended-pdf-viewer>
-            <button class="btn btn-danger btn-foc-rojo" (click)="srcDocument = ''">Cerrar</button>
-        </div>
-    } -->
+    <div class="d-flex flex-column">
+        <span class="h2 mb-3">
+            Documentación del pleno
+        </span>
+        @for (documento of documentos; track $index) {
+            <div class="card mb-3">
+              <div class="card-body">
+                <h5 class="card-title">{{ documento.titulo }}</h5>
+                <p class="card-text">{{ documento.descripcion }}</p>
+                <a href="{{ documento.url }}" target="_blank" class="btn btn-primary">Ver Documento</a>
+                <!-- <button class="btn btn-primary" (click)="srcDocument = documento.url">
+                    Ver documento
+                </button> -->
+              </div>
+            </div>
+        } @empty {
+            <div class="alert alert-info" role="alert">
+                No hay documentos para mostrar en este pleno.
+            </div>
+        }
+        <!-- @if (srcDocument) {
+            <div class="pdf-visor">
+                <ngx-extended-pdf-viewer 
+                    [src]="srcDocument" 
+                    useBrowserLocale="true" 
+                    height="80vh"
+                ></ngx-extended-pdf-viewer>
+                <button class="btn btn-danger btn-foc-rojo" (click)="srcDocument = ''">Cerrar</button>
+            </div>
+        } -->
+    </div>
   </div>
