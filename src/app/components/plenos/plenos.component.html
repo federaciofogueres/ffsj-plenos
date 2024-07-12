@@ -3,12 +3,16 @@
 } @else {
     <div class="container">
         @for(pleno of plenos; track $index) {
-            <div class="card mb-3" (click)="route.navigateByUrl('/plenos/' + pleno.id)">
+            <div class="card mb-3" (click)="gestionaPleno(pleno.id)">
                 <div class="card-body">
                   <h5 class="card-title">{{ pleno.titulo }}</h5>
                   <p class="card-text">{{ pleno.informacionExtra }}</p>
                   <p>{{ pleno.fecha }}</p>
                 </div>
+            </div>
+        } @empty {
+            <div class="alert alert-danger" role="alert">
+                No hay plenos disponibles para el usuario con id: {{idAsociado}}.
             </div>
         }
     </div>

@@ -12,6 +12,7 @@ export const routes: Routes = [
     { path: 'plenos/:idPleno', component: PlenoComponent, canActivate: [AuthGuard] },
     { path: 'plenos', component: PlenosComponent, canActivate: [AuthGuard] },
     { path: 'asistencia', component: AsistenciaComponent, canActivate: [AuthGuard] },
+    { path: 'asistencia/:idPleno', component: AsistenciaComponent, canActivate: [AuthGuard] },
     { path: 'votaciones', component: VotacionesComponent, canActivate: [AuthGuard] },
     { path: 'documentos', component: DocumentosComponent, canActivate: [AuthGuard] },
     { path: 'login', component: LoginComponent },

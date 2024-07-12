@@ -104,54 +104,6 @@ export class AsistenciaService {
     }
 
     /**
-     * Eliminar una asistencia por ID
-     * 
-     * @param id 
-     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
-     * @param reportProgress flag to report request and response progress.
-     */
-    public asistenciaIdDelete(id: number, observe?: 'body', reportProgress?: boolean): Observable<Status>;
-    public asistenciaIdDelete(id: number, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<Status>>;
-    public asistenciaIdDelete(id: number, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<Status>>;
-    public asistenciaIdDelete(id: number, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
-
-        if (id === null || id === undefined) {
-            throw new Error('Required parameter id was null or undefined when calling asistenciaIdDelete.');
-        }
-
-        let headers = this.defaultHeaders;
-
-        // authentication (bearerAuth) required
-        if (this.configuration.accessToken) {
-            const accessToken = typeof this.configuration.accessToken === 'function'
-                ? this.configuration.accessToken()
-                : this.configuration.accessToken;
-            headers = headers.set('Authorization', 'Bearer ' + accessToken);
-        }
-        // to determine the Accept header
-        let httpHeaderAccepts: string[] = [
-            'application/json'
-        ];
-        const httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
-        if (httpHeaderAcceptSelected != undefined) {
-            headers = headers.set('Accept', httpHeaderAcceptSelected);
-        }
-
-        // to determine the Content-Type header
-        const consumes: string[] = [
-        ];
-
-        return this.httpClient.request<Status>('delete',`${this.basePath}/asistencia/${encodeURIComponent(String(id))}`,
-            {
-                withCredentials: this.configuration.withCredentials,
-                headers: headers,
-                observe: observe,
-                reportProgress: reportProgress
-            }
-        );
-    }
-
-    /**
      * Obtener una asistencia por ID
      * 
      * @param id 
@@ -190,6 +142,117 @@ export class AsistenciaService {
         ];
 
         return this.httpClient.request<Asistencia>('get',`${this.basePath}/asistencia/${encodeURIComponent(String(id))}`,
+            {
+                withCredentials: this.configuration.withCredentials,
+                headers: headers,
+                observe: observe,
+                reportProgress: reportProgress
+            }
+        );
+    }
+
+    /**
+     * Confirmar una nueva asistencia
+     * 
+     * @param idPleno 
+     * @param idAsociado 
+     * @param nifAsociado 
+     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
+     * @param reportProgress flag to report request and response progress.
+     */
+    public asistenciaIdPlenoAsociadosIdAsociadoDelegacionNifAsociadoPost(idPleno: number, idAsociado: number, nifAsociado: string, observe?: 'body', reportProgress?: boolean): Observable<Status>;
+    public asistenciaIdPlenoAsociadosIdAsociadoDelegacionNifAsociadoPost(idPleno: number, idAsociado: number, nifAsociado: string, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<Status>>;
+    public asistenciaIdPlenoAsociadosIdAsociadoDelegacionNifAsociadoPost(idPleno: number, idAsociado: number, nifAsociado: string, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<Status>>;
+    public asistenciaIdPlenoAsociadosIdAsociadoDelegacionNifAsociadoPost(idPleno: number, idAsociado: number, nifAsociado: string, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
+
+        if (idPleno === null || idPleno === undefined) {
+            throw new Error('Required parameter idPleno was null or undefined when calling asistenciaIdPlenoAsociadosIdAsociadoDelegacionNifAsociadoPost.');
+        }
+
+        if (idAsociado === null || idAsociado === undefined) {
+            throw new Error('Required parameter idAsociado was null or undefined when calling asistenciaIdPlenoAsociadosIdAsociadoDelegacionNifAsociadoPost.');
+        }
+
+        if (nifAsociado === null || nifAsociado === undefined) {
+            throw new Error('Required parameter nifAsociado was null or undefined when calling asistenciaIdPlenoAsociadosIdAsociadoDelegacionNifAsociadoPost.');
+        }
+
+        let headers = this.defaultHeaders;
+
+        // authentication (bearerAuth) required
+        if (this.configuration.accessToken) {
+            const accessToken = typeof this.configuration.accessToken === 'function'
+                ? this.configuration.accessToken()
+                : this.configuration.accessToken;
+            headers = headers.set('Authorization', 'Bearer ' + accessToken);
+        }
+        // to determine the Accept header
+        let httpHeaderAccepts: string[] = [
+            'application/json'
+        ];
+        const httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
+        if (httpHeaderAcceptSelected != undefined) {
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
+        }
+
+        // to determine the Content-Type header
+        const consumes: string[] = [
+        ];
+
+        return this.httpClient.request<Status>('post',`${this.basePath}/asistencia/${encodeURIComponent(String(idPleno))}/asociados/${encodeURIComponent(String(idAsociado))}/delegacion/${encodeURIComponent(String(nifAsociado))}`,
+            {
+                withCredentials: this.configuration.withCredentials,
+                headers: headers,
+                observe: observe,
+                reportProgress: reportProgress
+            }
+        );
+    }
+
+    /**
+     * Eliminar una asistencia por ID
+     * 
+     * @param idPleno 
+     * @param idAsociado 
+     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
+     * @param reportProgress flag to report request and response progress.
+     */
+    public asistenciaIdPlenoAsociadosIdAsociadoDelete(idPleno: number, idAsociado: number, observe?: 'body', reportProgress?: boolean): Observable<Status>;
+    public asistenciaIdPlenoAsociadosIdAsociadoDelete(idPleno: number, idAsociado: number, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<Status>>;
+    public asistenciaIdPlenoAsociadosIdAsociadoDelete(idPleno: number, idAsociado: number, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<Status>>;
+    public asistenciaIdPlenoAsociadosIdAsociadoDelete(idPleno: number, idAsociado: number, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
+
+        if (idPleno === null || idPleno === undefined) {
+            throw new Error('Required parameter idPleno was null or undefined when calling asistenciaIdPlenoAsociadosIdAsociadoDelete.');
+        }
+
+        if (idAsociado === null || idAsociado === undefined) {
+            throw new Error('Required parameter idAsociado was null or undefined when calling asistenciaIdPlenoAsociadosIdAsociadoDelete.');
+        }
+
+        let headers = this.defaultHeaders;
+
+        // authentication (bearerAuth) required
+        if (this.configuration.accessToken) {
+            const accessToken = typeof this.configuration.accessToken === 'function'
+                ? this.configuration.accessToken()
+                : this.configuration.accessToken;
+            headers = headers.set('Authorization', 'Bearer ' + accessToken);
+        }
+        // to determine the Accept header
+        let httpHeaderAccepts: string[] = [
+            'application/json'
+        ];
+        const httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
+        if (httpHeaderAcceptSelected != undefined) {
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
+        }
+
+        // to determine the Content-Type header
+        const consumes: string[] = [
+        ];
+
+        return this.httpClient.request<Status>('delete',`${this.basePath}/asistencia/${encodeURIComponent(String(idPleno))}/asociados/${encodeURIComponent(String(idAsociado))}`,
             {
                 withCredentials: this.configuration.withCredentials,
                 headers: headers,
@@ -309,21 +372,26 @@ export class AsistenciaService {
      * Actualizar una asistencia por ID
      * 
      * @param body 
-     * @param id 
+     * @param idPleno 
+     * @param idAsociado 
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      */
-    public asistenciaIdPut(body: Asistencia, id: number, observe?: 'body', reportProgress?: boolean): Observable<Status>;
-    public asistenciaIdPut(body: Asistencia, id: number, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<Status>>;
-    public asistenciaIdPut(body: Asistencia, id: number, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<Status>>;
-    public asistenciaIdPut(body: Asistencia, id: number, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
+    public asistenciaIdPlenoAsociadosIdAsociadoPut(body: Asistencia, idPleno: number, idAsociado: number, observe?: 'body', reportProgress?: boolean): Observable<Status>;
+    public asistenciaIdPlenoAsociadosIdAsociadoPut(body: Asistencia, idPleno: number, idAsociado: number, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<Status>>;
+    public asistenciaIdPlenoAsociadosIdAsociadoPut(body: Asistencia, idPleno: number, idAsociado: number, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<Status>>;
+    public asistenciaIdPlenoAsociadosIdAsociadoPut(body: Asistencia, idPleno: number, idAsociado: number, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
 
         if (body === null || body === undefined) {
-            throw new Error('Required parameter body was null or undefined when calling asistenciaIdPut.');
+            throw new Error('Required parameter body was null or undefined when calling asistenciaIdPlenoAsociadosIdAsociadoPut.');
         }
 
-        if (id === null || id === undefined) {
-            throw new Error('Required parameter id was null or undefined when calling asistenciaIdPut.');
+        if (idPleno === null || idPleno === undefined) {
+            throw new Error('Required parameter idPleno was null or undefined when calling asistenciaIdPlenoAsociadosIdAsociadoPut.');
+        }
+
+        if (idAsociado === null || idAsociado === undefined) {
+            throw new Error('Required parameter idAsociado was null or undefined when calling asistenciaIdPlenoAsociadosIdAsociadoPut.');
         }
 
         let headers = this.defaultHeaders;
@@ -353,7 +421,7 @@ export class AsistenciaService {
             headers = headers.set('Content-Type', httpContentTypeSelected);
         }
 
-        return this.httpClient.request<Status>('put',`${this.basePath}/asistencia/${encodeURIComponent(String(id))}`,
+        return this.httpClient.request<Status>('put',`${this.basePath}/asistencia/${encodeURIComponent(String(idPleno))}/asociados/${encodeURIComponent(String(idAsociado))}`,
             {
                 body: body,
                 withCredentials: this.configuration.withCredentials,

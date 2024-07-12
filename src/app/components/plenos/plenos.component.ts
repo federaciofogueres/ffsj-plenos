@@ -1,7 +1,8 @@
-import { Component } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { Router } from '@angular/router';
 import { FfsjSpinnerComponent } from 'ffsj-web-components';
-import { Pleno, PlenoService, ResponsePlenos } from '../../../api';
+import { CookieService } from 'ngx-cookie-service';
+import { AsistenciaService, Pleno, PlenoService } from '../../../api';
 
 @Component({
   selector: 'app-plenos',
@@ -16,26 +17,58 @@ export class PlenosComponent {
 
   plenos: Pleno[] = [];
   loading: boolean = false;
+  mensajeError: string = '';
+  idAsociado: number = -1;
+
+  @Input() seleccionaPleno: boolean = false;
+  @Output() plenoSeleccionado = new EventEmitter<number>();
 
   constructor(
     private plenosService: PlenoService,
-    protected route: Router
+    private asistenciaService: AsistenciaService,
+    protected route: Router,
+    private cookieService: CookieService
   ) {}
 
   ngOnInit() {
     this.loading = true;
-    this.plenosService.plenoGet().subscribe({
-      next: (response: ResponsePlenos) => {
-        if (response.status.status === 200) {
-          this.plenos = response.plenos;
-        }
-        console.log(response);
-        this.loading = false;
+    this.loadPlenos();
+  }
+
+  loadPlenos() {
+    this.idAsociado = parseInt(this.cookieService.get('idUsuario'));
+    this.asistenciaService.asistenciaIdGet(this.idAsociado).subscribe({
+      next: async (response: any) => { // Añadir async aquí
+        console.log('Asistencia:', response);
+        const plenosPromises = response.asistencias.map((asistencia: any) => 
+          this.plenosService.plenoIdGet(asistencia.idPleno).toPromise().then((response: any) => {
+            console.log('Pleno:', response);
+            if (response.status.status === 200) {
+              this.plenos.push(response.plenos[0]);
+            }
+          }).catch((error: any) => {
+            console.log('Error:', error);
+          })
+        );
+  
+        await Promise.all(plenosPromises); // Esperar a que todas las promesas se resuelvan
+        this.loading = false; // Mover esta línea aquí
+        this.cookieService.set('idAsociado', response.idAsociado);
       },
       error: (error: any) => {
         console.log('Error:', error);
+        this.mensajeError = error.error.message;
+        this.loading = false;
       }
-    })
+    });
+  }
+
+  gestionaPleno(idPleno: number) {
+    if (!this.seleccionaPleno) {
+      this.route.navigate(['/plenos', idPleno]);
+    } else {
+      this.plenoSeleccionado.emit(idPleno);
+    }
   }
 
 }
