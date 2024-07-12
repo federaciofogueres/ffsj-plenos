@@ -65,6 +65,7 @@ export class PlenosComponent {
 
   gestionaPleno(idPleno: number) {
     if (!this.seleccionaPleno) {
+      this.cookieService.set('idPleno', idPleno.toString());
       this.route.navigate(['/plenos', idPleno]);
     } else {
       this.plenoSeleccionado.emit(idPleno);

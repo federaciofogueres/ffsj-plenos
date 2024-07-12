@@ -1,8 +1,9 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { FfsjSpinnerComponent } from 'ffsj-web-components';
+import { CookieService } from 'ngx-cookie-service';
 import { AsistenciaService, Pleno, PlenoService } from '../../../api';
 import { ValidatorsService } from '../../services/validators.service';
 import { PlenosComponent } from '../plenos/plenos.component';
@@ -45,15 +46,14 @@ export class AsistenciaComponent {
     private validatorsService: ValidatorsService,
     private asistenciaService: AsistenciaService,
     private activatedRoute: ActivatedRoute,
-    private plenosService: PlenoService
+    private plenosService: PlenoService,
+    private cookieService: CookieService,
+    private route: Router
   ) { }
 
   ngOnInit() {
     this.loading = true;
-    let plenoIdRoute = this.activatedRoute.snapshot.paramMap.get('idPleno');
-    if (plenoIdRoute) {
-      this.loadIdPleno(parseInt(plenoIdRoute));
-    }
+    this.loadIdPleno(-1);
     this.idAsociado = 8976;
     this.loading = false;
   }
@@ -63,9 +63,9 @@ export class AsistenciaComponent {
   }
 
   loadIdPleno(idPleno: number) {
-    this.idPleno = idPleno;
-    if (idPleno !== -1) {
-      this.plenosService.plenoIdGet(idPleno).subscribe({
+    this.idPleno = this.cookieService.get('idPleno') ? parseInt(this.cookieService.get('idPleno')) : idPleno;
+    if (this.idPleno !== -1) {
+      this.plenosService.plenoIdGet(this.idPleno).subscribe({
         next: (response: any) => {
           console.log('Pleno:', response);
           if (response.status.status === 200) {
@@ -76,6 +76,8 @@ export class AsistenciaComponent {
           console.log('Error:', error);
         }
       });
+    } else {
+      this.route.navigateByUrl('/plenos');
     }
   }
 
