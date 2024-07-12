@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { Router } from '@angular/router';
 import { FfsjSpinnerComponent } from 'ffsj-web-components';
 import { CookieService } from 'ngx-cookie-service';
 import { ConsultasService } from '../../../api';
@@ -48,13 +49,18 @@ export class VotacionesComponent {
   constructor(
     private cookieService: CookieService,
     private consultasService: ConsultasService,
-    private consultaInfoService: ConsultasInfoService
+    private consultaInfoService: ConsultasInfoService,
+    private route: Router
   ) {}
 
   ngOnInit() {
     this.loading = true;
-    this.idPleno = parseInt(this.cookieService.get('idPleno'));
-    this.getVotaciones();
+    this.idPleno = this.cookieService.get('idPleno') ? parseInt(this.cookieService.get('idPleno')) : -1;
+    if (this.idPleno !== -1) {
+      this.getVotaciones();
+    } else {
+      this.route.navigateByUrl('/plenos');
+    }
   }
 
   getVotaciones() {
