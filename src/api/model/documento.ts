@@ -12,7 +12,7 @@
 
 export interface Documento { 
     id: number;
-    fechaCreacion: Date;
+    fecha_creacion: Date;
     titulo: string;
     descripcion: string;
     autor: number;

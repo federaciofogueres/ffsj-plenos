@@ -1,0 +1,78 @@
+@if (loading) {
+    <lib-ffsj-spinner
+        [fullscreen]="true"
+    ></lib-ffsj-spinner>
+} @else {
+    @if (mostrarFormulario) {
+        <form [formGroup]="documentoForm">
+            <div class="d-flex flex-column gap-2 scrollable my-3">
+        
+                <div class="form-group">
+                    <label for="id">ID:</label>
+                    <input type="number" formControlName="id" class="form-control" isDisabled>
+                </div>
+        
+                <div class="form-group">
+                    <label for="fechaCreacion">Fecha de Creación:</label>
+                    <input type="datetime-local" formControlName="fecha_creacion" class="form-control">
+                </div>
+        
+                <div class="form-group">
+                    <label for="titulo">Título:</label>
+                    <input type="text" formControlName="titulo" class="form-control">
+                </div>
+        
+                <div class="form-group">
+                    <label for="descripcion">Descripción:</label>
+                    <textarea formControlName="descripcion" class="form-control"></textarea>
+                </div>
+        
+                <div class="form-group">
+                    <label for="autor">Autor:</label>
+                    <input type="number" formControlName="autor" class="form-control">
+                </div>
+        
+                <div class="form-group">
+                    <label for="url">URL:</label>
+                    <input type="text" formControlName="url" class="form-control">
+                </div>
+        
+            </div>
+        </form>
+        
+        <div class="d-flex mt-5">
+            <button class="btn btn-primary btn-foc-rojo w-100" (click)="procesar()">
+                Confirmar
+            </button>
+        </div>
+    } @else {
+        <div class="position-fixed" style="top: 70px; right: 12px;">
+            <button class="btn btn-primary" (click)="mostrarFormularioAction(true)">
+                <i class="bi bi-plus-circle me-2" style="font-size: 1rem;"></i>
+                <span>Nuevo</span>
+            </button>
+        </div>
+        <div class="d-flex flex-column">
+            <span class="h5">
+                @if (punto) {
+                    Documentos asociados al punto {{punto.titulo}}
+                } @else {
+                    Documentos asociados al nuevo punto
+                }
+            </span>
+            @for (doc of documentosExistentes; track $index) {
+                <div class="card my-3" (click)="mostrarFormularioAction(true, doc)">
+                    <div class="card-header">
+                        <span class="h4">
+                            {{$index+1}} - {{ doc.titulo }}
+                        </span>
+                    </div>
+                </div>
+            }@empty {
+                <div class="alert alert-info" role="alert">
+                    No hay documentos para mostrar en este pleno.
+                </div>
+            }
+        </div>
+    }
+}

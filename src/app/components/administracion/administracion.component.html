@@ -1,0 +1,28 @@
+@if (loading) {
+
+} @else {
+    <div class="container">
+        @if(pleno) {
+            <button class="btn btn-primary" (click)="pleno = null">
+                <i class="bi bi-chevron-left"></i>
+                <span>
+                    Volver
+                </span>
+            </button>
+            <app-formulario
+                [pleno]="pleno"
+                [puntosOrdenDelDia]="puntosOrdenDelDia"
+            ></app-formulario>
+        } @else {
+            <div class="d-flex flex-column">
+                <span class="h6 mb-3">
+                    Elige un pleno para ver su información o editarlo
+                </span>
+                <app-plenos
+                    [seleccionaPleno]="true"
+                    (plenoSeleccionado)="plenoSeleccionado($event)"
+                ></app-plenos>
+            </div>
+        }
+    </div>
+}

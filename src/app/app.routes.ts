@@ -1,4 +1,5 @@
 import { Routes } from '@angular/router';
+import { AdministracionComponent } from './components/administracion/administracion.component';
 import { AsistenciaComponent } from './components/asistencia/asistencia.component';
 import { DocumentosComponent } from './components/documentos/documentos.component';
 import { HomeComponent } from './components/home/home.component';
@@ -15,6 +16,7 @@ export const routes: Routes = [
     { path: 'asistencia/:idPleno', component: AsistenciaComponent, canActivate: [AuthGuard] },
     { path: 'votaciones', component: VotacionesComponent, canActivate: [AuthGuard] },
     { path: 'documentos', component: DocumentosComponent, canActivate: [AuthGuard] },
+    { path: 'admin', component: AdministracionComponent, canActivate: [AuthGuard] },
     { path: 'login', component: LoginComponent },
     { path: '**', component: HomeComponent, canActivate: [AuthGuard] },
 ];

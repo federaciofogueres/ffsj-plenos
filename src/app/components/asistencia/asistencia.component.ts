@@ -29,7 +29,7 @@ export class AsistenciaComponent {
     id: 0,
     fecha: new Date(),
     titulo: '',
-    informacionExtra: '',
+    informacion_extra: '',
     firma: ''
   };
 

@@ -1,0 +1,111 @@
+@if (loading) {
+    <lib-ffsj-spinner
+        [fullscreen]="true"
+    ></lib-ffsj-spinner>
+} @else {
+    @switch (formShow) {
+        @case ('puntoDelDia') {
+            <form [formGroup]="ordenDiaForm">
+                <div class="d-flex flex-column gap-2 scrollable my-3">
+            
+                    @if (puntoOrdenDelDia !== null) {
+                        <div class="form-group">
+                          <label for="id">ID:</label>
+                          <input type="number" formControlName="id" class="form-control" isDisabled>
+                        </div>
+                    }
+                    
+                    <!-- Eliminado el campo de fecha ya que no está en el nuevo modelo -->
+            
+                    <div class="form-group">
+                      <label for="titulo">Título:</label>
+                      <input type="text" formControlName="titulo" class="form-control">
+                    </div>
+            
+                    <div class="form-group">
+                      <label for="texto">Texto:</label>
+                      <input type="text" formControlName="texto" class="form-control">
+                    </div>
+            
+                    <!-- <div class="form-group">
+                      <label for="idPleno">ID Pleno:</label>
+                      <input type="number" formControlName="idPleno" class="form-control">
+                    </div> -->
+                    
+                    <button class="btn btn-primary btn-foc-naranja" (click)="changeFormShow('documentos')" [disabled]="puntoOrdenDelDia === null">
+                        Documentos asociados
+                    </button>
+              
+                    <button class="btn btn-primary btn-foc-naranja" (click)="changeFormShow('votaciones')" [disabled]="puntoOrdenDelDia === null">
+                        Votaciones asociadas
+                    </button>
+              
+                </div>
+            </form>
+    
+            <div class="d-flex mt-5">
+                <button class="btn btn-primary btn-foc-rojo w-100" (click)="procesar(ordenDiaForm)">
+                    Confirmar
+                </button>
+            </div>
+    
+        }
+        @case ('documentos') {
+            <app-formulario-documentos
+                [punto]="puntoOrdenDelDia"
+                [documentosExistentes]="documentos"
+            ></app-formulario-documentos>
+        }
+        @case ('votaciones') {
+            <form [formGroup]="votacionForm">
+                <div class="d-flex flex-column gap-2 scrollable my-3">
+            
+                    <div class="form-group">
+                        <label for="id">ID:</label>
+                        <input type="number" formControlName="id" class="form-control" isDisabled>
+                    </div>
+            
+                    <div class="form-group">
+                        <label for="fecha">Fecha:</label>
+                        <input type="date" formControlName="fecha" class="form-control">
+                    </div>
+            
+                    <div class="form-group">
+                        <label for="infoExtra">Información Extra:</label>
+                        <input type="text" formControlName="infoExtra" class="form-control">
+                    </div>
+            
+                    <div class="form-group">
+                        <label for="favor">Votos a Favor:</label>
+                        <input type="number" formControlName="favor" class="form-control">
+                    </div>
+            
+                    <div class="form-group">
+                        <label for="contra">Votos en Contra:</label>
+                        <input type="number" formControlName="contra" class="form-control">
+                    </div>
+            
+                    <div class="form-group">
+                        <label for="blanco">Votos en Blanco:</label>
+                        <input type="number" formControlName="blanco" class="form-control">
+                    </div>
+            
+                    <div class="form-group">
+                        <label for="idPunto">ID del Punto:</label>
+                        <input type="number" formControlName="idPunto" class="form-control">
+                    </div>
+            
+                </div>
+            </form>
+    
+            <div class="d-flex mt-5">
+                <button class="btn btn-primary btn-foc-rojo w-100" (click)="procesar(votacionForm)">
+                    Confirmar
+                </button>
+            </div>
+        }
+        @default {
+    
+        }
+    }
+}

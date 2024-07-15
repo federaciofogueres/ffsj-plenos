@@ -24,7 +24,7 @@ export class PlenoComponent {
     id: 0,
     fecha: new Date("2024-07-30T00:00:00.000Z"),
     titulo: '',
-    informacionExtra: '',
+    informacion_extra: '',
     firma: ''
   };
   puntos: PuntoOrdenDelDia[] = [];
