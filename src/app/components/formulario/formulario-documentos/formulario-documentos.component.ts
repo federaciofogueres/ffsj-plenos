@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { FfsjSpinnerComponent } from 'ffsj-web-components';
 import { catchError, forkJoin, of } from 'rxjs';
@@ -18,6 +18,7 @@ export class FormularioDocumentosComponent {
 
   loading: boolean = false;
 
+  @Output() back: EventEmitter<void> = new EventEmitter();
   @Input() documentosExistentes: Documento[] = [];
   @Input() punto: PuntoOrdenDelDia | null = null;
 
@@ -164,6 +165,8 @@ export class FormularioDocumentosComponent {
         },
         error: (error) => {
           console.error(error);
+          this.documentosExistentes = [];
+          this.loading = false;
         }
       });
     } else {
@@ -173,32 +176,21 @@ export class FormularioDocumentosComponent {
     }
   }
 
-  // eliminarDocumento(documento: number) {
-
-  //   this.documentosService.documentosIdDelete(documento).subscribe({
-  //     next: (response: any) => {
-  //       if (response.status.status === 200) {
-  //         console.log('Documento eliminado -> ', response);
-  //       }
-  //     },
-  //     error: (error) => {
-  //       console.error(error);
-  //     }
-  //   });
-
-  //   this.documentosPlenosService.documentosPlenosIdDelete(documento).subscribe({
-  //     next: (response: any) => {
-  //       if (response.status.status === 200) {
-  //         console.log('DocumentoPleno eliminado -> ', response);
-  //       }
-  //     },
-  //     error: (error) => {
-  //       console.error(error);
-  //     }
-  //   });
-
-  //   this.informacionPuntoDelDiaService.informacionPuntoDelDiaIdDelete(documento).subscribe({});
-
-  // }
+  borrarItem() {
+    this.loading = true;
+    if (window.confirm('¿Deseas borrar este documento?')) {
+      this.documentosService.documentosIdDelete(this.documentoSeleccionado!.id).subscribe({
+        next: (response: any) => {
+          if (response.status.status === 200) {
+            console.log('Documento eliminado -> ', response);
+            this.mostrarFormularioAction(false, null);
+          }
+        },
+        error: (error) => {
+          console.error(error);
+        }
+      });
+    }
+  }
 
 }

@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { FfsjSpinnerComponent } from 'ffsj-web-components';
 import { PuntoOrdenDelDia, PuntosOrdenDelDiaService, Votacion, VotacionesService } from '../../../../api';
@@ -17,6 +17,7 @@ export class FormularioVotacionesComponent {
 
   loading: boolean = false;
 
+  @Output() back: EventEmitter<void> = new EventEmitter();
   @Input() votaciones: Votacion[] = [];
   @Input() punto: PuntoOrdenDelDia | null = null;
 
@@ -112,6 +113,7 @@ export class FormularioVotacionesComponent {
         },
         error: (error) => {
           console.error(error);
+          this.votaciones = [];
           this.loading = false;
         }
       });
@@ -120,6 +122,23 @@ export class FormularioVotacionesComponent {
       this.loadForm();
       this.mostrarFormulario = mostrarFormulario;
       this.loading = false;
+    }
+  }
+
+  borrarItem() {
+    this.loading = true;
+    if (window.confirm('¿Deseas borrar esta votación?')) {
+      this.votacionesService.votacionesIdDelete(this.votacionSeleccionada!.id).subscribe({
+        next: (response: any) => {
+          if (response.status.status === 200) {
+            console.log('Votación eliminada -> ', response);
+            this.mostrarFormularioAction(false, null);
+          }
+        },
+        error: (error) => {
+          console.error(error);
+        }
+      });
     }
   }
 
