@@ -1,6 +1,7 @@
 import { Component, Input } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { FfsjSpinnerComponent } from 'ffsj-web-components';
+import { catchError, forkJoin, of } from 'rxjs';
 import { Documento, DocumentosPlenosService, DocumentosService, InformacionPuntoDelDiaService, PuntoOrdenDelDia, PuntosOrdenDelDiaService } from '../../../../api';
 
 @Component({
@@ -64,7 +65,6 @@ export class FormularioDocumentosComponent {
     }
   }
 
-  // Convertir de ISO 8601 a formato datetime-local (YYYY-MM-DDTHH:mm)
   // Convertir de Date a formato datetime-local (YYYY-MM-DDTHH:mm)
   convertirDateALocal(inputDate: Date): string {
     inputDate.setMinutes(inputDate.getMinutes() - inputDate.getTimezoneOffset());
@@ -99,38 +99,49 @@ export class FormularioDocumentosComponent {
       next: (response: any) => {
         if (response.status.status === 200) {
           console.log('Documento creado -> ', response);
-          this.documentosPlenosService.documentosPlenosPost({
+
+          const documentosPlenosObservable = this.documentosPlenosService.documentosPlenosPost({
             idDocumento: response.documentos,
             idPleno: this.punto!.idPleno
-          }).subscribe({
-            next: (response: any) => {
-              if (response.status.status === 200) {
-                console.log('DocumentoPleno creado -> ', response);
-                // this.documentosExistentes.push(this.documentoSeleccionado!);
-                // this.mostrarFormularioAction();
-              }
-            },
-            error: (error) => {
-              console.error(error);
-            }
-          })
-
-          this.informacionPuntoDelDiaService.informacionPuntoDelDiaPost({
+          }).pipe(
+            catchError(error => {
+              console.error('Error en documentosPlenosPost', error);
+              return of(null); // Devuelve un observable nulo para manejar el error sin detener el forkJoin
+            })
+          );
+          
+          const informacionPuntoDelDiaObservable = this.informacionPuntoDelDiaService.informacionPuntoDelDiaPost({
             idDocumento: response.documentos,
             idPunto: this.punto!.id
-          }).subscribe({
-            next: (response: any) => {
-              if (response.status.status === 200) {
-                console.log('InformacionPuntoDelDia creado -> ', response);
-                // this.documentosExistentes.push(this.documentoSeleccionado!);
-                // this.mostrarFormularioAction();
-                this.mostrarFormularioAction(false, null)
+          }).pipe(
+            catchError(error => {
+              console.error('Error en informacionPuntoDelDiaPost', error);
+              return of(null); // Similar al anterior
+            })
+          );
+          
+          // Ejecutar ambas operaciones simultáneamente y manejar los resultados
+          forkJoin([documentosPlenosObservable, informacionPuntoDelDiaObservable]).subscribe({
+            next: ([resultDocumentosPlenos, resultInformacionPuntoDelDia]: [any, any]) => {
+              if (resultDocumentosPlenos && resultInformacionPuntoDelDia) {
+                console.log('Ambas operaciones exitosas');
+                // Proceder con la lógica de éxito aquí
+                this.mostrarFormularioAction(false, null);
+              } else {
+                // Si alguna operación falló, determinar cuál fue y ejecutar la operación de borrado correspondiente
+                if (!resultDocumentosPlenos) {
+                  console.log('Necesario borrar InformacionPuntoDelDia debido a fallo en DocumentosPlenos');
+                  // Llamar al endpoint de 'delete' para InformacionPuntoDelDia
+                }
+                if (!resultInformacionPuntoDelDia) {
+                  console.log('Necesario borrar DocumentosPlenos debido a fallo en InformacionPuntoDelDia');
+                  // Llamar al endpoint de 'delete' para DocumentosPlenos
+                }
               }
             },
-            error: (error) => {
-              console.error(error);
-            }
+            error: error => console.error('Error en la ejecución conjunta', error)
           });
+
         }
       },
       error: (error) => {
@@ -161,5 +172,33 @@ export class FormularioDocumentosComponent {
       this.mostrarFormulario = mostrarFormulario;
     }
   }
+
+  // eliminarDocumento(documento: number) {
+
+  //   this.documentosService.documentosIdDelete(documento).subscribe({
+  //     next: (response: any) => {
+  //       if (response.status.status === 200) {
+  //         console.log('Documento eliminado -> ', response);
+  //       }
+  //     },
+  //     error: (error) => {
+  //       console.error(error);
+  //     }
+  //   });
+
+  //   this.documentosPlenosService.documentosPlenosIdDelete(documento).subscribe({
+  //     next: (response: any) => {
+  //       if (response.status.status === 200) {
+  //         console.log('DocumentoPleno eliminado -> ', response);
+  //       }
+  //     },
+  //     error: (error) => {
+  //       console.error(error);
+  //     }
+  //   });
+
+  //   this.informacionPuntoDelDiaService.informacionPuntoDelDiaIdDelete(documento).subscribe({});
+
+  // }
 
 }

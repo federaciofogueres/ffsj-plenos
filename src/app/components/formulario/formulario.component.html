@@ -1,37 +1,50 @@
-@if(formularioPage === 0) {
-    <app-formulario-pleno
-        [pleno]="pleno"
-        (nextPage)="formularioPage = formularioPage + 1"
-    ></app-formulario-pleno>
-} @else if (formularioPage === 1) {
-    @if (mostrarFormulario) {
-        <app-formulario-punto-del-dia
+@if (loading) {
+    <lib-ffsj-spinner
+        [fullscreen]="true"
+    ></lib-ffsj-spinner>
+} @else {
+    @if(formularioPage === 0) {
+        <app-formulario-pleno
             [pleno]="pleno"
-            [puntoOrdenDelDia]="puntoSeleccionado"
-        ></app-formulario-punto-del-dia>
-    } @else {
-        <div class="position-fixed" style="top: 70px; right: 12px;">
-            <button class="btn btn-primary" (click)="mostrarFormularioAction(true)">
-                <i class="bi bi-plus-circle me-2" style="font-size: 1rem;"></i>
-                <span>Nuevo</span>
-            </button>
-        </div>
-        <div class="d-flex flex-column">
-            <span class="h5">
-                Puntos del orden del día
-            </span>
-            @for (punto of puntosOrdenDelDia; track $index) {
-                <div class="card my-3" (click)="mostrarFormularioAction(true, punto)">
-                    <div class="card-header">
-                        <span class="h4">
-                            {{$index+1}} - {{ punto.titulo }}
-                        </span>
+            (nextPage)="formularioPage = formularioPage + 1"
+        ></app-formulario-pleno>
+    } @else if (formularioPage === 1) {
+        @if (mostrarFormulario) {
+            <app-formulario-punto-del-dia
+                [pleno]="pleno"
+                [puntoOrdenDelDia]="puntoSeleccionado"
+                (back)="mostrarFormularioAction(false)"
+            ></app-formulario-punto-del-dia>
+        } @else {
+            <div class="position-fixed" style="top: 70px; right: 12px;">
+                <button class="btn btn-primary" (click)="mostrarFormularioAction(true)">
+                    <i class="bi bi-plus-circle me-2" style="font-size: 1rem;"></i>
+                    <span>Nuevo</span>
+                </button>
+            </div>
+            <div class="d-flex flex-column">
+                @if (puntosOrdenDelDia.length > 0) {
+                    <span class="h5">
+                        Puntos del orden del día
+                    </span>
+                }
+                @for (punto of puntosOrdenDelDia; track $index) {
+                    <div class="card my-3" (click)="mostrarFormularioAction(true, punto)">
+                        <div class="card-header">
+                            <span class="h4">
+                                {{$index+1}} - {{ punto.titulo }}
+                            </span>
+                        </div>
                     </div>
-                </div>
-            }
-        </div>
+                } @empty {
+                    <div class="alert alert-info mt-3" role="alert">
+                        No hay puntos del día para mostrar en este pleno.
+                    </div>
+                }
+            </div>
+        }
+        <!-- <div class="position-fixed" style="bottom: 88px; right: 20px;">
+            <i class="bi bi-plus-circle" style="font-size: 2rem;"></i>
+        </div> -->
     }
-    <!-- <div class="position-fixed" style="bottom: 88px; right: 20px;">
-        <i class="bi bi-plus-circle" style="font-size: 2rem;"></i>
-    </div> -->
 }

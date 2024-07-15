@@ -1,8 +1,10 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { FfsjSpinnerComponent } from 'ffsj-web-components';
-import { Documento, Pleno, PuntoOrdenDelDia, PuntosOrdenDelDiaService, Votacion } from '../../../../api';
+import { catchError, forkJoin, of, tap } from 'rxjs';
+import { Documento, DocumentosService, Pleno, PuntoOrdenDelDia, PuntosOrdenDelDiaService, Votacion, VotacionesService } from '../../../../api';
 import { FormularioDocumentosComponent } from '../formulario-documentos/formulario-documentos.component';
+import { FormularioVotacionesComponent } from '../formulario-votaciones/formulario-votaciones.component';
 
 type FormShowType = 'puntoDelDia' | 'documentos' | 'votaciones';
 
@@ -12,6 +14,7 @@ type FormShowType = 'puntoDelDia' | 'documentos' | 'votaciones';
   imports: [
     ReactiveFormsModule,
     FormularioDocumentosComponent,
+    FormularioVotacionesComponent,
     FfsjSpinnerComponent
   ],
   templateUrl: './formulario-punto-del-dia.component.html',
@@ -22,6 +25,8 @@ export class FormularioPuntoDelDiaComponent {
   loading: boolean = false;
 
   @Output() nextPage: EventEmitter<void> = new EventEmitter();
+  @Output() back: EventEmitter<void> = new EventEmitter();
+
   @Input() pleno: Pleno | null = null;
   @Input() puntoOrdenDelDia: PuntoOrdenDelDia | null = null;
 
@@ -40,6 +45,8 @@ export class FormularioPuntoDelDiaComponent {
   constructor(
     private fb: FormBuilder,
     private puntosOrdenDelDiaService: PuntosOrdenDelDiaService,
+    private documentosService: DocumentosService,
+    private votacionesService: VotacionesService
   ) { }
 
   ngOnInit(): void {
@@ -83,15 +90,6 @@ export class FormularioPuntoDelDiaComponent {
       texto: [this.puntoOrdenDelDia ? this.puntoOrdenDelDia.texto : ''],
       idPleno: [this.pleno?.id ? this.pleno.id : 0]
     });
-    this.votacionForm = this.fb.group({
-      id: [{value: this.votacionSeleccionada ? this.votacionSeleccionada.id : '0', disabled: true}],
-      fecha: [this.votacionSeleccionada ? this.votacionSeleccionada.fecha : ''],
-      infoExtra: [this.votacionSeleccionada ? this.votacionSeleccionada.infoExtra : ''],
-      favor: [this.votacionSeleccionada ? this.votacionSeleccionada.favor : ''],
-      contra: [this.votacionSeleccionada ? this.votacionSeleccionada.contra : ''],
-      blanco: [this.votacionSeleccionada ? this.votacionSeleccionada.blanco : ''],
-      idPunto: [this.votacionSeleccionada ? this.votacionSeleccionada.idPunto : '']
-    });
   }
 
   onSubmit() {
@@ -105,35 +103,114 @@ export class FormularioPuntoDelDiaComponent {
   procesar(form: FormGroup){
     console.log('Formulario -> ', form.value);
     if (form.valid) {
-      form.value.id = 0;
-      console.log('Formulario OK -> ', form.value);
-      this.puntosOrdenDelDiaService.puntosOrdenDelDiaPost(form.value).subscribe({
-        next: (response: any) => {
-          console.log('Response:', response);
-          if (response.status.status === 200) {
-            let idPunto = response.puntosOrdenDelDia;
-            this.puntosOrdenDelDiaService.puntosOrdenDelDiaIdGet(this.pleno!.id).subscribe({
-              next: (response: any) => {
-                console.log('Response:', response);
-                if (response.status.status === 200) {
-                  this.puntoOrdenDelDia = response.puntosOrdenDelDia.filter((punto: PuntoOrdenDelDia) => punto.id === idPunto)[0];
-                  // this.nextPage.emit();
-                }
-              },
-              error: (error) => {
-                console.error(error);
-              }
-            });
-          }
-          // this.nextPage.emit();
-        },
-        error: (error) => {
-          console.error(error);
-        }
-      });
+      if (this.puntoOrdenDelDia !== null) {
+        this.edit();
+      } else {
+        this.create();
+      }
     } else {
       console.log('Formulario NOT OK -> ', form.value);
     }
+  }
+
+  edit() {
+    this.ordenDiaForm.value.id = this.puntoOrdenDelDia!.id;
+    this.puntosOrdenDelDiaService.puntosOrdenDelDiaIdPut(this.ordenDiaForm.value, this.puntoOrdenDelDia!.id).subscribe({
+      next: (response: any) => {
+        console.log('Response:', response);
+        if (response.status.status === 200) {
+          console.log('Punto del día actualizado -> ', response);
+          this.getPuntoDelDia(this.puntoOrdenDelDia!.id);
+        }
+      },
+      error: (error) => {
+        console.error(error);
+      }
+    });
+  }
+
+  create() {
+    this.ordenDiaForm.value.id = 0;
+    this.puntosOrdenDelDiaService.puntosOrdenDelDiaPost(this.ordenDiaForm.value).subscribe({
+      next: (response: any) => {
+        console.log('Response:', response);
+        if (response.status.status === 200) {
+          let idPunto = response.puntosOrdenDelDia;
+          this.getPuntoDelDia(idPunto);
+        }
+      },
+      error: (error) => {
+        console.error(error);
+      }
+    });
+  }
+
+  getPuntoDelDia(idPunto: number) {
+    this.puntosOrdenDelDiaService.puntosOrdenDelDiaIdGet(this.pleno!.id).subscribe({
+      next: (response: any) => {
+        console.log('Response:', response);
+        if (response.status.status === 200) {
+          this.puntoOrdenDelDia = response.puntosOrdenDelDia.filter((punto: PuntoOrdenDelDia) => punto.id === idPunto)[0];
+        }
+      },
+      error: (error) => {
+        console.error(error);
+      }
+    });
+  }
+
+  borrarItem() {
+    if (window.confirm('¿Estás seguro de que deseas borrar este punto del día?')) {
+      let observables = [];
+      for (let documento of this.documentos) {
+        observables.push(this.borrarDocumento(documento));
+      }
+      for (let votacion of this.votaciones) {
+        observables.push(this.borrarVotacion(votacion));
+      }
+      observables.push(this.puntosOrdenDelDiaService.puntosOrdenDelDiaIdDelete(this.puntoOrdenDelDia!.id));
+    
+      forkJoin(observables).subscribe({
+        next: (responses) => {
+          console.log('Todas las operaciones de borrado completadas', responses);
+          this.back.emit(); // Mover this.back.emit() aquí asegura que se ejecute después de todas las operaciones de borrado
+        },
+        error: (error) => {
+          console.error('Error en las operaciones de borrado', error);
+          // Manejar el error como sea apropiado
+        }
+      });
+    }
+  }
+
+  // Ejemplo de cómo podría modificarse borrarDocumento para devolver el observable
+  borrarDocumento(documento: Documento) {
+    return this.documentosService.documentosIdDelete(documento.id).pipe(
+      tap((response: any) => {
+        if (response.status.status === 200) {
+          console.log('Documento eliminado -> ', response);
+        }
+      }),
+      catchError((error) => {
+        console.error('Error al borrar documento', error);
+        return of(null); // Manejar el error o devolver un valor por defecto
+      })
+    );
+  }
+
+  // Ejemplo de cómo podría modificarse borrarDocumento para devolver el observable
+  borrarVotacion(votacion: Votacion) {
+    return this.votacionesService.votacionesIdDelete(votacion.id).pipe(
+      tap((response: any) => {
+        if (response.status.status === 200) {
+          console.log('Votación eliminada -> ', response);
+        }
+      }),
+      catchError((error) => {
+        console.error('Error al borrar votación', error);
+        return of(null); // Manejar el error o devolver un valor por defecto
+      })
+    );
   }
 
 }
