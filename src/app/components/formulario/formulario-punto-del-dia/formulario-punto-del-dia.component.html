@@ -5,6 +5,12 @@
 } @else {
     @switch (formShow) {
         @case ('puntoDelDia') {
+            <button class="btn btn-primary btn-foc-rojo" (click)="back.emit()">
+                <i class="bi bi-chevron-left"></i>
+                <span>
+                    Volver
+                </span>
+            </button>
             <form [formGroup]="ordenDiaForm">
                 <div class="d-flex flex-column gap-2 scrollable my-3">
             
@@ -14,9 +20,7 @@
                           <input type="number" formControlName="id" class="form-control" isDisabled>
                         </div>
                     }
-                    
-                    <!-- Eliminado el campo de fecha ya que no está en el nuevo modelo -->
-            
+
                     <div class="form-group">
                       <label for="titulo">Título:</label>
                       <input type="text" formControlName="titulo" class="form-control">
@@ -26,11 +30,6 @@
                       <label for="texto">Texto:</label>
                       <input type="text" formControlName="texto" class="form-control">
                     </div>
-            
-                    <!-- <div class="form-group">
-                      <label for="idPleno">ID Pleno:</label>
-                      <input type="number" formControlName="idPleno" class="form-control">
-                    </div> -->
                     
                     <button class="btn btn-primary btn-foc-naranja" (click)="changeFormShow('documentos')" [disabled]="puntoOrdenDelDia === null">
                         Documentos asociados
@@ -60,16 +59,15 @@
             <app-formulario-documentos
                 [punto]="puntoOrdenDelDia"
                 [documentosExistentes]="documentos"
+                (back)="changeFormShow('puntoDelDia')"
             ></app-formulario-documentos>
         }
         @case ('votaciones') {
             <app-formulario-votaciones
                 [punto]="puntoOrdenDelDia"
                 [votaciones]="votaciones"
+                (back)="changeFormShow('puntoDelDia')"
             ></app-formulario-votaciones>
-        }
-        @default {
-    
         }
     }
 }

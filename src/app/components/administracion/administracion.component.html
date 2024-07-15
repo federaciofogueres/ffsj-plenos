@@ -3,14 +3,9 @@
 } @else {
     <div class="container">
         @if(pleno) {
-            <button class="btn btn-primary" (click)="pleno = null">
-                <i class="bi bi-chevron-left"></i>
-                <span>
-                    Volver
-                </span>
-            </button>
             <app-formulario
                 [pleno]="pleno"
+                (back)="pleno = null"
             ></app-formulario>
         } @else {
             <div class="d-flex flex-column">

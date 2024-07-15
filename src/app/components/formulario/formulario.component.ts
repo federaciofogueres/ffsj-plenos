@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { FfsjSpinnerComponent } from 'ffsj-web-components';
 import { Pleno, PuntoOrdenDelDia, PuntosOrdenDelDiaService } from '../../../api';
@@ -21,6 +21,7 @@ export class FormularioComponent {
 
   loading: boolean = false;
 
+  @Output() back: EventEmitter<void> = new EventEmitter();
   @Input() pleno: Pleno | null = null;
   puntosOrdenDelDia: PuntoOrdenDelDia[] = [];
 

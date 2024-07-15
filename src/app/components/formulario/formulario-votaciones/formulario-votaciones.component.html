@@ -3,7 +3,19 @@
         [fullscreen]="true"
     ></lib-ffsj-spinner>
 }@else {
+    <button class="btn btn-primary btn-foc-rojo" (click)="back.emit()">
+        <i class="bi bi-chevron-left"></i>
+        <span>
+            Volver
+        </span>
+    </button>
     @if (mostrarFormulario) {
+        <div class="position-fixed" style="top: 70px; right: 12px;">
+            <button class="btn btn-primary btn-foc-rojo" (click)="mostrarFormularioAction(false)">
+                <i class="bi bi-x-lg me-2" style="font-size: 1rem;"></i>
+                <span>Cerrar</span>
+            </button>
+        </div>
         <form [formGroup]="votacionForm">
             <div class="d-flex flex-column gap-2 scrollable my-3">
         
