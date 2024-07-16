@@ -35,7 +35,7 @@ export class LoginComponent {
       console.log('Login successful');
 
       let token = this.authService.getToken();
-      // this.getIdUsuario(token);
+      this.getIdUsuario(token);
       this.setTokenConfigurations(token);
       this.router.navigateByUrl('/home');
 
