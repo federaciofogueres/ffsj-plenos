@@ -36,8 +36,10 @@ export class FormularioComponent {
   ) { }
 
   ngOnInit(): void {
-    this.loading = true;
-    this.loadPuntosDelDia();
+    if (this.pleno) {
+      this.loading = true;
+      this.loadPuntosDelDia();
+    }
   }
 
   nextPage() {

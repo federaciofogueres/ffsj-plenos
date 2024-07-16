@@ -2,11 +2,11 @@
 
 } @else {
     <div class="container">
-        @if(pleno) {
-            <app-formulario
+        @if(mostrarFormulario) {
+            <app-formulario-pleno
                 [pleno]="pleno"
-                (back)="pleno = null"
-            ></app-formulario>
+                (back)="mostrarFormularioAction(false)"
+            ></app-formulario-pleno>
         } @else {
             <div class="d-flex flex-column">
                 <span class="h6 mb-3">
@@ -16,6 +16,12 @@
                     [seleccionaPleno]="true"
                     (plenoSeleccionado)="plenoSeleccionado($event)"
                 ></app-plenos>
+                <div class="position-fixed" style="bottom: 82px; right: 12px;">
+                    <button class="btn btn-primary btn-foc-naranja" (click)="mostrarFormularioAction(true)">
+                        <i class="bi bi-plus-circle me-2" style="font-size: 1rem;"></i>
+                        <span>Nuevo</span>
+                    </button>
+                </div>
             </div>
         }
     </div>

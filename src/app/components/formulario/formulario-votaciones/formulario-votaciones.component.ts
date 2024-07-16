@@ -55,19 +55,19 @@ export class FormularioVotacionesComponent {
     return inputDate.toISOString().slice(0, 16); // Elimina los segundos y la zona horaria
   }
 
-    procesar() {
-      this.loading = true;
-      if (this.votacionForm.valid) {
-        if (this.votacionSeleccionada !== null) {
-          this.update();
-        } else {
-          this.create();
-        }
+  procesar() {
+    this.loading = true;
+    if (this.votacionForm.valid) {
+      if (this.votacionSeleccionada !== null) {
+        this.update();
       } else {
-        this.loading = false;
-        console.log('Formulario inválido');
+        this.create();
       }
+    } else {
+      this.loading = false;
+      console.log('Formulario inválido');
     }
+  }
 
   create() {
     this.votacionForm.value.id = 0;

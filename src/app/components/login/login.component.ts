@@ -3,7 +3,7 @@ import { Router } from '@angular/router';
 import { AuthService, FfsjLoginComponent } from 'ffsj-web-components';
 import { jwtDecode } from "jwt-decode";
 import { CookieService } from 'ngx-cookie-service';
-import { AsistenciaService, ConsultasService, DocumentosPlenosService, DocumentosService, PlenoService, PuntosOrdenDelDiaService, ResponseAsistencias, VotacionesService } from '../../../api';
+import { AsistenciaService, ConsultasService, DocumentosPlenosService, DocumentosService, PlenoService, PuntosOrdenDelDiaService, VotacionesService } from '../../../api';
 
 @Component({
   selector: 'app-login',
@@ -35,20 +35,21 @@ export class LoginComponent {
       console.log('Login successful');
 
       let token = this.authService.getToken();
-      this.getIdUsuario(token);
+      // this.getIdUsuario(token);
       this.setTokenConfigurations(token);
+      this.router.navigateByUrl('/home');
 
-      this.asistenciaService.asistenciaIdPlenoAsociadosIdAsociadoGet(0, this.getIdUsuario(token)).subscribe({
-        next: (response: ResponseAsistencias) => {
-          console.log(response);
-          if (response.status.status === 200) {
-            this.router.navigateByUrl('/home');
-          }
-        },
-        error: (error: any) => {
-          console.log('Error:', error);
-        }
-      })
+      // this.asistenciaService.asistenciaIdPlenoAsociadosIdAsociadoGet(0, this.getIdUsuario(token)).subscribe({
+      //   next: (response: ResponseAsistencias) => {
+      //     console.log(response);
+      //     if (response.status.status === 200) {
+      //       this.router.navigateByUrl('/home');
+      //     }
+      //   },
+      //   error: (error: any) => {
+      //     console.log('Error:', error);
+      //   }
+      // })
       
     } else {
       console.log('Login failed');
