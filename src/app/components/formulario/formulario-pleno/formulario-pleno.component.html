@@ -43,7 +43,7 @@
                 Orden del día
               </button>
       
-              <button class="btn btn-primary btn-foc-naranja" (click)="nextPage.emit()">
+              <button class="btn btn-primary btn-foc-naranja" (click)="formShow = 'consultas'">
                 Consultas asociadas
               </button>
               
@@ -108,6 +108,11 @@
             }
         </div>
       }
+    }
+    @case ('consultas') {
+      <app-formulario-consultas
+        [pleno]="pleno"
+      ></app-formulario-consultas>
     }
   }
 }

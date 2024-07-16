@@ -1,7 +1,6 @@
 import { Component } from '@angular/core';
 import { Pleno, PlenoService } from '../../../api';
 import { FormularioPlenoComponent } from '../formulario/formulario-pleno/formulario-pleno.component';
-import { FormularioComponent } from '../formulario/formulario.component';
 import { PlenosComponent } from "../plenos/plenos.component";
 
 @Component({
@@ -9,8 +8,7 @@ import { PlenosComponent } from "../plenos/plenos.component";
   standalone: true,
   imports: [
     PlenosComponent,
-    FormularioPlenoComponent,
-    FormularioComponent
+    FormularioPlenoComponent
   ],
   templateUrl: './administracion.component.html',
   styleUrl: './administracion.component.scss'

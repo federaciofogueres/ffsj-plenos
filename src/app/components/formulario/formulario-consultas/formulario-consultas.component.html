@@ -1,0 +1,62 @@
+@if (loading) {
+    <lib-ffsj-spinner
+        [fullscreen]="true"
+    ></lib-ffsj-spinner>
+} @else {
+
+    <div class="d-flex flex-column">
+        <div class="form-floating">
+            <select class="form-select" id="floatingSelect" aria-label="Floating label select example" (change)="changeSelected($event)">
+                @for (function of consultas; track $index) {
+                    <option [value]="function.id">{{ function.titulo }}</option>
+                }
+            </select>
+            <label for="floatingSelect">Selección de función</label>
+        </div>
+    
+        <div class="d-flex justify-content-between mt-3">
+            <button class="btn btn-primary btn-foc-naranja" (click)="agregarConsulta()">
+                Agregar consulta
+            </button>
+            <button class="btn btn-primary btn-foc-naranja" (click)="guardarConsultas()">
+                Guardar consultas
+            </button>
+        </div>
+    
+        @if (consultasSeleccionadas.length > 0) {
+            <span class="h5 my-3" style="display: block; width: 100%; text-justify: inter-word; text-justify: inter-word">
+                Listado de consultas asociadas al pleno
+            </span>
+            @for (consulta of consultasSeleccionadas; track $index) {
+                <div class="card mb-3">
+                    <div class="card-body d-flex justify-content-between">
+                        <span class="h5">{{ consulta.titulo }}</span>
+                        <i class="bi bi-x-lg me-2" style="font-size: 1rem;" (click)="eliminarConsulta(consulta)"></i>
+                    </div>
+                </div>
+            }
+        } @else {
+            <div class="alert alert-warning mt-3" role="alert">
+                No hay consultas seleccionadas
+            </div>
+        }
+
+        <span>
+            Consultas existentes asociadas al pleno
+        </span>
+        @for (consulta of consultasGuardadas; track $index) {
+            <div class="card mb-3">
+                <div class="card-body d-flex justify-content-between">
+                    <span class="h5">{{ consulta.titulo }}</span>
+                </div>
+            </div>
+        } @empty {
+            <div class="alert alert-warning mt-3" role="alert">
+                Todavía no hay consultas asociadas al pleno.
+            </div>
+        }
+
+
+    </div>
+
+}

@@ -19,7 +19,7 @@
 import { Inject, Injectable, Optional } from '@angular/core';
 
 import { Observable } from 'rxjs';
-import { BASE_PATH, Configuration } from '../../api';
+import { BASE_PATH, Configuration, ResponseConsultas } from '../../api';
 import { ResponseConsulta } from '../../external-api/responseConsulta';
 
 
@@ -84,6 +84,46 @@ export class ConsultasInfoService {
         );
     }
 
+    /**
+     * Obtener todas las consultas
+     * 
+     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
+     * @param reportProgress flag to report request and response progress.
+     */
+        public consultasGet(observe?: 'body', reportProgress?: boolean): Observable<ResponseConsultas>;
+        public consultasGet(observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<ResponseConsultas>>;
+        public consultasGet(observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<ResponseConsultas>>;
+        public consultasGet(observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
+    
+            let headers = this.defaultHeaders;
+    
+            // authentication (bearerAuth) required
+            if (this.configuration.accessToken) {
+                const accessToken = typeof this.configuration.accessToken === 'function'
+                    ? this.configuration.accessToken()
+                    : this.configuration.accessToken;
+                headers = headers.set('Authorization', 'Bearer ' + accessToken);
+            }
+            // to determine the Accept header
+            let httpHeaderAccepts: string[] = [
+                'application/json'
+            ];
+            const httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
+            if (httpHeaderAcceptSelected != undefined) {
+                headers = headers.set('Accept', httpHeaderAcceptSelected);
+            }
+    
+            // to determine the Content-Type header
+    
+            return this.httpClient.request<ResponseConsultas>('get',`${this.basePath}/consultas`,
+                {
+                    withCredentials: this.configuration.withCredentials,
+                    headers: headers,
+                    observe: observe,
+                    reportProgress: reportProgress
+                }
+            );
+        }
 
 
 
