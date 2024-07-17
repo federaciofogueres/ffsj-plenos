@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
-import { AuthService, FfsjLoginComponent } from 'ffsj-web-components';
+import { AuthService, FfsjAlertService, FfsjLoginComponent } from 'ffsj-web-components';
 import { jwtDecode } from "jwt-decode";
 import { CookieService } from 'ngx-cookie-service';
 import { AsistenciaService, ConsultasService, DocumentosPlenosService, DocumentosService, PlenoService, PuntosOrdenDelDiaService, VotacionesService } from '../../../api';
@@ -18,6 +18,7 @@ export class LoginComponent {
 
   constructor(
     private router: Router,
+    private ffsjAlertService: FfsjAlertService,
     private asistenciaService: AsistenciaService,
     private consultasService: ConsultasService,
     private documentosService: DocumentosService,
@@ -50,9 +51,11 @@ export class LoginComponent {
       //     console.log('Error:', error);
       //   }
       // })
+      this.ffsjAlertService.success('¡Bienvenid@!')
       
     } else {
       console.log('Login failed');
+      this.ffsjAlertService.success('Hubo un problema al iniciar sesión. Por favor, inténtalo de nuevo o contacta con transformaciondigital@hogueras.es.')
     }
   }
 
