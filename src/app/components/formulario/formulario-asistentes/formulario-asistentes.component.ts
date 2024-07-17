@@ -1,7 +1,8 @@
 import { Component, Input } from '@angular/core';
 import { FfsjSpinnerComponent } from 'ffsj-web-components';
 import { catchError, forkJoin, of } from 'rxjs';
-import { AsistenciaService, Pleno } from '../../../../api';
+import * as XLSX from 'xlsx';
+import { AsistenciaService, Pleno, ResponseAsistencias } from '../../../../api';
 import { Asociado } from '../../../../external-api/asociado';
 import { CensoService } from '../../../services/censo.service';
 
@@ -25,6 +26,7 @@ export class FormularioAsistentesComponent {
   nuevoAsistente!: Asociado;
 
   loading: boolean = false;
+  showList: string = 'nuevos';
 
   constructor(
     private censoService: CensoService,
@@ -35,8 +37,50 @@ export class FormularioAsistentesComponent {
     this.loadAsociados();
   }
 
+  subirExcel() {
+    
+  }
+
+  handleFile(event: any) {
+    const file = event.target.files[0];
+    const reader = new FileReader();
+    reader.onload = (e: any) => {
+      const bstr = e.target.result;
+      const wb = XLSX.read(bstr, {type: 'binary'});
+      const wsname = wb.SheetNames[0];
+      const ws = wb.Sheets[wsname];
+      const data = XLSX.utils.sheet_to_json(ws, {header: 1});
+      this.processExcelData(data);
+    };
+    reader.readAsBinaryString(file);
+  }
+  
+  processExcelData(data: any[]) {
+    // Asumiendo que cada fila del Excel contiene un NIF en la primera columna
+    data.forEach((row) => {
+      if (row[0]) { // Verifica que la fila tenga datos
+        // Aquí puedes llamar a agregar() pasando el NIF como argumento
+        // Por ejemplo: this.agregar(row[0]);
+        // Asegúrate de ajustar la función agregar() para manejar este caso
+        this.agregar(row[0]);
+      }
+    });
+  }
+
   loadAsistentes() {
-    // this.asistenciaService.asistenciaIdGet
+    this.asistenciaService.plenosIdPlenoAsistenciaGet(this.pleno!.id).subscribe({
+      next: (response: ResponseAsistencias) => {
+        console.log(response);
+        this.asistentes = response.asistencias.map(asistencia => {
+          const asociadoInfo = this.asociados.find(a => a.id === asistencia.idAsociado);
+          return asociadoInfo!;
+        });
+        this.loading = false;
+      },
+      error: (error) => {
+        console.error(error);
+      }
+    });
   }
 
   loadAsociados() {
@@ -46,7 +90,7 @@ export class FormularioAsistentesComponent {
         console.log(response);
         this.asociados = response.asociados.sort((a: Asociado, b: Asociado) => a.nif.localeCompare(b.nif));
         this.asociadosFiltrados = [...this.asociados];
-        this.loading = false;
+        this.loadAsistentes();
       },
       error: (error) => {
         console.error(error);
@@ -67,13 +111,18 @@ export class FormularioAsistentesComponent {
   }
 
   changeSelected(event: any) {
-    this.nuevoAsistente = this.asociados.find(a => a.id === event.target.value)!;
+    this.nuevoAsistente = this.asociados.find(a => a.nif == event.target.value)!;
   }
 
-  agregar() {
-    const included = this.nuevosAsistentes.some(a => a.id === this.nuevoAsistente.id);
-    if (!included) {
-      this.nuevosAsistentes.push(this.nuevoAsistente);
+  agregar(asistenteNif?: string) {
+    if (asistenteNif) {
+      this.nuevoAsistente = this.asociados.find(a => a.nif == asistenteNif)!;
+    }
+    if (this.nuevoAsistente) {
+      const included = this.nuevosAsistentes.some(a => a.id === this.nuevoAsistente.id);
+      if (!included) {
+        this.nuevosAsistentes.push(this.nuevoAsistente);
+      }
     }
   }
 
@@ -106,10 +155,9 @@ export class FormularioAsistentesComponent {
         console.log('Hubo un error al guardar algunos asistentes');
       } else {
         console.log('Todos los asistentes se han guardado correctamente');
-        this.nuevosAsistentes = [];
-        // Asumiendo que tienes una función loadInfo() que necesitas llamar aquí.
-        this.loadAsistentes();
       }
+      this.nuevosAsistentes = [];
+      this.loadAsistentes();
     });
 
 

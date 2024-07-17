@@ -35,6 +35,7 @@
     "ngx-extended-pdf-viewer": "^21.0.0-alpha.3",
     "rxjs": "~7.8.0",
     "tslib": "^2.3.0",
+    "xlsx": "^0.18.5",
     "zone.js": "~0.14.3"
   },
   "devDependencies": {
