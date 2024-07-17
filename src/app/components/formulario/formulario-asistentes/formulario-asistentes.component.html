@@ -8,14 +8,14 @@
         <div class="d-flex justify-content-between">
             <div class="form-floating">
                 <input list="asociadosList" type="text" class="form-control" id="searchBox" placeholder="Buscar..." (input)="changeSelected($event)">
-                <label for="searchBox">Buscar y seleccionar Asociado</label>
+                <label for="searchBox">Busca y selecciona por nif</label>
                 <datalist id="asociadosList">
                     @for (asociado of asociadosFiltrados; track $index) {
                         <option [value]="asociado.nif">{{ asociado.nombre }}, {{asociado.apellidos}}</option>
                     }
                 </datalist>
             </div>
-
+        
             <input #fileInput style="display: none" type="file" (change)="handleFile($event)" multiple="false" />
             <button class="btn btn-primary btn-foc-rojo" (click)="fileInput.click()">
                 <i class="bi bi-cloud-arrow-up-fill me-2"></i>Subir Excel
