@@ -8,6 +8,8 @@ export declare class AuthService {
     private censoService;
     private encoderService;
     private cookieService;
+    private loginStatus$;
+    loginStatusObservable: import("rxjs").Observable<boolean>;
     constructor(router: Router, censoService: CensoService, encoderService: EncoderService, cookieService: CookieService);
     checkToken(): boolean;
     checkExpireDateToken(token: string): boolean;

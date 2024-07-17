@@ -1,5 +1,6 @@
-import { Component, EventEmitter, Output } from '@angular/core';
+import { Component } from '@angular/core';
 import { Router } from '@angular/router';
+import { AuthService } from 'ffsj-web-components';
 
 @Component({
   selector: 'app-footer',
@@ -10,11 +11,23 @@ import { Router } from '@angular/router';
 })
 export class FooterComponent {
 
-  @Output() scannerEnabled = new EventEmitter<{type: string, mode: boolean}>();
+  userLogged: boolean = false;
 
   constructor(
-    protected router: Router
+    protected router: Router,
+    private authService: AuthService
   ){}
+
+  ngOnInit() {
+    this.userLogged = this.authService.isLoggedIn();
+    this.authService.loginStatusObservable.subscribe({
+      next: (loggedIn: boolean) => {
+        console.log('User logged in:', loggedIn);
+        
+        this.userLogged = loggedIn;
+      }
+    })
+  }
 
   redirectTo(url: string) {
     this.router.navigate([url]);

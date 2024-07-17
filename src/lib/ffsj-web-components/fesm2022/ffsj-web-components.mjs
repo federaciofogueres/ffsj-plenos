@@ -4,13 +4,13 @@ import * as i1 from '@angular/common/http';
 import { HttpHeaders, HttpClientModule } from '@angular/common/http';
 import * as i2 from '@angular/forms';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
+import { BehaviorSubject, Subject } from 'rxjs';
 import * as i1$1 from '@angular/router';
 import * as CryptoJS from 'crypto-js';
 import * as bcrypt from 'bcryptjs';
 import * as i4 from 'ngx-cookie-service';
 import * as i1$2 from '@angular/common';
 import { CommonModule } from '@angular/common';
-import { Subject } from 'rxjs';
 import * as i1$3 from '@angular/material/dialog';
 import { MAT_DIALOG_DATA, MatDialogModule } from '@angular/material/dialog';
 
@@ -209,6 +209,8 @@ class AuthService {
         this.censoService = censoService;
         this.encoderService = encoderService;
         this.cookieService = cookieService;
+        this.loginStatus$ = new BehaviorSubject(false);
+        this.loginStatusObservable = this.loginStatus$.asObservable();
     }
     checkToken() {
         return !this.checkExpireDateToken(this.encoderService.decrypt(this.cookieService.get('token')));
@@ -240,10 +242,12 @@ class AuthService {
                 next: (res) => {
                     console.log(res);
                     this.saveToken(res.token);
+                    this.loginStatus$.next(true);
                     resolve(res);
                 },
                 error: error => {
                     console.log(error);
+                    this.loginStatus$.next(false);
                     reject(error);
                 }
             });
@@ -253,16 +257,20 @@ class AuthService {
         let token = '';
         if (this.cookieService.get('token')) {
             token = this.encoderService.decrypt(this.cookieService.get('token'));
+            this.loginStatus$.next(true);
         }
         return token;
     }
     logout() {
         this.cookieService.delete('token');
         this.router.navigateByUrl('login');
+        this.loginStatus$.next(false);
     }
     isLoggedIn() {
         const token = this.cookieService.get('token');
-        return token !== null && token !== '' ? this.checkToken() : false;
+        const isLoggedIn = token !== null && token !== '' ? this.checkToken() : false;
+        this.loginStatus$.next(isLoggedIn);
+        return isLoggedIn;
     }
     static { this.ɵfac = i0.ɵɵngDeclareFactory({ minVersion: "12.0.0", version: "17.3.11", ngImport: i0, type: AuthService, deps: [{ token: i1$1.Router }, { token: CensoService }, { token: EncoderService }, { token: i4.CookieService }], target: i0.ɵɵFactoryTarget.Injectable }); }
     static { this.ɵprov = i0.ɵɵngDeclareInjectable({ minVersion: "12.0.0", version: "17.3.11", ngImport: i0, type: AuthService, providedIn: 'root' }); }

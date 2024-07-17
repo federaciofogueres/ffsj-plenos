@@ -12,16 +12,19 @@
         </div>
         @if(userLogged){
             <div class="dropdown">
-                <button class="btn" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false" style="padding: unset;">
+                <button class="btn text-light" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false" style="padding: unset;">
                     <i class="bi bi-list" style="font-size: 1.5rem;"></i>
                 </button>
                 <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
                     <li><a class="dropdown-item" routerLink="/home"><i class="bi bi-house-fill me-2"></i>Inicio</a></li>
-                    <li><a class="dropdown-item" routerLink="/ninots"><i class="bi bi-person-fill me-2"></i>Ninots</a></li>
-                        @if (userLogged) {
-                            <li><a class="dropdown-item" routerLink="/admin"><i class="bi bi-gear-fill me-2"></i>Administración</a></li>
-                            <li><a class="dropdown-item" (click)="logout()"><i class="bi bi-box-arrow-right me-2"></i>Cerrar sesión</a></li>
-                        }
+                    <li><a class="dropdown-item" routerLink="/plenos"><i class="bi bi-calendar-check-fill me-2"></i>Plenos</a></li>
+                    <li><a class="dropdown-item" routerLink="/asistencia"><i class="bi bi-person-fill me-2"></i>Asistencia</a></li>
+                    <li><a class="dropdown-item" routerLink="/documentos"><i class="bi bi-file-earmark-text-fill me-2"></i>Documentos</a></li>
+                    <li><a class="dropdown-item" routerLink="/votaciones"><i class="bi bi-envelope-paper-fill me-2"></i>Votaciones</a></li>
+                    <li><a class="dropdown-item" (click)="logout()"><i class="bi bi-box-arrow-right me-2"></i>Cerrar sesión</a></li>
+                    @if (userAdmin) {
+                        <li><a class="dropdown-item" routerLink="/admin"><i class="bi bi-gear-fill me-2"></i>Administración</a></li>
+                    }
                 </ul>
             </div>
         }
