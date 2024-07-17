@@ -114,6 +114,7 @@ export class PlenoComponent {
       },
       error: (error: any) => {
         console.log('Error:', error);
+        this.loading = false;
       }
     
     });
