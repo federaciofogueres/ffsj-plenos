@@ -1,8 +1,8 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
-import { ActivatedRoute, Router } from '@angular/router';
-import { FfsjSpinnerComponent } from 'ffsj-web-components';
+import { Router } from '@angular/router';
+import { FfsjAlertService, FfsjSpinnerComponent } from 'ffsj-web-components';
 import { CookieService } from 'ngx-cookie-service';
 import { AsistenciaService, Pleno, PlenoService } from '../../../api';
 import { ValidatorsService } from '../../services/validators.service';
@@ -45,10 +45,10 @@ export class AsistenciaComponent {
     private fb: FormBuilder,
     private validatorsService: ValidatorsService,
     private asistenciaService: AsistenciaService,
-    private activatedRoute: ActivatedRoute,
     private plenosService: PlenoService,
     private cookieService: CookieService,
-    private route: Router
+    private route: Router,
+    private ffsjAlertService: FfsjAlertService
   ) { }
 
   ngOnInit() {
@@ -86,23 +86,33 @@ export class AsistenciaComponent {
       next: (resposne: any) => {
         if (resposne.status.status === 200) {
           console.log('Asistencia confirmada');
+          this.ffsjAlertService.success('Asistencia confirmada correctamente');
         }
       },
       error: (error) => {
         console.log('Error al confirmar asistencia: ', error.error);
+        this.ffsjAlertService.warning('Error al confirmar asistencia. Por favor, contacta con secretaría.');
       }
     
     })
   }
 
+
+
   delegarAsistencia() {
     console.log('Delegar asistencia a: ', this.delegacionAsistenciaForm.value.dni);
     this.asistenciaService.asistenciaIdPlenoAsociadosIdAsociadoDelegacionNifAsociadoPost(this.idPleno, this.idAsociado, this.delegacionAsistenciaForm.value.dni).subscribe({
       next: (response: any) => {
-        console.log('Delegación realizada -> ', response);
+        if (response.status.status === 200) {
+          console.log('Delegación realizada -> ', response);
+          this.ffsjAlertService.success('Asistencia delegada correctamente al socio: ' + this.delegacionAsistenciaForm.value.dni);
+          this.cookieService.delete('idPleno');
+          this.route.navigateByUrl('/home');
+        }
       },
       error: (error) => {
         console.log('Error al delegar asistencia: ', error.error);
+        this.ffsjAlertService.danger('Error al delegar asistencia. Por favor, inténtalo de nuevo.');
       }
     });
     
