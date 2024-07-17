@@ -215,7 +215,12 @@ class AuthService {
         return (Math.floor((new Date).getTime() / 1000)) >= expiry;
     }
     saveToken(token) {
-        this.cookieService.set('token', this.encoderService.encrypt(token));
+        const options = {
+            domain: '.hogueras.es',
+            path: '/',
+            secure: true
+        };
+        this.cookieService.set('token', this.encoderService.encrypt(token), options);
     }
     async login(user, password) {
         let usuario = {
@@ -227,7 +232,7 @@ class AuthService {
                 next: (res) => {
                     console.log(res);
                     this.saveToken(res.token);
-                    resolve(true);
+                    resolve(res);
                 },
                 error: error => {
                     console.log(error);
