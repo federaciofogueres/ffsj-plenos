@@ -1,5 +1,5 @@
 import * as i0 from '@angular/core';
-import { Component, Injectable, EventEmitter, Input, Output } from '@angular/core';
+import { Component, Injectable, EventEmitter, Input, Output, Inject } from '@angular/core';
 import * as i1 from '@angular/common/http';
 import { HttpHeaders, HttpClientModule } from '@angular/common/http';
 import * as i2 from '@angular/forms';
@@ -10,6 +10,9 @@ import * as bcrypt from 'bcryptjs';
 import * as i4 from 'ngx-cookie-service';
 import * as i1$2 from '@angular/common';
 import { CommonModule } from '@angular/common';
+import { Subject } from 'rxjs';
+import * as i1$3 from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialogModule } from '@angular/material/dialog';
 
 class FfsjWebComponentsComponent {
     static { this.ɵfac = i0.ɵɵngDeclareFactory({ minVersion: "12.0.0", version: "17.3.11", ngImport: i0, type: FfsjWebComponentsComponent, deps: [], target: i0.ɵɵFactoryTarget.Component }); }
@@ -358,6 +361,109 @@ i0.ɵɵngDeclareClassMetadata({ minVersion: "12.0.0", version: "17.3.11", ngImpo
                 type: Input
             }] } });
 
+var AlertType;
+(function (AlertType) {
+    AlertType["Success"] = "success";
+    AlertType["Danger"] = "danger";
+    AlertType["Warning"] = "warning";
+    AlertType["Info"] = "info";
+})(AlertType || (AlertType = {}));
+
+class FfsjAlertService {
+    constructor() {
+        this.alert$ = new Subject();
+    }
+    success(message, duration = 5000) {
+        this.alert$.next({ type: AlertType.Success, message: message, duration: duration });
+    }
+    danger(message, duration = 5000) {
+        this.alert$.next({ type: AlertType.Danger, message: message, duration: duration });
+    }
+    warning(message, duration = 5000) {
+        this.alert$.next({ type: AlertType.Warning, message: message, duration: duration });
+    }
+    info(message, duration = 5000) {
+        this.alert$.next({ type: AlertType.Info, message: message, duration: duration });
+    }
+    static { this.ɵfac = i0.ɵɵngDeclareFactory({ minVersion: "12.0.0", version: "17.3.11", ngImport: i0, type: FfsjAlertService, deps: [], target: i0.ɵɵFactoryTarget.Injectable }); }
+    static { this.ɵprov = i0.ɵɵngDeclareInjectable({ minVersion: "12.0.0", version: "17.3.11", ngImport: i0, type: FfsjAlertService, providedIn: 'root' }); }
+}
+i0.ɵɵngDeclareClassMetadata({ minVersion: "12.0.0", version: "17.3.11", ngImport: i0, type: FfsjAlertService, decorators: [{
+            type: Injectable,
+            args: [{
+                    providedIn: 'root'
+                }]
+        }] });
+
+class FfsjAlertComponent {
+    constructor(ffsjAlertService) {
+        this.ffsjAlertService = ffsjAlertService;
+    }
+    ngOnInit() {
+        this.subscription = this.ffsjAlertService.alert$.subscribe(alert => {
+            this.message = alert.message;
+            this.type = alert.type;
+            setTimeout(() => this.closeAlert(), alert.duration);
+        });
+    }
+    ngOnDestroy() {
+        this.subscription.unsubscribe();
+    }
+    closeAlert() {
+        this.message = null;
+    }
+    static { this.ɵfac = i0.ɵɵngDeclareFactory({ minVersion: "12.0.0", version: "17.3.11", ngImport: i0, type: FfsjAlertComponent, deps: [{ token: FfsjAlertService }], target: i0.ɵɵFactoryTarget.Component }); }
+    static { this.ɵcmp = i0.ɵɵngDeclareComponent({ minVersion: "17.0.0", version: "17.3.11", type: FfsjAlertComponent, isStandalone: true, selector: "lib-ffsj-alert", ngImport: i0, template: "@if (message) {\r\n    <div class=\"alert alert-{{type}}\" role=\"alert\">\r\n        {{message}}\r\n        <button type=\"button\" class=\"close\" (click)=\"closeAlert()\">\r\n          <span aria-hidden=\"true\">&times;</span>\r\n        </button>\r\n    </div>\r\n}", styles: [".alert{display:flex;align-items:center;justify-content:space-between;position:absolute;top:0;right:0;padding:10px}.close{font-size:1.5rem;font-weight:700;background:transparent;border:0}.close:hover{color:#000;text-decoration:none}.close:not(:disabled):not(.disabled):hover,.close:not(:disabled):not(.disabled):focus{opacity:.75}\n"] }); }
+}
+i0.ɵɵngDeclareClassMetadata({ minVersion: "12.0.0", version: "17.3.11", ngImport: i0, type: FfsjAlertComponent, decorators: [{
+            type: Component,
+            args: [{ selector: 'lib-ffsj-alert', standalone: true, imports: [], template: "@if (message) {\r\n    <div class=\"alert alert-{{type}}\" role=\"alert\">\r\n        {{message}}\r\n        <button type=\"button\" class=\"close\" (click)=\"closeAlert()\">\r\n          <span aria-hidden=\"true\">&times;</span>\r\n        </button>\r\n    </div>\r\n}", styles: [".alert{display:flex;align-items:center;justify-content:space-between;position:absolute;top:0;right:0;padding:10px}.close{font-size:1.5rem;font-weight:700;background:transparent;border:0}.close:hover{color:#000;text-decoration:none}.close:not(:disabled):not(.disabled):hover,.close:not(:disabled):not(.disabled):focus{opacity:.75}\n"] }]
+        }], ctorParameters: () => [{ type: FfsjAlertService }] });
+
+var AlertButtonType;
+(function (AlertButtonType) {
+    AlertButtonType["Aceptar"] = "Aceptar";
+    AlertButtonType["Cancelar"] = "Cancelar";
+    AlertButtonType["Entendido"] = "Entendido";
+})(AlertButtonType || (AlertButtonType = {}));
+
+class FfsjDialogAlertComponent {
+    constructor(dialogSelfRef, data) {
+        this.dialogSelfRef = dialogSelfRef;
+        this.data = data;
+    }
+    static { this.ɵfac = i0.ɵɵngDeclareFactory({ minVersion: "12.0.0", version: "17.3.11", ngImport: i0, type: FfsjDialogAlertComponent, deps: [{ token: i1$3.MatDialogRef }, { token: MAT_DIALOG_DATA }], target: i0.ɵɵFactoryTarget.Component }); }
+    static { this.ɵcmp = i0.ɵɵngDeclareComponent({ minVersion: "17.0.0", version: "17.3.11", type: FfsjDialogAlertComponent, isStandalone: true, selector: "lib-ffsj-dialog-alert", ngImport: i0, template: "<h2 mat-dialog-title>{{ data.title }}</h2>\r\n<mat-dialog-content>\r\n  My favorite animal is:\r\n  {{ data.content }}\r\n</mat-dialog-content>\r\n<mat-dialog-actions>\r\n  @for (button of data.buttonsAlert; track $index) {\r\n    <button mat-button (click)=\"dialogSelfRef.close(button)\">{{ button }}</button>\r\n  }\r\n</mat-dialog-actions>\r\n", styles: [""], dependencies: [{ kind: "ngmodule", type: MatDialogModule }, { kind: "directive", type: i1$3.MatDialogTitle, selector: "[mat-dialog-title], [matDialogTitle]", inputs: ["id"], exportAs: ["matDialogTitle"] }, { kind: "directive", type: i1$3.MatDialogActions, selector: "[mat-dialog-actions], mat-dialog-actions, [matDialogActions]", inputs: ["align"] }, { kind: "directive", type: i1$3.MatDialogContent, selector: "[mat-dialog-content], mat-dialog-content, [matDialogContent]" }] }); }
+}
+i0.ɵɵngDeclareClassMetadata({ minVersion: "12.0.0", version: "17.3.11", ngImport: i0, type: FfsjDialogAlertComponent, decorators: [{
+            type: Component,
+            args: [{ selector: 'lib-ffsj-dialog-alert', standalone: true, imports: [MatDialogModule], template: "<h2 mat-dialog-title>{{ data.title }}</h2>\r\n<mat-dialog-content>\r\n  My favorite animal is:\r\n  {{ data.content }}\r\n</mat-dialog-content>\r\n<mat-dialog-actions>\r\n  @for (button of data.buttonsAlert; track $index) {\r\n    <button mat-button (click)=\"dialogSelfRef.close(button)\">{{ button }}</button>\r\n  }\r\n</mat-dialog-actions>\r\n" }]
+        }], ctorParameters: () => [{ type: i1$3.MatDialogRef }, { type: undefined, decorators: [{
+                    type: Inject,
+                    args: [MAT_DIALOG_DATA]
+                }] }] });
+
+class FfsjDialogAlertService {
+    constructor(dialog) {
+        this.dialog = dialog;
+    }
+    openDialogAlert(data) {
+        const dialogRef = this.dialog.open(FfsjDialogAlertComponent, {
+            data: data,
+            width: '600px',
+        });
+        return dialogRef;
+    }
+    static { this.ɵfac = i0.ɵɵngDeclareFactory({ minVersion: "12.0.0", version: "17.3.11", ngImport: i0, type: FfsjDialogAlertService, deps: [{ token: i1$3.MatDialog }], target: i0.ɵɵFactoryTarget.Injectable }); }
+    static { this.ɵprov = i0.ɵɵngDeclareInjectable({ minVersion: "12.0.0", version: "17.3.11", ngImport: i0, type: FfsjDialogAlertService, providedIn: 'root' }); }
+}
+i0.ɵɵngDeclareClassMetadata({ minVersion: "12.0.0", version: "17.3.11", ngImport: i0, type: FfsjDialogAlertService, decorators: [{
+            type: Injectable,
+            args: [{
+                    providedIn: 'root'
+                }]
+        }], ctorParameters: () => [{ type: i1$3.MatDialog }] });
+
 /*
  * Public API Surface of ffsj-web-components
  */
@@ -366,5 +472,5 @@ i0.ɵɵngDeclareClassMetadata({ minVersion: "12.0.0", version: "17.3.11", ngImpo
  * Generated bundle index. Do not edit.
  */
 
-export { AuthGuard, AuthService, FfsjLoginComponent, FfsjSpinnerComponent, FfsjWebComponentsComponent, FfsjWebComponentsService };
+export { AlertButtonType, AlertType, AuthGuard, AuthService, FfsjAlertComponent, FfsjAlertService, FfsjDialogAlertComponent, FfsjDialogAlertService, FfsjLoginComponent, FfsjSpinnerComponent, FfsjWebComponentsComponent, FfsjWebComponentsService };
 //# sourceMappingURL=ffsj-web-components.mjs.map
