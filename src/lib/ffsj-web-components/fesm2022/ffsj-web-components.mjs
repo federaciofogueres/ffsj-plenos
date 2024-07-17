@@ -217,11 +217,16 @@ class AuthService {
         const expiry = (JSON.parse(atob(token.split('.')[1]))).exp;
         return (Math.floor((new Date).getTime() / 1000)) >= expiry;
     }
+    isLocalDomain() {
+        return window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+    }
     saveToken(token) {
+        const isLocal = this.isLocalDomain();
+        const hostName = isLocal ? undefined : '.hogueras.es';
         const options = {
-            domain: '.hogueras.es',
+            domain: hostName,
             path: '/',
-            secure: true
+            secure: !isLocal // Assuming secure cookies should not be set for localhost
         };
         this.cookieService.set('token', this.encoderService.encrypt(token), options);
     }

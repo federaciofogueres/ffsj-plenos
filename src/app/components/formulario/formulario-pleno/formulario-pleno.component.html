@@ -46,6 +46,10 @@
               <button class="btn btn-primary btn-foc-naranja" (click)="formShow = 'consultas'">
                 Consultas asociadas
               </button>
+
+              <button class="btn btn-primary btn-foc-naranja" (click)="formShow = 'asistentes'">
+                Asistentes del pleno
+              </button>
               
               @if (pleno) {
                 <button class="btn btn-primary btn-foc-rojo mt-3" (click)="procesar()">
@@ -113,6 +117,11 @@
       <app-formulario-consultas
         [pleno]="pleno"
       ></app-formulario-consultas>
+    }
+    @case ('asistentes') {
+      <app-formulario-asistentes
+        [pleno]="pleno"
+      ></app-formulario-asistentes>
     }
   }
 }

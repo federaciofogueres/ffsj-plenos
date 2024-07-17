@@ -11,6 +11,7 @@ export declare class AuthService {
     constructor(router: Router, censoService: CensoService, encoderService: EncoderService, cookieService: CookieService);
     checkToken(): boolean;
     checkExpireDateToken(token: string): boolean;
+    private isLocalDomain;
     saveToken(token: string): void;
     login(user: string, password: string): Promise<unknown>;
     getToken(): string;

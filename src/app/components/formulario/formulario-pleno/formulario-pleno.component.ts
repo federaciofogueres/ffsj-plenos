@@ -2,10 +2,11 @@ import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { FfsjSpinnerComponent } from 'ffsj-web-components';
 import { Pleno, PlenoService, PuntoOrdenDelDia, PuntosOrdenDelDiaService } from '../../../../api';
+import { FormularioAsistentesComponent } from '../formulario-asistentes/formulario-asistentes.component';
 import { FormularioConsultasComponent } from '../formulario-consultas/formulario-consultas.component';
 import { FormularioPuntoDelDiaComponent } from '../formulario-punto-del-dia/formulario-punto-del-dia.component';
 
-type FormShowType = 'pleno' | 'ordenDelDia' | 'consultas';
+type FormShowType = 'pleno' | 'ordenDelDia' | 'consultas' | 'asistentes';
 
 @Component({
   selector: 'app-formulario-pleno',
@@ -14,6 +15,7 @@ type FormShowType = 'pleno' | 'ordenDelDia' | 'consultas';
     ReactiveFormsModule,
     FormularioPuntoDelDiaComponent,
     FormularioConsultasComponent,
+    FormularioAsistentesComponent,
     FfsjSpinnerComponent
   ],
   templateUrl: './formulario-pleno.component.html',

@@ -54,8 +54,12 @@ export class AsistenciaComponent {
   ngOnInit() {
     this.loading = true;
     this.loadIdPleno(-1);
-    this.idAsociado = 8976;
+    this.setIdAsociado();
     this.loading = false;
+  }
+
+  setIdAsociado() {
+    this.cookieService.get('idUsuario') ? this.idAsociado = parseInt(this.cookieService.get('idUsuario')) : this.idAsociado = 8976;
   }
 
   gestionaPleno(event: number) {

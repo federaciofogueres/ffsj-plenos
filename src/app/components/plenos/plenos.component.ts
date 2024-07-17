@@ -53,6 +53,7 @@ export class PlenosComponent {
   
         await Promise.all(plenosPromises); // Esperar a que todas las promesas se resuelvan
         this.loading = false; // Mover esta línea aquí
+        //TO-DO: Revisar esto
         this.cookieService.set('idAsociado', response.idAsociado);
       },
       error: (error: any) => {

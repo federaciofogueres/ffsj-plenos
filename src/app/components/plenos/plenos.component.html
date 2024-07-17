@@ -1,7 +1,10 @@
 @if (loading) {
     <lib-ffsj-spinner></lib-ffsj-spinner>
 } @else {
-    <div class="container">
+    <div class="container d-flex flex-column">
+        <span class="h5 mb-3">
+            Selecciona un pleno para ver más información.
+        </span>
         @for(pleno of plenos; track $index) {
             <div class="card mb-3" (click)="gestionaPleno(pleno.id)">
                 <div class="card-body">
