@@ -486,4 +486,52 @@ export class AsistenciaService {
         );
     }
 
+    /**
+     * Obtener la asistencia de un pleno por IDPleno
+     * 
+     * @param idPleno 
+     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
+     * @param reportProgress flag to report request and response progress.
+     */
+    public plenosIdPlenoAsistenciaGet(idPleno: number, observe?: 'body', reportProgress?: boolean): Observable<ResponseAsistencias>;
+    public plenosIdPlenoAsistenciaGet(idPleno: number, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<ResponseAsistencias>>;
+    public plenosIdPlenoAsistenciaGet(idPleno: number, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<ResponseAsistencias>>;
+    public plenosIdPlenoAsistenciaGet(idPleno: number, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
+
+        if (idPleno === null || idPleno === undefined) {
+            throw new Error('Required parameter idPleno was null or undefined when calling plenosIdPlenoAsistenciaGet.');
+        }
+
+        let headers = this.defaultHeaders;
+
+        // authentication (bearerAuth) required
+        if (this.configuration.accessToken) {
+            const accessToken = typeof this.configuration.accessToken === 'function'
+                ? this.configuration.accessToken()
+                : this.configuration.accessToken;
+            headers = headers.set('Authorization', 'Bearer ' + accessToken);
+        }
+        // to determine the Accept header
+        let httpHeaderAccepts: string[] = [
+            'application/json'
+        ];
+        const httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
+        if (httpHeaderAcceptSelected != undefined) {
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
+        }
+
+        // to determine the Content-Type header
+        const consumes: string[] = [
+        ];
+
+        return this.httpClient.request<ResponseAsistencias>('get',`${this.basePath}/plenos/${encodeURIComponent(String(idPleno))}/asistencia`,
+            {
+                withCredentials: this.configuration.withCredentials,
+                headers: headers,
+                observe: observe,
+                reportProgress: reportProgress
+            }
+        );
+    }
+
 }

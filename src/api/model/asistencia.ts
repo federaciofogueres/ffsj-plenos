@@ -15,4 +15,5 @@ export interface Asistencia {
     idAsociado: number;
     delegado: boolean;
     asistenciaConfirmada: boolean;
+    asistenciaConfirmadaPorSecretaria: boolean;
 }
