@@ -52,10 +52,29 @@ export class AsistenciaComponent {
   ) { }
 
   ngOnInit() {
-    this.loading = true;
     this.loadIdPleno(-1);
     this.setIdAsociado();
-    this.loading = false;
+    this.checkAsistencia();
+    this.loading = true;
+  }
+
+  checkAsistencia() {
+    this.asistenciaService.asistenciaIdPlenoAsociadosIdAsociadoGet(this.idPleno, this.idAsociado).subscribe({
+      next: (response: any) => {
+        if (response.status.status === 200) {
+          if (response.asistencias[0].asistenciaConfirmada === 0) {
+            this.loadInfoPleno();
+            this.loading = false;
+          } else {
+            this.ffsjAlertService.success('Asistencia confirmada');
+            this.route.navigateByUrl('/plenos/' + this.idPleno);
+          }
+        }
+      },
+      error: (error) => {
+        console.log('Error:', error);
+      }
+    });
   }
 
   setIdAsociado() {
@@ -68,6 +87,9 @@ export class AsistenciaComponent {
 
   loadIdPleno(idPleno: number) {
     this.idPleno = this.cookieService.get('idPleno') ? parseInt(this.cookieService.get('idPleno')) : idPleno;
+  }
+
+  loadInfoPleno() {
     if (this.idPleno !== -1) {
       this.plenosService.plenoIdGet(this.idPleno).subscribe({
         next: (response: any) => {
@@ -100,8 +122,6 @@ export class AsistenciaComponent {
     
     })
   }
-
-
 
   delegarAsistencia() {
     console.log('Delegar asistencia a: ', this.delegacionAsistenciaForm.value.dni);
