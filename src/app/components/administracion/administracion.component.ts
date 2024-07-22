@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { CookieService } from 'ngx-cookie-service';
 import { Pleno, PlenoService } from '../../../api';
 import { FormularioPlenoComponent } from '../formulario/formulario-pleno/formulario-pleno.component';
 import { PlenosComponent } from "../plenos/plenos.component";
@@ -21,6 +22,7 @@ export class AdministracionComponent {
 
   constructor(
     private plenosService: PlenoService,
+    private cookieService: CookieService
   ) {}
 
   ngOnInit() {}
@@ -30,6 +32,7 @@ export class AdministracionComponent {
     this.plenosService.plenoIdGet(event).subscribe({
       next: (response: any) => {
         this.pleno = response.plenos[0];
+        this.cookieService.set('idPleno', this.pleno!.id.toString());
         this.mostrarFormularioAction(true, this.pleno);
       },
       error: (error) => {

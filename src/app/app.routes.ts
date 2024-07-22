@@ -2,6 +2,7 @@ import { Routes } from '@angular/router';
 import { AdministracionComponent } from './components/administracion/administracion.component';
 import { AsistenciaComponent } from './components/asistencia/asistencia.component';
 import { DocumentosComponent } from './components/documentos/documentos.component';
+import { GestorAsistenciaComponent } from './components/gestor-asistencia/gestor-asistencia.component';
 import { HomeComponent } from './components/home/home.component';
 import { LoginComponent } from './components/login/login.component';
 import { PlenoComponent } from './components/pleno/pleno.component';
@@ -18,6 +19,7 @@ export const routes: Routes = [
     { path: 'votaciones', component: VotacionesComponent, canActivate: [AuthGuard, AsistenciaCheckGuard] },
     { path: 'documentos', component: DocumentosComponent, canActivate: [AuthGuard, AsistenciaCheckGuard] },
     { path: 'admin', component: AdministracionComponent, canActivate: [AuthGuard] },
+    { path: 'gestor-asistencia', component: GestorAsistenciaComponent, canActivate: [AuthGuard] },
     { path: 'login', component: LoginComponent },
     { path: '**', component: HomeComponent, canActivate: [AuthGuard] },
 ];

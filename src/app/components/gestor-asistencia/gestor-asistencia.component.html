@@ -1,0 +1,35 @@
+@if (loading) {
+    <lib-ffsj-spinner
+        [fullscreen]="true"
+    ></lib-ffsj-spinner>
+} @else {
+    <div class="container">
+        <button class="btn btn-primary btn-foc-naranja w-100 mb-3" (click)="loadAsistencia()">
+            Refrescar
+        </button>
+        @for (item of asistencias; track $index) {
+            @if (item.confirmadoPorUsuario) {
+                <div class="card">
+                    <div class="d-flex justify-content-between card-header btn btn-primary btn-foc-salmon" type="button" data-bs-toggle="collapse" [attr.data-bs-target]="'#asistencia' + $index">
+                        <h2 class="mb-0">
+                            Usuario: {{ item.nif }}
+                        </h2>
+                        @if(item.confirmadoPorSecretaria) {
+                            <button class="btn btn-danger" (click)="confirmarAsistencia(item)">
+                                Borrar confirmación
+                            </button>
+                        } @else {
+                            <button class="btn btn-primary" (click)="confirmarAsistencia(item)">
+                                Confirmar
+                            </button>
+                        }
+                    </div>
+                    <div id="asistencia{{$index}}" class="collapse card-body">
+                        <p>Nombre: {{ item.nombre }}</p>
+                        <p>Apellidos: {{ item.apellidos }}</p>
+                    </div>
+                </div>
+            }
+        }
+    </div>
+}

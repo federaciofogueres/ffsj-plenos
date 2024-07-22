@@ -87,6 +87,10 @@ export class AsistenciaComponent {
 
   loadIdPleno(idPleno: number) {
     this.idPleno = this.cookieService.get('idPleno') ? parseInt(this.cookieService.get('idPleno')) : idPleno;
+    if (this.idPleno === -1) {
+      this.ffsjAlertService.warning('No se ha seleccionado ningún pleno. Por favor, selecciona uno.');
+      this.route.navigateByUrl('/plenos');
+    }
   }
 
   loadInfoPleno() {
@@ -102,8 +106,6 @@ export class AsistenciaComponent {
           console.log('Error:', error);
         }
       });
-    } else {
-      this.route.navigateByUrl('/plenos');
     }
   }
 

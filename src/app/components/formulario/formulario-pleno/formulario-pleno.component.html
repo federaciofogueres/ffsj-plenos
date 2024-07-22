@@ -50,6 +50,10 @@
               <button class="btn btn-primary btn-foc-naranja" (click)="formShow = 'asistentes'">
                 Asistentes del pleno
               </button>
+
+              <button class="btn btn-primary btn-foc-naranja" (click)="router.navigateByUrl('/gestor-asistencia')">
+                Confirmación de asistentes
+              </button>
               
               @if (pleno) {
                 <button class="btn btn-primary btn-foc-rojo mt-3" (click)="procesar()">

@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { AuthService } from 'ffsj-web-components';
+import { CookieService } from 'ngx-cookie-service';
 import { Subject, takeUntil } from 'rxjs';
 // import { AuthService } from '../../services/auth.service';
 
@@ -19,10 +20,12 @@ export class HeaderComponent {
   userLogged: boolean = false;
   userAdmin: boolean = false;
   private unsubscribe$ = new Subject<void>();
+  protected idPleno = -1;
 
   constructor(
     protected router: Router,
     protected authService: AuthService,
+    private cookieService: CookieService
   ) {}
 
   ngOnInit() {
@@ -35,6 +38,19 @@ export class HeaderComponent {
         this.userLogged = loggedIn;
       }
     });
+  }
+
+  redirectToPleno() {
+    this.getIdPleno();
+    if (this.idPleno > 0) {
+      this.router.navigateByUrl('plenos/' + this.idPleno);
+    } else {
+      this.router.navigateByUrl('plenos');
+    }
+  }
+
+  getIdPleno() {
+    this.idPleno = this.cookieService.get('idPleno') ? parseInt(this.cookieService.get('idPleno')) : -1;
   }
 
   logout() {

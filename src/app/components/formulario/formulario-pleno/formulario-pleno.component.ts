@@ -1,5 +1,6 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
+import { Router } from '@angular/router';
 import { FfsjSpinnerComponent } from 'ffsj-web-components';
 import { Pleno, PlenoService, PuntoOrdenDelDia, PuntosOrdenDelDiaService } from '../../../../api';
 import { FormularioAsistentesComponent } from '../formulario-asistentes/formulario-asistentes.component';
@@ -41,7 +42,8 @@ export class FormularioPlenoComponent {
   constructor(
     private fb: FormBuilder,
     private plenoService: PlenoService,
-    private puntosOrdenDelDiaService: PuntosOrdenDelDiaService
+    private puntosOrdenDelDiaService: PuntosOrdenDelDiaService,
+    protected router: Router
   ) { }
 
   ngOnInit(): void {
