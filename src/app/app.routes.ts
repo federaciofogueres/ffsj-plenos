@@ -8,6 +8,7 @@ import { LoginComponent } from './components/login/login.component';
 import { PlenoComponent } from './components/pleno/pleno.component';
 import { PlenosComponent } from './components/plenos/plenos.component';
 import { VotacionesComponent } from './components/votaciones/votaciones.component';
+import { AdminGuard } from './guards/admin.guard';
 import { AsistenciaCheckGuard } from './guards/asistencia-check.guard';
 import { AuthGuard } from './guards/auth.guard';
 
@@ -18,7 +19,7 @@ export const routes: Routes = [
     { path: 'asistencia/:idPleno', component: AsistenciaComponent, canActivate: [AuthGuard] },
     { path: 'votaciones', component: VotacionesComponent, canActivate: [AuthGuard, AsistenciaCheckGuard] },
     { path: 'documentos', component: DocumentosComponent, canActivate: [AuthGuard, AsistenciaCheckGuard] },
-    { path: 'admin', component: AdministracionComponent, canActivate: [AuthGuard] },
+    { path: 'admin', component: AdministracionComponent, canActivate: [AuthGuard, AdminGuard] },
     { path: 'gestor-asistencia', component: GestorAsistenciaComponent, canActivate: [AuthGuard] },
     { path: 'login', component: LoginComponent },
     { path: '**', component: HomeComponent, canActivate: [AuthGuard] },

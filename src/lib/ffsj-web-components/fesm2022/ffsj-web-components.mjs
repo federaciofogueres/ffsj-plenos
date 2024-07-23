@@ -272,6 +272,9 @@ class AuthService {
         this.loginStatus$.next(isLoggedIn);
         return isLoggedIn;
     }
+    getCargos() {
+        return JSON.parse(atob(this.encoderService.decrypt(this.cookieService.get('token')).split('.')[1])).cargos;
+    }
     static { this.ɵfac = i0.ɵɵngDeclareFactory({ minVersion: "12.0.0", version: "17.3.11", ngImport: i0, type: AuthService, deps: [{ token: i1$1.Router }, { token: CensoService }, { token: EncoderService }, { token: i4.CookieService }], target: i0.ɵɵFactoryTarget.Injectable }); }
     static { this.ɵprov = i0.ɵɵngDeclareInjectable({ minVersion: "12.0.0", version: "17.3.11", ngImport: i0, type: AuthService, providedIn: 'root' }); }
 }

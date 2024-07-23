@@ -36,6 +36,7 @@ export class HeaderComponent {
       next: (loggedIn: boolean) => {
         console.log('User logged in:', loggedIn);
         this.userLogged = loggedIn;
+        this.userAdmin = this.authService.getCargos().some((cargo: any) => cargo.idCargo === 16);
       }
     });
   }
