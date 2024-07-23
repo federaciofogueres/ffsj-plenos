@@ -19,7 +19,8 @@ export declare class AuthService {
     getToken(): string;
     logout(): void;
     isLoggedIn(): boolean;
-    getCargos(): string[];
+    getCargos(): any[];
+    updatePassword(asociado: number, password: string): Promise<any>;
     static ɵfac: i0.ɵɵFactoryDeclaration<AuthService, never>;
     static ɵprov: i0.ɵɵInjectableDeclaration<AuthService>;
 }

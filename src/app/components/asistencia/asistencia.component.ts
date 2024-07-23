@@ -73,6 +73,9 @@ export class AsistenciaComponent {
       },
       error: (error) => {
         console.log('Error:', error);
+        this.ffsjAlertService.danger('El usuario no consta como asistente al pleno. Seleccione otro o contacte con Secretaría por favor.');
+        this.idPleno = -1;
+        this.loading = false;
       }
     });
   }
