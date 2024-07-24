@@ -1,5 +1,5 @@
 import { Injectable } from "@angular/core";
-import { CanActivate } from "@angular/router";
+import { CanActivate, Router } from "@angular/router";
 import { FfsjAlertService } from "ffsj-web-components";
 import { CookieService } from "ngx-cookie-service";
 import { AsistenciaService } from "../../api";
@@ -12,7 +12,8 @@ export class AsistenciaCheckGuard implements CanActivate {
   constructor(
     private asistenciaService: AsistenciaService,
     private cookieService: CookieService,
-    private alertService: FfsjAlertService
+    private alertService: FfsjAlertService,
+    private route: Router
   ) {}
 
   async canActivate(): Promise<boolean> {
@@ -36,6 +37,7 @@ export class AsistenciaCheckGuard implements CanActivate {
 
     if (!asistenciaChecked) {
         this.alertService.warning('No puedes acceder a esta página hasta que no confirmes tu asistencia. Contacta con secretaría para que confirmen tu asistencia.');
+        this.route.navigateByUrl('/plenos');
     }
     return asistenciaChecked;
   }

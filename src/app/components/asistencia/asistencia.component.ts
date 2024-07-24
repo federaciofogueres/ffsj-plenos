@@ -4,7 +4,7 @@ import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } 
 import { Router } from '@angular/router';
 import { FfsjAlertService, FfsjSpinnerComponent } from 'ffsj-web-components';
 import { CookieService } from 'ngx-cookie-service';
-import { AsistenciaService, Pleno, PlenoService } from '../../../api';
+import { Asistencia, AsistenciaService, Pleno, PlenoService } from '../../../api';
 import { ValidatorsService } from '../../services/validators.service';
 import { PlenosComponent } from '../plenos/plenos.component';
 
@@ -31,6 +31,14 @@ export class AsistenciaComponent {
     titulo: '',
     informacion_extra: '',
     firma: ''
+  };
+
+  asistenciaAsociado: Asistencia = {
+    idPleno: 0,
+    idAsociado: 0,
+    delegado: false,
+    asistenciaConfirmada: false,
+    asistenciaConfirmadaPorSecretaria: false
   };
 
   showDelegacionAsistenciaForm = false;
@@ -63,6 +71,10 @@ export class AsistenciaComponent {
       next: (response: any) => {
         if (response.status.status === 200) {
           if (response.asistencias[0].asistenciaConfirmada === 0) {
+            this.asistenciaAsociado = response.asistencias[0];
+            this.asistenciaAsociado.asistenciaConfirmada = Boolean(this.asistenciaAsociado.asistenciaConfirmada);
+            this.asistenciaAsociado.delegado = Boolean(this.asistenciaAsociado.delegado);
+            this.asistenciaAsociado.asistenciaConfirmadaPorSecretaria = Boolean(this.asistenciaAsociado.asistenciaConfirmadaPorSecretaria);
             this.loadInfoPleno();
             this.loading = false;
           } else {
@@ -113,11 +125,13 @@ export class AsistenciaComponent {
   }
 
   confirmarAsistencia() {
-    this.asistenciaService.asistenciaIdPlenoAsociadosIdAsociadoPost(this.idPleno, this.idAsociado).subscribe({
+    this.asistenciaAsociado.asistenciaConfirmada = true;
+    this.asistenciaService.asistenciaIdPlenoAsociadosIdAsociadoPut(this.asistenciaAsociado, this.idPleno, this.idAsociado).subscribe({
       next: (resposne: any) => {
         if (resposne.status.status === 200) {
           console.log('Asistencia confirmada');
           this.ffsjAlertService.success('Asistencia confirmada correctamente');
+          this.route.navigateByUrl('/plenos');
         }
       },
       error: (error) => {
