@@ -71,11 +71,15 @@ export class FormularioAsistentesComponent {
     this.asistenciaService.plenosIdPlenoAsistenciaGet(this.pleno!.id).subscribe({
       next: (response: ResponseAsistencias) => {
         console.log(response);
-        this.asistentes = response.asistencias.map(asistencia => {
-          const asociadoInfo = this.asociados.find(a => a.id === asistencia.idAsociado);
-          return asociadoInfo!;
-        });
-        this.loading = false;
+        if (response.asistencias.length > 0) {
+          this.asistentes = response.asistencias.map(asistencia => {
+            const asociadoInfo = this.asociados.find(a => a.id === asistencia.idAsociado);
+            return asociadoInfo!;
+          });
+          this.loading = false;
+        } else {
+          this.asistentes = [];
+        }
       },
       error: (error) => {
         console.error(error);
