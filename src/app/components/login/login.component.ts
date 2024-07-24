@@ -55,7 +55,7 @@ export class LoginComponent {
       
     } else {
       console.log('Login failed');
-      this.ffsjAlertService.success('Hubo un problema al iniciar sesión. Por favor, inténtalo de nuevo o contacta con transformaciondigital@hogueras.es.')
+      this.ffsjAlertService.danger('Hubo un problema al iniciar sesión. Por favor, inténtalo de nuevo o contacta con transformaciondigital@hogueras.es.')
     }
   }
 
