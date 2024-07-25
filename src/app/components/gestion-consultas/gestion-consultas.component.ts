@@ -49,6 +49,7 @@ export class GestionConsultasComponent {
   }
 
   loadInfoConsulta() {
+    this.loading = true;
     forkJoin([this.loadAsistencia(), this.getConsultas()]).subscribe({
       next: () => {
         if (this.consultaSeleccionada === undefined) {
