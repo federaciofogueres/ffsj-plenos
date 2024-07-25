@@ -2,19 +2,11 @@ import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { FfsjAlertService, FfsjSpinnerComponent } from 'ffsj-web-components';
 import { CookieService } from 'ngx-cookie-service';
-import { firstValueFrom } from 'rxjs';
 import { Asistencia, AsistenciaService } from '../../../api';
+import { AsistenciaPlenoFormattedModel } from '../../models/asistencia-pleno.model';
+import { AsistenciaPlenoService } from '../../services/asistencia-pleno.service';
 import { CensoService } from '../../services/censo.service';
-
-export interface AsistenciaModel {
-  nombre: string;
-  apellidos: string;
-  nif: string;
-  delegado: boolean;
-  confirmadoPorUsuario: boolean;
-  confirmadoPorSecretaria: boolean;
-  id: number;
-}
+import { PlenoExtraService } from '../../services/pleno-extra.service';
 
 @Component({
   selector: 'app-gestor-asistencia',
@@ -29,7 +21,7 @@ export interface AsistenciaModel {
 export class GestorAsistenciaComponent {
 
   private idPleno = -1;
-  protected asistencias: AsistenciaModel[] = [];
+  protected asistencias: AsistenciaPlenoFormattedModel[] = [];
 
   protected loading: boolean = false;
 
@@ -37,12 +29,14 @@ export class GestorAsistenciaComponent {
     private cookieService: CookieService,
     private asistenciaService: AsistenciaService,
     private ffsjAlertService: FfsjAlertService,
-    private censoService: CensoService
+    private censoService: CensoService,
+    private asistenciaPlenoService: AsistenciaPlenoService,
+    private plenoExtraService: PlenoExtraService,
   ) {}
 
   ngOnInit() {
     this.loading = true;
-    this.getIdPleno();
+    this.idPleno = this.plenoExtraService.getIdPleno();
     if (this.idPleno !== -1) {
       this.loadAsistencia();
     } else {
@@ -52,45 +46,16 @@ export class GestorAsistenciaComponent {
 
   async loadAsistencia() {
     this.loading = true;
-    try {
-      const data = await firstValueFrom(this.asistenciaService.plenosIdPlenoAsistenciaGet(this.idPleno));
-      if (data.status.status === 200 && data.asistencias.length > 0) {
-        const asistenciasPromises = data.asistencias.map(async (asistencia) => {
-          const response = await firstValueFrom(this.censoService.asociadosGetById(asistencia.idAsociado));
-          if (response && response.status && response.status.status !== 200) {
-            throw new Error('Error al cargar la asistencia: ' + response.status.message);
-          }
-          const asociado = response.asociados && response.asociados[0];
-          if (!asociado) {
-            throw new Error('Error al cargar la asistencia: No se encontró el asociado');
-          }
-          return {
-            nombre: asociado.nombre,
-            apellidos: asociado.apellidos,
-            nif: asociado.nif,
-            delegado: asistencia.delegado,
-            confirmadoPorUsuario: asistencia.asistenciaConfirmada,
-            confirmadoPorSecretaria: asistencia.asistenciaConfirmadaPorSecretaria,
-            id: asociado.id
-          };
-        });
-        this.asistencias = await Promise.all(asistenciasPromises);
-      } else {
-        this.ffsjAlertService.warning('No hay asistencias disponibles para este pleno');
-      }
-    } catch (error) {
-      console.error('Error al cargar las asistencias: ', error);
+    this.asistenciaPlenoService.loadAsistencia(this.idPleno).then((asistencias: any) => {
+      this.asistencias = asistencias;
+    }).catch((error) => {
       this.ffsjAlertService.danger('Error al cargar las asistencias: ' + error);
-    } finally {
+    }).finally(() => {
       this.loading = false;
-    }
+    });
   }
 
-  getIdPleno() {
-    this.idPleno = this.cookieService.get('idPleno') ? parseInt(this.cookieService.get('idPleno')) : -1;
-  }
-
-  confirmarAsistencia(asistencia: AsistenciaModel) {
+  confirmarAsistencia(asistencia: AsistenciaPlenoFormattedModel) {
     this.asistencias = this.asistencias.map((a) => {
       if (a.nif === asistencia.nif) {
         a.confirmadoPorSecretaria = !a.confirmadoPorSecretaria;

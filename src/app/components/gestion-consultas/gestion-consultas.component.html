@@ -1,0 +1,78 @@
+@if (loading) {
+    <lib-ffsj-spinner
+        [fullscreen]="true"
+    ></lib-ffsj-spinner>
+} @else {
+    <div class="container">
+        <button class="btn btn-primary btn-foc-naranja w-100 mb-3" (click)="loadAsistencia()">
+            Refrescar
+        </button>
+        <div class="d-flex flex-column gap-2">
+            <div class="form-floating">
+                <select class="form-select" id="floatingSelect" aria-label="Floating label select example" (change)="changeSelected($event)">
+                    @for (function of consultas; track $index) {
+                        <option [value]="function.id">{{ function.titulo }}</option>
+                    }
+                </select>
+                <label for="floatingSelect">Selección de consulta</label>
+            </div>
+            @if (showUsers === 'asistentes') {
+                <div class="d-flex justify-content-between">
+                    <span class="h4">
+                        Asistentes al pleno
+                    </span>
+                    <button class="btn btn-foc-naranja" (click)="showUsers = 'autorizados'">
+                        Ver autorizados
+                    </button>
+                </div>
+                @for (item of asistencias; track $index) {
+                    @if (item.confirmadoPorUsuario) {
+                        <div class="card">
+                            <div class="d-flex align-items-center justify-content-between card-header btn btn-primary btn-foc-salmon" type="button" data-bs-toggle="collapse" [attr.data-bs-target]="'#asistencia' + $index">
+                                <span class="h4 mb-0">
+                                    {{item.nombre | titlecase}} {{item.apellidos | titlecase}}
+                                </span>
+                                <button class="btn btn-success" (click)="autorizar(item)">
+                                    Autorizar
+                                </button>
+                            </div>
+                            <div id="asistencia{{$index}}" class="collapse card-body">
+                                <p>NIF: {{item.nif}}</p>
+                                @if (item.delegado) {
+                                    <p>Asistencia delegada</p>
+                                }
+                            </div>
+                        </div>
+                    }
+                }
+            } @else if (showUsers === 'autorizados') {
+                <div class="d-flex justify-content-between">
+                    <span class="h4">
+                        Autorizados a la consulta
+                    </span>
+                    <button class="btn btn-foc-naranja" (click)="showUsers = 'asistentes'">
+                        Ver asistentes
+                    </button>
+                </div>
+                @for (item of autorizados; track $index) {
+                    <div class="card">
+                        <div class="d-flex align-items-center justify-content-between card-header btn btn-primary btn-foc-salmon" type="button" data-bs-toggle="collapse" [attr.data-bs-target]="'#asistencia' + $index">
+                            <span class="h4 mb-0">
+                                {{item.nombre | titlecase}} {{item.apellidos | titlecase}}
+                            </span>
+                            <button class="btn btn-danger" (click)="eliminarAutorizacion(item)">
+                                Eliminar
+                            </button>
+                        </div>
+                        <div id="asistencia{{$index}}" class="collapse card-body">
+                            <p>NIF: {{item.nif}}</p>
+                            @if (item.delegado) {
+                                <p>Asistencia delegada</p>
+                            }
+                        </div>
+                    </div>
+                }
+            }
+        </div>
+    </div>
+}

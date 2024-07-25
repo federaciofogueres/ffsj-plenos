@@ -43,16 +43,20 @@
                 Orden del día
               </button>
       
-              <button class="btn btn-primary btn-foc-naranja" (click)="formShow = 'consultas'">
-                Consultas asociadas
-              </button>
-
               <button class="btn btn-primary btn-foc-naranja" (click)="formShow = 'asistentes'">
                 Asistentes del pleno
               </button>
 
               <button class="btn btn-primary btn-foc-naranja" (click)="router.navigateByUrl('/gestor-asistencia')">
                 Confirmación de asistentes
+              </button>
+
+              <button class="btn btn-primary btn-foc-naranja" (click)="formShow = 'consultas'">
+                Consultas asociadas
+              </button>
+
+              <button class="btn btn-primary btn-foc-naranja" (click)="router.navigateByUrl('/gestor-consultas')">
+                Gestión consultas asociadas
               </button>
               
               @if (pleno) {
