@@ -1,8 +1,9 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
+import { Router } from '@angular/router';
 import { BarcodeFormat } from '@zxing/library';
 import { ZXingScannerModule } from '@zxing/ngx-scanner';
-import { EncoderService, FfsjAlertService, FfsjSpinnerComponent } from 'ffsj-web-components';
+import { AlertButtonType, EncoderService, FfsjAlertService, FfsjDialogAlertService, FfsjSpinnerComponent } from 'ffsj-web-components';
 import { CookieService } from 'ngx-cookie-service';
 import { Asistencia, AsistenciaService } from '../../../api';
 import { AsistenciaPlenoFormattedModel } from '../../models/asistencia-pleno.model';
@@ -27,6 +28,7 @@ export class GestorAsistenciaComponent {
   scanQRMode: boolean = false;
   qrResultString: string = '';
   qrResultStringDecoded: string = '';
+  fromQr: boolean = false;
 
   private idPleno = -1;
   protected asistencias: AsistenciaPlenoFormattedModel[] = [];
@@ -40,7 +42,9 @@ export class GestorAsistenciaComponent {
     private censoService: CensoService,
     private asistenciaPlenoService: AsistenciaPlenoService,
     private plenoExtraService: PlenoExtraService,
-    private encoderService: EncoderService
+    private encoderService: EncoderService,
+    private router: Router,
+    private ffsjDialogAlertService: FfsjDialogAlertService
   ) {}
 
   ngOnInit() {
@@ -92,6 +96,21 @@ export class GestorAsistenciaComponent {
             return a;
           });
         } else {
+          if (this.fromQr) {
+            // this.router.navigateByUrl('/gestor-consultas');
+            this.ffsjDialogAlertService.openDialogAlert({
+              title: 'Autorizar usuario',
+              content: '¿Desea autorizar al usuario?',
+              buttonsAlert: [AlertButtonType.Aceptar, AlertButtonType.Cancelar],
+            }).afterClosed().subscribe({
+              next: (result) => {
+                console.log(result);
+                if (result === AlertButtonType.Aceptar) {
+                  this.router.navigateByUrl('/gestor-consultas');
+                }
+              }
+            })
+          }
           this.ffsjAlertService.success('Asistencia confirmada correctamente');
         }
 
@@ -113,7 +132,14 @@ export class GestorAsistenciaComponent {
     this.qrResultString = resultString;
     console.log('QR code scanned:', resultString);
     this.qrResultStringDecoded = this.encoderService.decrypt(this.qrResultString);
-    // Aquí puedes añadir la lógica para manejar el resultado del código QR
+    let asistenciaQR: Asistencia = JSON.parse(this.qrResultStringDecoded);
+    const bodyAsistencia: AsistenciaPlenoFormattedModel | undefined = this.asistencias.find((a) => a.id === asistenciaQR.idAsociado);
+    if (bodyAsistencia) {
+      this.fromQr = true;
+      this.confirmarAsistencia(bodyAsistencia);
+    } else {
+      this.ffsjAlertService.danger('Hubo un problema al procesar el QR');
+    }
   }
 
 }
