@@ -2,11 +2,22 @@
     <lib-ffsj-spinner
         [fullscreen]="true"
     ></lib-ffsj-spinner>
+} @else if (scanQRMode) {
+    <zxing-scanner (scanSuccess)="onCodeResult($event)"></zxing-scanner>
+    <button (click)="scanQRMode = false">Stop Scanning</button>
+    <span>
+        Resultado - {{qrResultStringDecoded}}
+    </span>
 } @else {
     <div class="container">
-        <button class="btn btn-primary btn-foc-naranja w-100 mb-3" (click)="loadAsistencia()">
-            Refrescar
-        </button>
+        <div class="d-flex">
+            <button class="btn btn-primary btn-foc-naranja w-100 mb-3" (click)="loadAsistencia()">
+                Refrescar
+            </button>
+            <button class="btn btn-primary btn-foc-naranja w-100 mb-3" (click)="scanQRMode = true">
+                Escanear QR
+            </button>
+        </div>
         <div class="d-flex flex-column gap-2">
             @for (item of asistencias; track $index) {
                 @if (item.confirmadoPorUsuario) {

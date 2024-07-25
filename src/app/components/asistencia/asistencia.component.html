@@ -1,5 +1,9 @@
 @if (loading) {
     <lib-ffsj-spinner></lib-ffsj-spinner>
+} @else if (showQr) {
+    <app-qr-card
+        [asistencia]="asistenciaAsociado"
+    ></app-qr-card>
 } @else if (idPleno !== -1) {
     <div class="container">
         <div class="d-flex flex-column my-3">

@@ -1,6 +1,8 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
-import { FfsjAlertService, FfsjSpinnerComponent } from 'ffsj-web-components';
+import { BarcodeFormat } from '@zxing/library';
+import { ZXingScannerModule } from '@zxing/ngx-scanner';
+import { EncoderService, FfsjAlertService, FfsjSpinnerComponent } from 'ffsj-web-components';
 import { CookieService } from 'ngx-cookie-service';
 import { Asistencia, AsistenciaService } from '../../../api';
 import { AsistenciaPlenoFormattedModel } from '../../models/asistencia-pleno.model';
@@ -13,12 +15,18 @@ import { PlenoExtraService } from '../../services/pleno-extra.service';
   standalone: true,
   imports: [
     FfsjSpinnerComponent,
-    CommonModule
+    CommonModule,
+    ZXingScannerModule
   ],
   templateUrl: './gestor-asistencia.component.html',
   styleUrl: './gestor-asistencia.component.scss'
 })
 export class GestorAsistenciaComponent {
+
+  formatsEnabled: BarcodeFormat[] = [BarcodeFormat.QR_CODE];
+  scanQRMode: boolean = false;
+  qrResultString: string = '';
+  qrResultStringDecoded: string = '';
 
   private idPleno = -1;
   protected asistencias: AsistenciaPlenoFormattedModel[] = [];
@@ -32,6 +40,7 @@ export class GestorAsistenciaComponent {
     private censoService: CensoService,
     private asistenciaPlenoService: AsistenciaPlenoService,
     private plenoExtraService: PlenoExtraService,
+    private encoderService: EncoderService
   ) {}
 
   ngOnInit() {
@@ -98,6 +107,13 @@ export class GestorAsistenciaComponent {
         });
       }
     })
+  }
+
+  onCodeResult(resultString: string) {
+    this.qrResultString = resultString;
+    console.log('QR code scanned:', resultString);
+    this.qrResultStringDecoded = this.encoderService.decrypt(this.qrResultString);
+    // Aquí puedes añadir la lógica para manejar el resultado del código QR
   }
 
 }

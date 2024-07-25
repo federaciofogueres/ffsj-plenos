@@ -7,6 +7,7 @@ import { CookieService } from 'ngx-cookie-service';
 import { Asistencia, AsistenciaService, Pleno, PlenoService } from '../../../api';
 import { ValidatorsService } from '../../services/validators.service';
 import { PlenosComponent } from '../plenos/plenos.component';
+import { QrCardComponent } from '../qr-card/qr-card.component';
 
 @Component({
   selector: 'app-asistencia',
@@ -16,12 +17,15 @@ import { PlenosComponent } from '../plenos/plenos.component';
     ReactiveFormsModule,
     FormsModule,
     FfsjSpinnerComponent,
-    PlenosComponent
+    PlenosComponent,
+    QrCardComponent
   ],
   templateUrl: './asistencia.component.html',
   styleUrl: './asistencia.component.scss'
 })
 export class AsistenciaComponent {
+
+  showQr: boolean = false;
 
   idPleno: number = -1;
   idAsociado: number = -1;
@@ -70,16 +74,18 @@ export class AsistenciaComponent {
     this.asistenciaService.asistenciaIdPlenoAsociadosIdAsociadoGet(this.idPleno, this.idAsociado).subscribe({
       next: (response: any) => {
         if (response.status.status === 200) {
+          this.asistenciaAsociado = response.asistencias[0];
+          this.asistenciaAsociado.asistenciaConfirmada = Boolean(this.asistenciaAsociado.asistenciaConfirmada);
+          this.asistenciaAsociado.delegado = Boolean(this.asistenciaAsociado.delegado);
+          this.asistenciaAsociado.asistenciaConfirmadaPorSecretaria = Boolean(this.asistenciaAsociado.asistenciaConfirmadaPorSecretaria);
           if (response.asistencias[0].asistenciaConfirmada === 0) {
-            this.asistenciaAsociado = response.asistencias[0];
-            this.asistenciaAsociado.asistenciaConfirmada = Boolean(this.asistenciaAsociado.asistenciaConfirmada);
-            this.asistenciaAsociado.delegado = Boolean(this.asistenciaAsociado.delegado);
-            this.asistenciaAsociado.asistenciaConfirmadaPorSecretaria = Boolean(this.asistenciaAsociado.asistenciaConfirmadaPorSecretaria);
             this.loadInfoPleno();
             this.loading = false;
           } else {
-            this.ffsjAlertService.success('Asistencia confirmada');
-            this.route.navigateByUrl('/plenos/' + this.idPleno);
+            this.showQr = true;
+            this.loading = false;
+            // this.ffsjAlertService.success('Asistencia confirmada');
+            // this.route.navigateByUrl('/plenos/' + this.idPleno);
           }
         }
       },
