@@ -1,3 +1,4 @@
+import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { FfsjAlertService, FfsjSpinnerComponent } from 'ffsj-web-components';
 import { CookieService } from 'ngx-cookie-service';
@@ -19,7 +20,8 @@ export interface AsistenciaModel {
   selector: 'app-gestor-asistencia',
   standalone: true,
   imports: [
-    FfsjSpinnerComponent
+    FfsjSpinnerComponent,
+    CommonModule
   ],
   templateUrl: './gestor-asistencia.component.html',
   styleUrl: './gestor-asistencia.component.scss'
@@ -49,6 +51,7 @@ export class GestorAsistenciaComponent {
   }
 
   async loadAsistencia() {
+    this.loading = true;
     try {
       const data = await firstValueFrom(this.asistenciaService.plenosIdPlenoAsistenciaGet(this.idPleno));
       if (data.status.status === 200 && data.asistencias.length > 0) {
