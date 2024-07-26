@@ -115,6 +115,8 @@ export class GestorAsistenciaComponent {
             return a;
           });
         } else {
+          console.log(this.consultasPlenos);
+          
           if (this.fromQr && asistenciaBody.asistenciaConfirmadaPorSecretaria) {
             // Abrir el diálogo
             const dialogRef = this.dialog.open(ConsultasDialogComponent, {
@@ -160,11 +162,20 @@ export class GestorAsistenciaComponent {
   }
 
   onCodeResult(resultString: string) {
+    this.loading = true;
+    this.scanQRMode = false;
     this.qrResultString = resultString;
     console.log('QR code scanned:', resultString);
+    
+    let resultadoMocked = 'U2FsdGVkX19pyX3H04cvarT/2Be25kzyBcjWnpFFCmX7kwCL0W0f1rdHg5bxS0aN02rWl6vbnjQMAXZaZwPtEAf6nfEdqVwIp8fz1XJtAsU8pjyFkqa/6jW/Xzn1Fh6b5sTfTKMLi4eiDXWdB3T1BfdGIdVIZwm8i1xQH1Eg3cMEaI/LjWfIjn2eGFS5beR0';
+    console.log(resultadoMocked);
+    
+
     this.qrResultStringDecoded = this.encoderService.decrypt(this.qrResultString);
     let asistenciaQR: Asistencia = JSON.parse(this.qrResultStringDecoded);
     const bodyAsistencia: AsistenciaPlenoFormattedModel | undefined = this.asistencias.find((a) => a.id === asistenciaQR.idAsociado && !a.confirmadoPorSecretaria);
+    console.log(bodyAsistencia);
+    
     if (bodyAsistencia) {
       this.fromQr = true;
       this.confirmarAsistencia(bodyAsistencia);

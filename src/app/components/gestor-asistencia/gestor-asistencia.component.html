@@ -3,6 +3,11 @@
         [fullscreen]="true"
     ></lib-ffsj-spinner>
 } @else if (scanQRMode) {
+
+    <!-- <button (click)="onCodeResult('U2FsdGVkX19pyX3H04cvarT/2Be25kzyBcjWnpFFCmX7kwCL0W0f1rdHg5bxS0aN02rWl6vbnjQMAXZaZwPtEAf6nfEdqVwIp8fz1XJtAsU8pjyFkqa/6jW/Xzn1Fh6b5sTfTKMLi4eiDXWdB3T1BfdGIdVIZwm8i1xQH1Eg3cMEaI/LjWfIjn2eGFS5beR0')">
+        mocked
+    </button> -->
+
     <zxing-scanner (scanSuccess)="onCodeResult($event)"></zxing-scanner>
     <button (click)="scanQRMode = false">Stop Scanning</button>
     <span>
@@ -10,7 +15,10 @@
     </span>
 } @else {
     <div class="container">
-        <div class="d-flex">
+        <span class="h1">
+            Gestión de asistencia
+        </span>
+        <div class="d-flex gap-2">
             <button class="btn btn-primary btn-foc-naranja w-100 mb-3" (click)="loadAsistencia()">
                 Refrescar
             </button>
