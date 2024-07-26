@@ -138,6 +138,9 @@ export class GestorAsistenciaComponent {
                   error: (error) => {
                     console.error('Error al autorizar al asociado: ', error);
                     this.ffsjAlertService.danger('Error al autorizar al asociado: ' + error);
+                  },
+                  complete: () => {
+                    this.loading = false;
                   }
                 });
                 console.log('Consulta seleccionada:', result);
