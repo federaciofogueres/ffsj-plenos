@@ -1,15 +1,20 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { BarcodeFormat } from '@zxing/library';
 import { ZXingScannerModule } from '@zxing/ngx-scanner';
-import { AlertButtonType, EncoderService, FfsjAlertService, FfsjDialogAlertService, FfsjSpinnerComponent } from 'ffsj-web-components';
+import { EncoderService, FfsjAlertService, FfsjSpinnerComponent } from 'ffsj-web-components';
 import { CookieService } from 'ngx-cookie-service';
-import { Asistencia, AsistenciaService } from '../../../api';
+import { Asistencia, AsistenciaService, ConsultasService } from '../../../api';
+import { Consulta } from '../../../external-api/consulta';
 import { AsistenciaPlenoFormattedModel } from '../../models/asistencia-pleno.model';
 import { AsistenciaPlenoService } from '../../services/asistencia-pleno.service';
 import { CensoService } from '../../services/censo.service';
+import { ConsultasPlenoService } from '../../services/consultas-pleno.service';
+import { ConsultasInfoService } from '../../services/consultas.service';
 import { PlenoExtraService } from '../../services/pleno-extra.service';
+import { ConsultasDialogComponent } from '../dialogs/consultas-dialog/consultas-dialog.component';
 
 @Component({
   selector: 'app-gestor-asistencia',
@@ -28,12 +33,14 @@ export class GestorAsistenciaComponent {
   scanQRMode: boolean = false;
   qrResultString: string = '';
   qrResultStringDecoded: string = '';
-  fromQr: boolean = false;
+  fromQr: boolean = true;
 
   private idPleno = -1;
   protected asistencias: AsistenciaPlenoFormattedModel[] = [];
 
   protected loading: boolean = false;
+
+  consultasPlenos: Consulta[] = [];
 
   constructor(
     private cookieService: CookieService,
@@ -44,7 +51,10 @@ export class GestorAsistenciaComponent {
     private plenoExtraService: PlenoExtraService,
     private encoderService: EncoderService,
     private router: Router,
-    private ffsjDialogAlertService: FfsjDialogAlertService
+    private dialog: MatDialog,
+    private consultasService: ConsultasService,
+    private consultasInfoService: ConsultasInfoService,
+    private consultasPlenoService: ConsultasPlenoService
   ) {}
 
   ngOnInit() {
@@ -52,9 +62,18 @@ export class GestorAsistenciaComponent {
     this.idPleno = this.plenoExtraService.getIdPleno();
     if (this.idPleno !== -1) {
       this.loadAsistencia();
+      this.loadConsultas();
     } else {
       this.ffsjAlertService.warning('No se ha seleccionado ningún pleno');
     }
+  }
+
+  loadConsultas() {
+    this.consultasPlenoService.getConsultasFromPlenoAsync(this.idPleno!)
+    .then((consultas: any) => {
+      this.consultasPlenos = consultas;
+    })
+    .catch(error => console.error('Error in getConsultasFromPlenoAsync:', error))
   }
 
   async loadAsistencia() {
@@ -96,20 +115,32 @@ export class GestorAsistenciaComponent {
             return a;
           });
         } else {
-          if (this.fromQr) {
-            // this.router.navigateByUrl('/gestor-consultas');
-            this.ffsjDialogAlertService.openDialogAlert({
-              title: 'Autorizar usuario',
-              content: '¿Desea autorizar al usuario?',
-              buttonsAlert: [AlertButtonType.Aceptar, AlertButtonType.Cancelar],
-            }).afterClosed().subscribe({
-              next: (result) => {
-                console.log(result);
-                if (result === AlertButtonType.Aceptar) {
-                  this.router.navigateByUrl('/gestor-consultas');
-                }
+          if (this.fromQr && asistenciaBody.asistenciaConfirmadaPorSecretaria) {
+            // Abrir el diálogo
+            const dialogRef = this.dialog.open(ConsultasDialogComponent, {
+              data: { consultas: this.consultasPlenos },
+              panelClass: 'custom-dialog-container'
+            });
+
+            dialogRef.afterClosed().subscribe((result: any) => {
+              if (result) {
+                this.consultasInfoService.consultasIdConsultaAutorizadosPost({idConsulta: result.id, idAsociado: asistenciaBody.idAsociado}, result.id).subscribe({
+                  next: (data: any) => {
+                    console.log(data);
+                    if (data.status.status !== 200) {
+                      this.ffsjAlertService.danger('Error al autorizar al asociado: ' + data.status.message);
+                    } else {
+                      this.ffsjAlertService.success('Usuario autorizado correctamente');
+                    }
+                  },
+                  error: (error) => {
+                    console.error('Error al autorizar al asociado: ', error);
+                    this.ffsjAlertService.danger('Error al autorizar al asociado: ' + error);
+                  }
+                });
+                console.log('Consulta seleccionada:', result);
               }
-            })
+            });
           }
           this.ffsjAlertService.success('Asistencia confirmada correctamente');
         }
@@ -133,7 +164,7 @@ export class GestorAsistenciaComponent {
     console.log('QR code scanned:', resultString);
     this.qrResultStringDecoded = this.encoderService.decrypt(this.qrResultString);
     let asistenciaQR: Asistencia = JSON.parse(this.qrResultStringDecoded);
-    const bodyAsistencia: AsistenciaPlenoFormattedModel | undefined = this.asistencias.find((a) => a.id === asistenciaQR.idAsociado);
+    const bodyAsistencia: AsistenciaPlenoFormattedModel | undefined = this.asistencias.find((a) => a.id === asistenciaQR.idAsociado && !a.confirmadoPorSecretaria);
     if (bodyAsistencia) {
       this.fromQr = true;
       this.confirmarAsistencia(bodyAsistencia);

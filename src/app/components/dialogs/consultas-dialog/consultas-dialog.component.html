@@ -1,0 +1,22 @@
+<div class="container">
+    <h1 mat-dialog-title>Autorizar usuario</h1>
+    <span>
+        Selecciona la consulta que deseas autorizar para el usuario
+    </span>
+    <div mat-dialog-content>
+        <mat-form-field>
+        <mat-label>Consulta</mat-label>
+        <mat-select [(value)]="selectedConsulta">
+            @for (consulta of data.consultas; track $index) {
+                <mat-option [value]="consulta">
+                    {{consulta.titulo}}
+                </mat-option>
+            }
+        </mat-select>
+        </mat-form-field>
+    </div>
+    <div mat-dialog-actions>
+        <button mat-button (click)="onCancel()">Cancelar</button>
+        <button mat-button (click)="onConfirm()">Confirmar</button>
+    </div>
+</div>

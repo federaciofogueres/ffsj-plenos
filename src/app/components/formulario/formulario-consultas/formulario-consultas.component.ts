@@ -5,6 +5,7 @@ import { FfsjSpinnerComponent } from 'ffsj-web-components';
 import { catchError, forkJoin, of } from 'rxjs';
 import { ConsultasService, Pleno } from '../../../../api';
 import { Consulta } from '../../../../external-api/consulta';
+import { ConsultasPlenoService } from '../../../services/consultas-pleno.service';
 import { ConsultasInfoService } from '../../../services/consultas.service';
 
 @Component({
@@ -33,7 +34,8 @@ export class FormularioConsultasComponent {
   constructor(
     private fb: FormBuilder,
     private consultasInfoService: ConsultasInfoService,
-    private consultasService: ConsultasService
+    private consultasService: ConsultasService,
+    private consultasPlenoService: ConsultasPlenoService
   ) { }
 
   ngOnInit(): void {
@@ -44,7 +46,11 @@ export class FormularioConsultasComponent {
   async loadInfo() {
     await Promise.all([
       this.getAllConsultasAsync().catch(error => console.error('Error in getAllConsultasAsync:', error)),
-      this.getConsultasFromPlenoAsync().catch(error => console.error('Error in getConsultasFromPlenoAsync:', error))
+      this.consultasPlenoService.getConsultasFromPlenoAsync(this.pleno!.id)
+      .then((consultas: any) => {
+        this.consultasGuardadas = consultas;
+      })
+      .catch(error => console.error('Error in getConsultasFromPlenoAsync:', error))
     ]).finally(() => this.loading = false);
   }
   
@@ -59,44 +65,6 @@ export class FormularioConsultasComponent {
         error: (error) => {
           console.error(error);
           reject(error);
-        }
-      });
-    });
-  }
-  
-  private async getConsultasFromPlenoAsync(): Promise<void> {
-    return new Promise((resolve, reject) => {
-      this.consultasService.consultasIdGet(this.pleno!.id).subscribe({
-        next: async (response: any) => {
-          console.log(response);
-          this.consultasGuardadas = [];
-          const consultasPromises = response.consultas.map((consulta: any) => 
-            new Promise((resolveConsulta, rejectConsulta) => {
-              this.consultasInfoService.consultasIdGet(consulta.idConsulta).subscribe({
-                next: (responseConsulta: any) => {
-                  console.log(responseConsulta);
-                  this.consultasGuardadas.push(responseConsulta.consulta);
-                  resolveConsulta(null); // Resuelve la promesa interna
-                },
-                error: (errorConsulta) => {
-                  console.error(errorConsulta);
-                  rejectConsulta(errorConsulta); // Rechaza la promesa interna
-                }
-              });
-            })
-          );
-  
-          // Espera a que todas las promesas del array se resuelvan
-          Promise.all(consultasPromises).then(() => {
-            resolve(); // Resuelve la promesa externa una vez que todas las consultas están cargadas
-          }).catch((error) => {
-            console.error('Error loading consultas:', error);
-            reject(error); // Rechaza la promesa externa si alguna consulta falla
-          });
-        },
-        error: (error) => {
-          console.error(error);
-          reject(error); // Rechaza la promesa externa si la llamada inicial falla
         }
       });
     });
