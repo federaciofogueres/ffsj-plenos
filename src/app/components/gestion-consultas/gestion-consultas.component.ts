@@ -2,6 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { FfsjAlertService, FfsjSpinnerComponent } from 'ffsj-web-components';
 import { catchError, forkJoin, from, switchMap, tap, throwError } from 'rxjs';
+import * as XLSX from 'xlsx';
 import { ConsultasService } from '../../../api';
 import { Consulta } from '../../../external-api/consulta';
 import { AsistenciaPlenoFormattedModel } from '../../models/asistencia-pleno.model';
@@ -77,7 +78,7 @@ export class GestionConsultasComponent {
       })
     );
   }
-  
+
   getConsultas() {
     this.consultas = [];
     return this.consultasService.consultasIdGet(this.idPleno).pipe(
@@ -161,6 +162,31 @@ export class GestionConsultasComponent {
       },
       error: (error) => {
         this.ffsjAlertService.danger('Error al eliminar la autorización: ' + error);
+      }
+    });
+  }
+
+  handleFile(event: any) {
+    const file = event.target.files[0];
+    const reader = new FileReader();
+    reader.onload = async (e: any) => {
+      const bstr = e.target.result;
+      const wb = XLSX.read(bstr, {type: 'binary'});
+      const wsname = wb.SheetNames[0];
+      const ws = wb.Sheets[wsname];
+      const data = XLSX.utils.sheet_to_json(ws, {header: 1});
+      this.processExcelData(data);
+    };
+    reader.readAsBinaryString(file);
+  }
+  
+  processExcelData(data: any[]) {
+    data.forEach((row) => {
+      if (row[0]) { 
+        const autorizado = this.asistencias.find(asociado => asociado.nif === row[0]);
+        if (autorizado) {
+          this.autorizar(autorizado);
+        }
       }
     });
   }

@@ -4,9 +4,18 @@
     ></lib-ffsj-spinner>
 } @else {
     <div class="container">
-        <button class="btn btn-primary btn-foc-naranja w-100 mb-3" (click)="loadInfoConsulta()">
-            Refrescar
-        </button>
+        <span class="h3">
+            Usuarios autorizados en las votaciones
+        </span>
+        <div class="d-flex justify-content-between">
+            <button class="btn btn-primary btn-foc-naranja mb-3" (click)="loadInfoConsulta()">
+                Refrescar
+            </button>
+            <button class="btn btn-primary btn-foc-rojo" (click)="fileInput.click()">
+                <i class="bi bi-cloud-arrow-up-fill me-2"></i>Subir Excel
+            </button>
+        </div>
+        <input #fileInput style="display: none" type="file" (change)="handleFile($event)" multiple="false" />
         <div class="d-flex flex-column gap-2">
             <div class="form-floating">
                 <select class="form-select" id="floatingSelect" aria-label="Floating label select example" (change)="changeSelected($event)">
