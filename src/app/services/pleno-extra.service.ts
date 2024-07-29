@@ -24,7 +24,7 @@ export class PlenoExtraService {
       informacion_extra: '',
       firma: ''
     };
-    puntos: PuntoOrdenDelDia[] = [];
+    private puntos: PuntoOrdenDelDia[] = [];
 
     constructor(
         private cookieService: CookieService,
@@ -37,6 +37,10 @@ export class PlenoExtraService {
 
     private loadPlenoFromCookies() {
         this.idPleno = this.cookieService.get('idPleno') ? parseInt(this.cookieService.get('idPleno')) : -1;
+    }
+
+    getPuntosFromOrdenDia() {
+        return this.ordenDia.puntos;
     }
 
     getIdPleno() {
@@ -57,6 +61,7 @@ export class PlenoExtraService {
     }
 
     async loadPlenoInfo(): Promise<{ pleno: Pleno, ordenDia: OrdenDiaModel, puntos: PuntoOrdenDelDia[] }> {
+        this.loadPlenoFromCookies();
         try {
             const plenoResponse: any = await this.plenoService.plenoIdGet(this.idPleno).toPromise();
             this.pleno = plenoResponse!.plenos[0];
@@ -79,8 +84,8 @@ export class PlenoExtraService {
             return { pleno: this.pleno, ordenDia: this.ordenDia, puntos: this.puntos };
         } catch (error) {
             console.log('Error:', error);
-            throw error;
         }
+        return { pleno: this.pleno, ordenDia: this.ordenDia, puntos: this.puntos };
     }
 
     private async loadAllInfoFromPuntos(puntos: PuntoOrdenDiaModel[]) {

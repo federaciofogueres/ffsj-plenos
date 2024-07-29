@@ -57,6 +57,9 @@ export class PlenoComponent {
             this.pleno = response.pleno;
             this.puntos = response.puntos;
             this.ordenDia = response.ordenDia;
+          }).catch((error) => {
+          }).finally(() => {
+            this.loading = false;
           });
         }
       },

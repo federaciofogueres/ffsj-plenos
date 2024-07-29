@@ -1,18 +1,27 @@
 //@ts-nocheck
-import { CanvasJS } from "@canvasjs/angular-charts"
-import { OpcionesRespuestaResult } from "src/api";
-import { ChangeDetectorRef, Component, ElementRef, Input, QueryList, ViewChildren, ViewEncapsulation, HostListener } from '@angular/core';
+import { ChangeDetectorRef, Component, ElementRef, HostListener, Input, QueryList, ViewChildren, ViewEncapsulation } from '@angular/core';
+import { CanvasJSAngularChartsModule } from "@canvasjs/angular-charts";
 
 import { Subscription } from 'rxjs';
 
-CanvasJS.addColorSet("futurShades",
-[//colorSet Array
-    "#0033A0",
-    "#00C1D5",
-    "#F1B434",
-]);
+export interface OpcionesRespuestaResult { 
+    idOpcion?: string;
+    opcion?: string;
+    votos?: number;
+}
+
+// CanvasJS.addColorSet("futurShades",
+// [//colorSet Array
+//     "#0033A0",
+//     "#00C1D5",
+//     "#F1B434",
+// ]);
 @Component({
     selector: 'app-grafico',
+    standalone: true,
+    imports: [
+        CanvasJSAngularChartsModule
+    ],
     templateUrl: './grafico.component.html',
     styleUrls: ['./grafico.component.scss'],
     encapsulation: ViewEncapsulation.None
@@ -216,6 +225,8 @@ export class GraficoComponent {
             //console.log(this.respuestas);
             this.totalVotos = 1578;
             //for(let respuesta of this.respuestas) {
+            console.log(this.fakeResult);
+            
             for(let respuesta of this.fakeResult) {
                 if(respuesta.votos > 0){
                     let percentaje = respuesta.votos / this.totalVotos * 100;
