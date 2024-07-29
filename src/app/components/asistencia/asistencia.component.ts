@@ -78,14 +78,17 @@ export class AsistenciaComponent {
           this.asistenciaAsociado.asistenciaConfirmada = Boolean(this.asistenciaAsociado.asistenciaConfirmada);
           this.asistenciaAsociado.delegado = Boolean(this.asistenciaAsociado.delegado);
           this.asistenciaAsociado.asistenciaConfirmadaPorSecretaria = Boolean(this.asistenciaAsociado.asistenciaConfirmadaPorSecretaria);
-          if (response.asistencias[0].asistenciaConfirmada === 0) {
+          if (!response.asistencias[0].asistenciaConfirmada) {
             this.loadInfoPleno();
             this.loading = false;
           } else {
-            this.showQr = true;
-            this.loading = false;
-            // this.ffsjAlertService.success('Asistencia confirmada');
-            // this.route.navigateByUrl('/plenos/' + this.idPleno);
+            if (response.asistencias[0].asistenciaConfirmadaPorSecretaria) {
+              this.ffsjAlertService.success('Asistencia confirmada');
+              this.route.navigateByUrl('/plenos/' + this.idPleno);
+            } else {
+              this.showQr = true;
+              this.loading = false;
+            }
           }
         }
       },
