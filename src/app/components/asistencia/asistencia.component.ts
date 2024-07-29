@@ -140,7 +140,8 @@ export class AsistenciaComponent {
         if (resposne.status.status === 200) {
           console.log('Asistencia confirmada');
           this.ffsjAlertService.success('Asistencia confirmada correctamente');
-          this.route.navigateByUrl('/plenos');
+          // this.route.navigateByUrl('/plenos');
+          this.showQr = true;
         }
       },
       error: (error) => {
