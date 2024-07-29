@@ -6,6 +6,8 @@ import { GestionConsultasComponent } from './components/gestion-consultas/gestio
 import { GestorAsistenciaComponent } from './components/gestor-asistencia/gestor-asistencia.component';
 import { HomeComponent } from './components/home/home.component';
 import { LoginComponent } from './components/login/login.component';
+import { AsambleaComponent } from './components/paneles/asamblea/asamblea.component';
+import { ResultadosComponent } from './components/paneles/resultados/resultados.component';
 import { PlenoComponent } from './components/pleno/pleno.component';
 import { PlenosComponent } from './components/plenos/plenos.component';
 import { VotacionesComponent } from './components/votaciones/votaciones.component';
@@ -23,6 +25,8 @@ export const routes: Routes = [
     { path: 'admin', component: AdministracionComponent, canActivate: [AuthGuard, AdminGuard] },
     { path: 'gestor-asistencia', component: GestorAsistenciaComponent, canActivate: [AuthGuard, AdminGuard] },
     { path: 'gestor-consultas', component: GestionConsultasComponent, canActivate: [AuthGuard, AdminGuard] },
+    { path: 'gestion-asamblea', component: AsambleaComponent, canActivate: [AuthGuard, AdminGuard] },
+    { path: 'resultados', component: ResultadosComponent, canActivate: [AuthGuard, AdminGuard] },
     { path: 'login', component: LoginComponent },
     { path: '**', component: HomeComponent, canActivate: [AuthGuard] },
 ];

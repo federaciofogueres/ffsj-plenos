@@ -1,0 +1,27 @@
+@if (loading) {
+    <lib-ffsj-spinner
+        [fullscreen]="true"
+    ></lib-ffsj-spinner>
+} @else {
+    <div class="container">
+        @if (idPleno === -1) {
+            <div class="d-flex flex-column">
+                <span class="h6 mb-3">
+                    Elige un pleno para ver su información o editarlo
+                </span>
+                <app-plenos
+                    [seleccionaPleno]="true"
+                    (plenoSeleccionado)="plenoSeleccionado($event)"
+                ></app-plenos>
+            </div>
+        }
+        @else {
+            <button class="btn btn-foc-rojo" (click)="router.navigateByUrl('resultados')">
+                Resultados
+            </button>
+            <app-orden-dia
+                [ordenDia]="ordenDia"
+            ></app-orden-dia>
+        }
+    </div>
+}
