@@ -6,6 +6,7 @@ import { ConsultasService } from '../../../api';
 import { Consulta } from '../../../external-api/consulta';
 import { Votacion } from '../../models/votacion.model';
 import { ConsultasInfoService } from '../../services/consultas.service';
+import { PlenoExtraService } from '../../services/pleno-extra.service';
 
 @Component({
   selector: 'app-votaciones',
@@ -50,6 +51,7 @@ export class VotacionesComponent {
     private cookieService: CookieService,
     private consultasService: ConsultasService,
     private consultaInfoService: ConsultasInfoService,
+    private plenoExtraService: PlenoExtraService,
     private route: Router
   ) {}
 
@@ -63,13 +65,30 @@ export class VotacionesComponent {
     }
   }
 
+  async checkAutorizado(idConsulta: number): Promise<boolean> {
+    try {
+        const response: any = await this.consultaInfoService.consultasIdConsultaAutorizadosIdAsociadoGet(idConsulta, this.plenoExtraService.getIdUsuario()).toPromise();
+        if (response!.status.status === 200) {
+            return response!.autorizaciones.some((auth: any) => auth.idConsulta === idConsulta);
+        }
+        return false;
+    } catch (error) {
+        console.error('Error checking authorization:', error);
+        return false;
+    }
+}
+
   getVotaciones() {
     this.consultasService.consultasIdGet(this.idPleno).subscribe({
       next: (response: any) => {
         if (response.status.status === 200) {
           // Convertir cada llamada en una promesa y usar Promise.all para esperar a todas
           Promise.all(response.consultas.map((consulta: any) => {
-            return new Promise<void>((resolve, reject) => {
+            return new Promise<void>(async (resolve, reject) => {
+              if (!await this.checkAutorizado(consulta.idConsulta)) {
+                resolve();
+                return;
+              }
               this.consultaInfoService.consultasIdGet(consulta.idConsulta).subscribe({
                 next: (response: any) => {
                   if (response.status.status === 200) {

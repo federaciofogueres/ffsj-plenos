@@ -21,6 +21,7 @@ import { Inject, Injectable, Optional } from '@angular/core';
 import { Observable } from 'rxjs';
 import { BASE_PATH, Configuration, ResponseConsultas } from '../../api';
 import { Autorizacion } from '../../external-api/autorizacion';
+import { ResponseAutorizacion } from '../../external-api/responseAutorizacion';
 import { ResponseAutorizaciones } from '../../external-api/responseAutorizaciones';
 import { ResponseConsulta } from '../../external-api/responseConsulta';
 import { ResponseStatus } from '../../external-api/responseStatus';
@@ -287,5 +288,58 @@ export class ConsultasInfoService {
             }
         );
     }
+
+    /**
+     * Obtener una autorización de usuario por ID
+     * 
+     * @param idConsulta 
+     * @param idAsociado 
+     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
+     * @param reportProgress flag to report request and response progress.
+     */
+        public consultasIdConsultaAutorizadosIdAsociadoGet(idConsulta: number, idAsociado: number, observe?: 'body', reportProgress?: boolean): Observable<ResponseAutorizacion>;
+        public consultasIdConsultaAutorizadosIdAsociadoGet(idConsulta: number, idAsociado: number, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<ResponseAutorizacion>>;
+        public consultasIdConsultaAutorizadosIdAsociadoGet(idConsulta: number, idAsociado: number, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<ResponseAutorizacion>>;
+        public consultasIdConsultaAutorizadosIdAsociadoGet(idConsulta: number, idAsociado: number, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
+    
+            if (idConsulta === null || idConsulta === undefined) {
+                throw new Error('Required parameter idConsulta was null or undefined when calling consultasIdConsultaAutorizadosIdAsociadoGet.');
+            }
+    
+            if (idAsociado === null || idAsociado === undefined) {
+                throw new Error('Required parameter idAsociado was null or undefined when calling consultasIdConsultaAutorizadosIdAsociadoGet.');
+            }
+    
+            let headers = this.defaultHeaders;
+    
+            // authentication (bearerAuth) required
+            if (this.configuration.accessToken) {
+                const accessToken = typeof this.configuration.accessToken === 'function'
+                    ? this.configuration.accessToken()
+                    : this.configuration.accessToken;
+                headers = headers.set('Authorization', 'Bearer ' + accessToken);
+            }
+            // to determine the Accept header
+            let httpHeaderAccepts: string[] = [
+                'application/json'
+            ];
+            const httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
+            if (httpHeaderAcceptSelected != undefined) {
+                headers = headers.set('Accept', httpHeaderAcceptSelected);
+            }
+    
+            // to determine the Content-Type header
+            const consumes: string[] = [
+            ];
+    
+            return this.httpClient.request<ResponseAutorizacion>('get',`${this.basePath}/consultas/${encodeURIComponent(String(idConsulta))}/autorizados/${encodeURIComponent(String(idAsociado))}`,
+                {
+                    withCredentials: this.configuration.withCredentials,
+                    headers: headers,
+                    observe: observe,
+                    reportProgress: reportProgress
+                }
+            );
+        }
 
 }
