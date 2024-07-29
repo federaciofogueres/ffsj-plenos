@@ -15,3 +15,4 @@ export * from './responsePuntosOrdenDelDia';
 export * from './responseVotaciones';
 export * from './status';
 export * from './votacion';
+export * from './voto';
