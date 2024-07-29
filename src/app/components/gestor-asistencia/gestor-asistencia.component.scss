@@ -3,3 +3,8 @@
 .card-header{
     background-color: $salmon;
 }
+
+.container-asistencias {
+    height: calc(100vh - 230px);
+    overflow: auto;
+}

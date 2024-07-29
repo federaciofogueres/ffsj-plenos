@@ -26,7 +26,7 @@
                 Escanear QR
             </button>
         </div>
-        <div class="d-flex flex-column gap-2">
+        <div class="d-flex flex-column gap-2 container-asistencias">
             @for (item of asistencias; track $index) {
                 @if (item.confirmadoPorUsuario) {
                     <div class="card">
