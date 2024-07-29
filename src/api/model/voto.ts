@@ -11,7 +11,7 @@
  */
 
 export interface Voto { 
-    idAsociado?: number;
+    idAsociado: number;
     favor: boolean;
     contra: boolean;
     blanco: boolean;

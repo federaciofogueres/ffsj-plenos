@@ -1,0 +1,26 @@
+<div class="container">
+    <h1 mat-dialog-title>Votación {{data.votacion.infoExtra}}</h1>
+    <div mat-dialog-content>
+        <span>
+            Selecciona tu voto
+        </span>
+        <div class="d-flex gap-2">
+            <div class="container-votacion d-flex flex-column gap-2 align-items-center" (click)="onConfirm(-1)">
+                <div class="card-votacion card-red"></div>
+                <span>En contra</span>
+            </div>
+            <div class="container-votacion d-flex flex-column gap-2 align-items-center" (click)="onConfirm(0)">
+                <div class="card-votacion card-white"></div>
+                <span>Abstención</span>
+            </div>
+            <div class="container-votacion d-flex flex-column gap-2 align-items-center" (click)="onConfirm(1)">
+                <div class="card-votacion card-green"></div>
+                <span>A favor</span>
+            </div>
+        </div>
+    </div>
+    <!-- <div mat-dialog-actions>
+        <button mat-button (click)="onCancel()">Cancelar</button>
+        <button mat-button (click)="onConfirm()">Confirmar</button>
+    </div> -->
+</div>
