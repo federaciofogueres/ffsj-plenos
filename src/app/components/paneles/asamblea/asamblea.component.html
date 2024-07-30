@@ -19,9 +19,6 @@
                 <button class="btn btn-foc-rojo" (click)="showMode = 'resultados'">
                     Resultados votaciones
                 </button>
-                <button class="btn btn-foc-rojo" (click)="showMode = 'resultados'">
-                    Resultados urna cerrada
-                </button>
                 <button class="btn btn-foc-rojo" (click)="showMode = 'asistencia'">
                     Informe de asistencia
                 </button>
@@ -33,6 +30,10 @@
             <app-resultados
                 (close)="showMode = 'asamblea'"
             ></app-resultados>
+        } @else if(showMode === 'asistencia'){
+            <app-informe-asistencia
+                (close)="showMode = 'asamblea'"
+            ></app-informe-asistencia>
         }
     </div>
 }

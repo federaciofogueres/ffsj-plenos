@@ -6,6 +6,7 @@ import { OrdenDiaModel, PuntoOrdenDiaModel } from '../../../models/orden-dia.mod
 import { PlenoExtraService } from '../../../services/pleno-extra.service';
 import { OrdenDiaComponent } from '../../orden-dia/orden-dia.component';
 import { PlenosComponent } from '../../plenos/plenos.component';
+import { InformeAsistenciaComponent } from "../informe-asistencia/informe-asistencia.component";
 import { ResultadosComponent } from "../resultados/resultados.component";
 
 @Component({
@@ -15,7 +16,8 @@ import { ResultadosComponent } from "../resultados/resultados.component";
     FfsjSpinnerComponent,
     PlenosComponent,
     OrdenDiaComponent,
-    ResultadosComponent
+    ResultadosComponent,
+    InformeAsistenciaComponent
 ],
   templateUrl: './asamblea.component.html',
   styleUrl: './asamblea.component.scss'

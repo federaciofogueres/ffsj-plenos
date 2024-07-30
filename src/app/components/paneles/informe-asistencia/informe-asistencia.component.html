@@ -1,1 +1,66 @@
-<p>informe-asistencia works!</p>
+@if (loading) {
+    <lib-ffsj-spinner
+        [fullscreen]="true"
+    ></lib-ffsj-spinner>
+} @else {
+    <div class="container">
+        @if (showConfirmed) {
+            <div class="d-flex justify-content-between">
+                <span class="h2">
+                    Asistentes al pleno confirmados - {{asistentesConfirmados.length}}
+                </span>
+                <button class="btn btn-foc-rojo" (click)="showConfirmed = false">
+                    Ver sin confirmar
+                </button>
+            </div>
+            @for (asistente of asistentesConfirmados; track $index) {
+                <div class="d-flex flex-column">
+                    <span class="h6">
+                        {{asistente.nombre}}, {{asistente.apellidos}}
+                    </span>
+                </div>
+            }
+        } @else {
+            <div class="d-flex justify-content-between">
+                <span class="h2">
+                    Asistentes al pleno sin confirmar - {{asistentesSinConfirmar.length}}
+                </span>
+                <button class="btn btn-foc-rojo" (click)="showConfirmed = true">
+                    Ver confirmados
+                </button>
+            </div>
+            @for (asistente of asistentesSinConfirmar; track $index) {
+                <div class="d-flex flex-column">
+                    <span class="h6">
+                        {{asistente.nombre}}, {{asistente.apellidos}}
+                    </span>
+                </div>
+            }
+        }
+        <!-- <span class="h2">
+            Asistentes al pleno
+        </span>
+        @if (showConfirmed) {
+            <button class="btn btn-foc-rojo" (click)="showConfirmed = false">
+                Ver sin confirmar
+            </button>
+        } @else {
+            <button class="btn btn-foc-rojo" (click)="showConfirmed = true">
+                Ver confirmados
+            </button>
+        }
+        @if (showConfirmed) {
+            @for (asistente of asistentesConfirmados; track $index) {
+                <div class="d-flex flex-column">
+                    {{asistente.nombre}}, {{asistente.apellidos}}
+                </div>
+            }
+        } @else {
+            @for (asistente of asistentesSinConfirmar; track $index) {
+                <div class="d-flex flex-column">
+                    {{asistente.nombre}}, {{asistente.apellidos}}
+                </div>
+            }
+        } -->
+    </div>
+}
