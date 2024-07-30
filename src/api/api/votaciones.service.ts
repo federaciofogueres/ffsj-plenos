@@ -23,6 +23,7 @@ import { Observable } from 'rxjs';
 import { ResponseVotaciones } from '../model/responseVotaciones';
 import { Status } from '../model/status';
 import { Votacion } from '../model/votacion';
+import { Votantes } from '../model/votantes';
 import { Voto } from '../model/voto';
 
 import { Configuration } from '../configuration';
@@ -310,6 +311,54 @@ export class VotacionesService {
         return this.httpClient.request<Status>('put',`${this.basePath}/votaciones/${encodeURIComponent(String(id))}`,
             {
                 body: body,
+                withCredentials: this.configuration.withCredentials,
+                headers: headers,
+                observe: observe,
+                reportProgress: reportProgress
+            }
+        );
+    }
+
+    /**
+     * Obtener votantes de una votación por ID de votación
+     * 
+     * @param id 
+     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
+     * @param reportProgress flag to report request and response progress.
+     */
+    public votacionesIdVotantesGet(id: number, observe?: 'body', reportProgress?: boolean): Observable<Votantes>;
+    public votacionesIdVotantesGet(id: number, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<Votantes>>;
+    public votacionesIdVotantesGet(id: number, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<Votantes>>;
+    public votacionesIdVotantesGet(id: number, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
+
+        if (id === null || id === undefined) {
+            throw new Error('Required parameter id was null or undefined when calling votacionesIdVotantesGet.');
+        }
+
+        let headers = this.defaultHeaders;
+
+        // authentication (bearerAuth) required
+        if (this.configuration.accessToken) {
+            const accessToken = typeof this.configuration.accessToken === 'function'
+                ? this.configuration.accessToken()
+                : this.configuration.accessToken;
+            headers = headers.set('Authorization', 'Bearer ' + accessToken);
+        }
+        // to determine the Accept header
+        let httpHeaderAccepts: string[] = [
+            'application/json'
+        ];
+        const httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
+        if (httpHeaderAcceptSelected != undefined) {
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
+        }
+
+        // to determine the Content-Type header
+        const consumes: string[] = [
+        ];
+
+        return this.httpClient.request<Votantes>('get',`${this.basePath}/votaciones/${encodeURIComponent(String(id))}/votantes`,
+            {
                 withCredentials: this.configuration.withCredentials,
                 headers: headers,
                 observe: observe,
