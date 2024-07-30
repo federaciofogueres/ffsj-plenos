@@ -1,3 +1,4 @@
+import { CommonModule } from '@angular/common';
 import { Component, Input } from '@angular/core';
 import { Chart, registerables } from 'chart.js';
 import { FfsjSpinnerComponent } from 'ffsj-web-components';
@@ -26,7 +27,8 @@ export interface OpcionesRespuestaResult {
   standalone: true,
   imports: [
     GraficoComponent,
-    FfsjSpinnerComponent
+    FfsjSpinnerComponent,
+    CommonModule
   ],
   templateUrl: './resultados.component.html',
   styleUrl: './resultados.component.scss'
@@ -46,11 +48,14 @@ export class ResultadosComponent {
 
   @Input() puntos: PuntoOrdenDiaModel[] = [];
 
-  votacionesResults = {
+  votacionesResults: VotacionResult = {
     votosTotales: 0,
-    presentes: 0,
-    opciones: []
+    opciones: [],
+    votacionTitulo: '',
+    votacionId: 0
   }
+
+  showVotes: any[] = [];
 
   chart: Chart | undefined;
   chartData: any = {
@@ -101,10 +106,43 @@ export class ResultadosComponent {
     
   }
 
+  agruparVotantesPorIdAsociacion(votantes: any[]): any {
+    const agrupados: any = {};
+    votantes.forEach((votante: any) => {
+      const idAsociacion = votante.idAsociacion;
+      if (!agrupados[idAsociacion]) {
+        agrupados[idAsociacion] = [];
+      }
+      agrupados[idAsociacion].push(votante);
+    });
+    return agrupados;
+  }
+
+  async loadResultFromVotacion(votacion: Votacion) {
+    this.getPresentes();
+    const votantes: any = await this.getVotantes(votacion.id);
+    this.votacionesResults.votacionTitulo = votacion.infoExtra;
+    this.votacionesResults.votacionId = votacion.id;
+    this.votacionesResults.votosTotales = votacion.favor + votacion.contra + votacion.blanco;
+    if (votantes.status.status === 200) {
+      this.votacionesResults.opciones = [];
+      const keys = Object.keys(votantes.votantes);
+      for (let i = 0; i < keys.length; i++) {
+        const key = keys[i];
+        let opcion: OpcionesRespuestaResult = {
+          idOpcion: i.toString(),
+          opcion: key,
+          votos: votantes.votantes[key].length,
+          votantes: this.agruparVotantesPorIdAsociacion(votantes.votantes[key])
+        }
+        this.votacionesResults.opciones.push(opcion);
+      }
+    }
+  }
+
   showResults(votacion: Votacion) {
     console.log(votacion);
-    this.getPresentes();
-    this.getVotantes(votacion.id);
+    this.loadResultFromVotacion(votacion);
     this.showChart = true;
     this.chartData.labels = [];
     this.chartData.datasets = [];
@@ -156,10 +194,7 @@ export class ResultadosComponent {
   }
 
   async getVotantes(idVotacion: number) {
-    const votantes = await firstValueFrom(this.votacionesService.votacionesIdGet(idVotacion));
-    console.log(votantes);
-    
+    return await firstValueFrom(this.votacionesService.votacionesIdVotantesGet(idVotacion));
   }
-
 
 }

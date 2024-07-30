@@ -22,6 +22,28 @@
                 </span>
             }
             <canvas id="resultsChart"></canvas>
+            @if (showChart) {
+                <span class="h2 w-100 text-center">
+                    Votos
+                </span>
+                <div class="d-flex justify-content-between">
+                    @for (opcion of votacionesResults.opciones; track $index) {
+                        <button class="btn btn-foc-naranja" (click)="showVotes = opcion.votantes">
+                            {{opcion.opcion}}
+                        </button>
+                    }
+                </div>
+                @for (asociacion of showVotes | keyvalue; track $index) {
+                    <span class="h4">
+                        Asociación {{asociacion.value[0]?.nombreAsociacion || 'Sin Asociación'}}
+                    </span>
+                    @for(vote of asociacion.value; track $index) {
+                        <span>
+                            {{vote.nombre}}, {{vote.apellidos}}
+                        </span>
+                    }
+                }
+            }
         </div>
     </div>
 }
