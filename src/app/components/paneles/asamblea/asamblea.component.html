@@ -15,15 +15,23 @@
                 ></app-plenos>
             </div>
         } @else if(showMode === 'asamblea'){
-            <button class="btn btn-foc-rojo" (click)="showMode = 'resultados'">
-                Resultados
-            </button>
+            <div class="d-flex gap-3 m-3">
+                <button class="btn btn-foc-rojo" (click)="showMode = 'resultados'">
+                    Resultados votaciones
+                </button>
+                <button class="btn btn-foc-rojo" (click)="showMode = 'resultados'">
+                    Resultados urna cerrada
+                </button>
+                <button class="btn btn-foc-rojo" (click)="showMode = 'asistencia'">
+                    Informe de asistencia
+                </button>
+            </div>
             <app-orden-dia
                 [ordenDia]="ordenDia"
             ></app-orden-dia>
         } @else if(showMode === 'resultados'){
             <app-resultados
-            
+                (close)="showMode = 'asamblea'"
             ></app-resultados>
         }
     </div>

@@ -1,1 +1,14 @@
 @import '../../../../variables.scss';
+// #resultsChart {
+//     width: 60%;
+//     margin: 0 auto; /* Centra el canvas horizontalmente */
+// }
+
+.resultados-votes{
+    height: calc(100vh - 380px);
+    overflow-y: auto;
+}
+
+.votos-container {
+    min-width: 200px;
+}

@@ -5,45 +5,110 @@
 } @else {
     <div class="container">
         <div class="d-flex flex-column gap-3">
-            <div class="container-votaciones d-flex gap-2">
-                @for (votacion of votaciones; track $index) {
-                    <button class="btn btn-foc-naranja" (click)="showResults(votacion)">
-                        {{votacion.infoExtra}}
-                    </button>
-                } @empty {
-                    <span class="h6">
-                        No hay votaciones
-                    </span>
-                }
+            <div class="container-votaciones d-flex justify-content-between">
+                <div class="d-flex gap-2">
+                    @for (votacion of votaciones; track $index) {
+                        <button class="btn btn-foc-naranja" (click)="showResults(votacion)" [ngClass]="{'btn-foc-naranja': selectedVotacion !== votacion.id, 'btn-foc-rojo': selectedVotacion === votacion.id}">
+                            {{votacion.infoExtra}}
+                        </button>
+                    } @empty {
+                        <span class="h6">
+                            No hay votaciones
+                        </span>
+                    }
+                </div>
+                <div class="d-flex gap-2">
+                    @for (consulta of consultas; track $index) {
+                        <button class="btn btn-foc-naranja" (click)="showConsulta(consulta)" [ngClass]="{'btn-foc-naranja': selectedConsulta !== consulta.id, 'btn-foc-rojo': selectedConsulta === consulta.id}">
+                            {{consulta.titulo}}
+                        </button>
+                    } @empty {
+                        <span class="h6">
+                            No hay votaciones
+                        </span>
+                    }
+                </div>
+                <button class="btn btn-foc-rojo" (click)="close.emit()">
+                    Volver a la asamblea
+                </button>
             </div>
             @if (showChart) {
                 <span class="h2 w-100 text-center">
                     Votos totales: {{votosTotales}} / Presentes: {{presentes}}
                 </span>
             }
-            <canvas id="resultsChart"></canvas>
-            @if (showChart) {
-                <span class="h2 w-100 text-center">
-                    Votos
-                </span>
-                <div class="d-flex justify-content-between">
-                    @for (opcion of votacionesResults.opciones; track $index) {
-                        <button class="btn btn-foc-naranja" (click)="showVotes = opcion.votantes">
-                            {{opcion.opcion}}
-                        </button>
+            <div class="row">
+                <div class="col-12 col-md-9">
+                    <canvas id="resultsChart"></canvas>
+                </div>
+                <div class="col-12 col-md-3">
+                    @if (showChart && selectedConsulta === -1) {
+                        <div class="d-flex flex-column gap-3 votos-container">
+                            <span class="h2 w-100 text-center">
+                                Votos
+                            </span>
+                            <div class="d-flex justify-content-between">
+                                @for (opcion of votacionesResults.opciones; track $index) {
+                                    <button class="btn" [ngClass]="{'btn-foc-naranja': selectedOption !== opcion.opcion, 'btn-foc-rojo': selectedOption === opcion.opcion}" (click)="selectOption(opcion)">
+                                        {{opcion.opcion | titlecase}}
+                                    </button>
+                                }
+                            </div>
+                            <div class="d-flex flex-column gap-3 resultados-votes">
+                                @for (asociacion of showVotes | keyvalue; track $index) {
+                                    <div class="d-flex flex-column">
+                                        <span class="h4 m-0">
+                                            Asociación {{asociacion.value[0]?.nombreAsociacion || 'Sin Asociación'}}
+                                        </span>
+                                        @for(vote of asociacion.value; track $index) {
+                                            <span>
+                                                {{vote.nombre}}, {{vote.apellidos}}
+                                            </span>
+                                        }
+                                    </div>
+                                }
+                            </div>
+                        </div>
                     }
                 </div>
-                @for (asociacion of showVotes | keyvalue; track $index) {
-                    <span class="h4">
-                        Asociación {{asociacion.value[0]?.nombreAsociacion || 'Sin Asociación'}}
-                    </span>
-                    @for(vote of asociacion.value; track $index) {
-                        <span>
-                            {{vote.nombre}}, {{vote.apellidos}}
-                        </span>
-                    }
-                }
-            }
+            </div>
+            <!-- <div class="d-flex flex-md-row flex-column">
+                <div class="row">
+                    <div class="col-8">
+                        <canvas id="resultsChart"></canvas>
+                    </div>
+                    <div class="col-4">
+                        @if (showChart) {
+                            <div class="d-flex flex-column gap-3 votos-container">
+                                <span class="h2 w-100 text-center">
+                                    Votos
+                                </span>
+                                <div class="d-flex justify-content-between">
+                                    @for (opcion of votacionesResults.opciones; track $index) {
+                                        <button class="btn" [ngClass]="{'btn-foc-naranja': selectedOption !== opcion.opcion, 'btn-foc-rojo': selectedOption === opcion.opcion}" (click)="selectOption(opcion)">
+                                            {{opcion.opcion | titlecase}}
+                                        </button>
+                                    }
+                                </div>
+                                <div class="d-flex flex-column gap-3 resultados-votes">
+                                    @for (asociacion of showVotes | keyvalue; track $index) {
+                                        <div class="d-flex flex-column">
+                                            <span class="h4 m-0">
+                                                Asociación {{asociacion.value[0]?.nombreAsociacion || 'Sin Asociación'}}
+                                            </span>
+                                            @for(vote of asociacion.value; track $index) {
+                                                <span>
+                                                    {{vote.nombre}}, {{vote.apellidos}}
+                                                </span>
+                                            }
+                                        </div>
+                                    }
+                                </div>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div> -->
         </div>
     </div>
 }

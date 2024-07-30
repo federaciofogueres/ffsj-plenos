@@ -1,10 +1,13 @@
 import { CommonModule } from '@angular/common';
-import { Component, Input } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { Chart, registerables } from 'chart.js';
 import { FfsjSpinnerComponent } from 'ffsj-web-components';
 import { firstValueFrom } from 'rxjs';
-import { AsistenciaService, Consulta, ConsultasService, Votacion, VotacionesService } from '../../../../api';
+import { AsistenciaService, ConsultasService, Votacion, VotacionesService } from '../../../../api';
+import { Consulta } from '../../../../external-api/consulta';
+import { ResultadoPregunta } from '../../../../external-api/resultadoPregunta';
 import { PuntoOrdenDiaModel } from '../../../models/orden-dia.model';
+import { ConsultasInfoService } from '../../../services/consultas.service';
 import { PlenoExtraService } from '../../../services/pleno-extra.service';
 import { GraficoComponent } from '../grafico/grafico.component';
 
@@ -35,8 +38,32 @@ export interface OpcionesRespuestaResult {
 })
 export class ResultadosComponent {
 
+  @Output() close: EventEmitter<any> = new EventEmitter<any>();
+
+  colores = [
+    '#FF5733', // Rojo
+    '#33FF57', // Verde
+    '#3357FF', // Azul
+    '#FF33A1', // Rosa
+    '#FF8C33', // Naranja
+    '#33FFF5', // Cian
+    '#8D33FF', // Púrpura
+    '#FFD433', // Amarillo
+    '#33FF8C', // Verde claro
+    '#FF3333', // Rojo oscuro
+    '#33A1FF', // Azul claro
+    '#FF33D4', // Magenta
+    '#FFC300', // Amarillo oscuro (alternativa al rojo)
+    '#DAF7A6', // Verde pálido (alternativa al verde)
+    '#900C3F'  // Vino (alternativa al azul)
+  ];
+
   loading: boolean = false;
   showChart: boolean = false;
+
+  selectedOption: string = '';
+  selectedVotacion: number = -1;
+  selectedConsulta: number = -1;
 
   idOpcion = 0;
   idPleno: number = -1;
@@ -47,6 +74,8 @@ export class ResultadosComponent {
   presentes: number = 0;
 
   @Input() puntos: PuntoOrdenDiaModel[] = [];
+
+  chartsData: any[] = []; // Array para almacenar los datos de múltiples gráficos
 
   votacionesResults: VotacionResult = {
     votosTotales: 0,
@@ -67,7 +96,8 @@ export class ResultadosComponent {
     private votacionesService: VotacionesService,
     private consultasService: ConsultasService,
     private plenoExtraService: PlenoExtraService,
-    private asistenciaService: AsistenciaService
+    private asistenciaService: AsistenciaService,
+    private consultasInfoService: ConsultasInfoService
   ) {
     Chart.register(...registerables);
   }
@@ -76,14 +106,29 @@ export class ResultadosComponent {
     this.loading = true;
     this.idPleno = this.plenoExtraService.getIdPleno();
     if (this.idPleno !== -1) {
+      this.getPresentes();
       this.loadResults();
+      this.loadConsultas();
     }
   }
 
   loadConsultas() {
     this.consultasService.consultasIdGet(this.idPleno).subscribe({
       next: (consultas: any) => {
-        this.consultas = consultas.consultas;
+        console.log(consultas);
+        for (let consulta of consultas.consultas) {
+          this.consultasInfoService.consultasIdGet(consulta.idConsulta).subscribe({
+            next: (consultaInfo: any) => {
+              console.log(consultaInfo);
+              if (consultaInfo.status.status === 200) {
+                this.consultas.push(consultaInfo.consulta);
+              }
+            },
+            error: (error) => {
+              console.error(error);
+            }
+          });
+        }
       },
       error: (error) => {
         console.error(error);
@@ -101,9 +146,7 @@ export class ResultadosComponent {
         this.votaciones.push(votacion);
       })
     }
-    console.log(this.votaciones);
     this.loading = false;
-    
   }
 
   agruparVotantesPorIdAsociacion(votantes: any[]): any {
@@ -141,7 +184,7 @@ export class ResultadosComponent {
   }
 
   showResults(votacion: Votacion) {
-    console.log(votacion);
+    this.selectedVotacion = votacion.id;
     this.loadResultFromVotacion(votacion);
     this.showChart = true;
     this.chartData.labels = [];
@@ -160,15 +203,44 @@ export class ResultadosComponent {
     this.renderChart(this.chartData);
   }
 
-  // parseResultsVotaciones(texto: string, votos: number) {
-  //   let result: OpcionesRespuestaResult = {
-  //     idOpcion: this.idOpcion.toString(),
-  //     opcion: texto,
-  //     votos: votos
-  //   };
-  //   this.idOpcion++;
-  //   return result;
-  // }
+  loadResultsFromConsulta(consulta: Consulta) {
+    this.chartsData = [];
+    this.consultasInfoService.consultasIdResultadosGet(consulta.id).subscribe({
+      next: (resultados: any) => {
+        console.log(resultados);
+        if (resultados.status.status === 200) {
+          this.selectedConsulta = consulta.id;
+          this.showChart = true;
+          for(let pregunta of resultados.resultadoConsulta.resultadoPreguntas) {
+            this.prepareChart(pregunta);
+          }
+        }
+      },
+      error: (error) => {
+        console.error(error);
+      }
+    });
+  }
+
+  prepareChart(pregunta: ResultadoPregunta) {
+    this.chartData.labels = [];
+    this.chartData.datasets = [];
+    this.chartData.labels.push(`${pregunta.titulo}`);
+    this.votosTotales = 0;
+    for (let i = 0; i < pregunta.resultadoOpciones!.length; i++) {
+      let resultado = pregunta.resultadoOpciones![i];
+      this.votosTotales += resultado.votos;
+      this.chartData.datasets.push(
+          { label: resultado.respuesta, data: [resultado.votos], backgroundColor: this.colores[i] },
+      );
+  }
+    this.renderChart(this.chartData);
+  }
+
+  showConsulta(consulta: Consulta){
+    this.selectedConsulta = consulta.id;
+    this.loadResultsFromConsulta(consulta);
+  }
 
   renderChart(data: any) {
     const ctx = document.getElementById('resultsChart') as HTMLCanvasElement;
@@ -195,6 +267,11 @@ export class ResultadosComponent {
 
   async getVotantes(idVotacion: number) {
     return await firstValueFrom(this.votacionesService.votacionesIdVotantesGet(idVotacion));
+  }
+
+  selectOption(opcion: any): void {
+    this.selectedOption = opcion.opcion;
+    this.showVotes = opcion.votantes;
   }
 
 }
