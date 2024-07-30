@@ -226,8 +226,8 @@ export class GraficoComponent {
             this.totalVotos = 1578;
             //for(let respuesta of this.respuestas) {
             console.log(this.fakeResult);
-            
-            for(let respuesta of this.fakeResult) {
+            this.totalVotos = 200;
+            for(let respuesta of this.fakeResult[0].preguntas[0].opcionesRespuesta) {
                 if(respuesta.votos > 0){
                     let percentaje = respuesta.votos / this.totalVotos * 100;
                     let option: any = { 

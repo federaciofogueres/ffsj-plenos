@@ -14,13 +14,17 @@
                     (plenoSeleccionado)="plenoSeleccionado($event)"
                 ></app-plenos>
             </div>
-        } @else {
-            <button class="btn btn-foc-rojo" (click)="router.navigateByUrl('resultados')">
+        } @else if(showMode === 'asamblea'){
+            <button class="btn btn-foc-rojo" (click)="showMode = 'resultados'">
                 Resultados
             </button>
             <app-orden-dia
                 [ordenDia]="ordenDia"
             ></app-orden-dia>
+        } @else if(showMode === 'resultados'){
+            <app-resultados
+            
+            ></app-resultados>
         }
     </div>
 }

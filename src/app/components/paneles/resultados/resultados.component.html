@@ -1,1 +1,27 @@
-<app-grafico></app-grafico>
+@if (loading) {
+    <lib-ffsj-spinner
+        [fullscreen]="true"
+    ></lib-ffsj-spinner>
+} @else {
+    <div class="container">
+        <div class="d-flex flex-column gap-3">
+            <div class="container-votaciones d-flex gap-2">
+                @for (votacion of votaciones; track $index) {
+                    <button class="btn btn-foc-naranja" (click)="showResults(votacion)">
+                        {{votacion.infoExtra}}
+                    </button>
+                } @empty {
+                    <span class="h6">
+                        No hay votaciones
+                    </span>
+                }
+            </div>
+            @if (showChart) {
+                <span class="h2 w-100 text-center">
+                    Votos totales: {{votosTotales}} / Presentes: {{presentes}}
+                </span>
+            }
+            <canvas id="resultsChart"></canvas>
+        </div>
+    </div>
+}

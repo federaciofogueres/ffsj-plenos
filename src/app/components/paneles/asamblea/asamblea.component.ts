@@ -1,11 +1,12 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { FfsjSpinnerComponent } from 'ffsj-web-components';
-import { Pleno, PuntoOrdenDelDia } from '../../../../api';
-import { OrdenDiaModel } from '../../../models/orden-dia.model';
+import { Pleno } from '../../../../api';
+import { OrdenDiaModel, PuntoOrdenDiaModel } from '../../../models/orden-dia.model';
 import { PlenoExtraService } from '../../../services/pleno-extra.service';
 import { OrdenDiaComponent } from '../../orden-dia/orden-dia.component';
 import { PlenosComponent } from '../../plenos/plenos.component';
+import { ResultadosComponent } from "../resultados/resultados.component";
 
 @Component({
   selector: 'app-asamblea',
@@ -13,13 +14,15 @@ import { PlenosComponent } from '../../plenos/plenos.component';
   imports: [
     FfsjSpinnerComponent,
     PlenosComponent,
-    OrdenDiaComponent
-  ],
+    OrdenDiaComponent,
+    ResultadosComponent
+],
   templateUrl: './asamblea.component.html',
   styleUrl: './asamblea.component.scss'
 })
 export class AsambleaComponent {
 
+  showMode: string = 'asamblea';
   loading: boolean = false;
   idPleno: number = -1;
   pleno: Pleno = {
@@ -29,7 +32,7 @@ export class AsambleaComponent {
     informacion_extra: '',
     firma: ''
   };
-  puntos: PuntoOrdenDelDia[] = [];
+  puntos: PuntoOrdenDiaModel[] = [];
   ordenDia: OrdenDiaModel = {
     titulo: '',
     firma: '',
@@ -51,7 +54,7 @@ export class AsambleaComponent {
     this.plenoExtraService.loadPlenoInfo().then((response) => {
       console.log(response);
       this.pleno = response.pleno;
-      this.puntos = response.puntos;
+      this.puntos = response.ordenDia.puntos;
       this.ordenDia = response.ordenDia;
       
     });
