@@ -1,1 +1,6 @@
 @import '../../../../variables.scss';
+
+.scrollable {
+    overflow-y: auto;
+    height: calc(100vh - 250px);
+}
