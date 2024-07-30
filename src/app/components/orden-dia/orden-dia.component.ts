@@ -65,7 +65,7 @@ export class OrdenDiaComponent {
         },
         error: (error) => {
           console.error(error);
-          this.ffsjAlertService.danger('Error al registrar tu voto: ' + error.error.message);
+          this.ffsjAlertService.danger('Error al registrar tu voto: ' + error.error);
           this.loadVotes(votacion.id);
         }
       });
