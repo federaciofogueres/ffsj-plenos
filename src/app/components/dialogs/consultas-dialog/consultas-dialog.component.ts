@@ -19,7 +19,7 @@ import { Consulta } from '../../../../external-api/consulta';
 })
 export class ConsultasDialogComponent {
   selectedConsulta: Consulta = {
-    id: 0,
+    id: -1,
     fecha: '',
     titulo: '',
     votosTotales: 0,
@@ -36,6 +36,6 @@ export class ConsultasDialogComponent {
   }
 
   onConfirm(): void {
-    this.dialogRef.close(this.selectedConsulta);
+    this.dialogRef.close(this.selectedConsulta.id !== -1 ? this.selectedConsulta : undefined);
   }
 }

@@ -136,13 +136,11 @@ export class GestorAsistenciaComponent {
                     } else {
                       this.ffsjAlertService.success('Usuario autorizado correctamente');
                     }
+                    this.loading = false;
                   },
                   error: (error) => {
                     console.error('141 -> Error al autorizar al asociado: ', error);
                     this.ffsjAlertService.danger('Error al autorizar al asociado: ' + error);
-                  },
-                  complete: () => {
-                    console.log('145 -> Completado');
                     this.loading = false;
                   }
                 });
