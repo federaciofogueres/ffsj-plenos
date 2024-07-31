@@ -126,9 +126,11 @@ export class GestorAsistenciaComponent {
 
             dialogRef.afterClosed().subscribe((result: any) => {
               if (result) {
+                console.log('129 -> ', result);
+                
                 this.consultasInfoService.consultasIdConsultaAutorizadosPost({idConsulta: result.id, idAsociado: asistenciaBody.idAsociado}, result.id).subscribe({
                   next: (data: any) => {
-                    console.log(data);
+                    console.log('133 -> ', data);
                     if (data.status.status !== 200) {
                       this.ffsjAlertService.danger('Error al autorizar al asociado: ' + data.status.message);
                     } else {
@@ -136,10 +138,11 @@ export class GestorAsistenciaComponent {
                     }
                   },
                   error: (error) => {
-                    console.error('Error al autorizar al asociado: ', error);
+                    console.error('141 -> Error al autorizar al asociado: ', error);
                     this.ffsjAlertService.danger('Error al autorizar al asociado: ' + error);
                   },
                   complete: () => {
+                    console.log('145 -> Completado');
                     this.loading = false;
                   }
                 });
