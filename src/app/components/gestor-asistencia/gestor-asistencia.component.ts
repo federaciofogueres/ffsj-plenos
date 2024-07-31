@@ -99,7 +99,7 @@ export class GestorAsistenciaComponent {
       idPleno: this.idPleno,
       idAsociado: asistencia.id,
       delegado: Boolean(asistencia.delegado),
-      asistenciaConfirmada: asistencia.confirmadoPorUsuario,
+      asistenciaConfirmada: true,
       asistenciaConfirmadaPorSecretaria: asistencia.confirmadoPorSecretaria
     }
     this.asistenciaService.asistenciaIdPlenoAsociadosIdAsociadoPut(asistenciaBody, this.idPleno, asistenciaBody.idAsociado).subscribe({
@@ -140,7 +140,7 @@ export class GestorAsistenciaComponent {
                   },
                   error: (error) => {
                     console.error('141 -> Error al autorizar al asociado: ', error);
-                    this.ffsjAlertService.danger('Error al autorizar al asociado: ' + error);
+                    this.ffsjAlertService.danger('Error al autorizar al asociado: ' + error.error);
                     this.loading = false;
                   }
                 });
