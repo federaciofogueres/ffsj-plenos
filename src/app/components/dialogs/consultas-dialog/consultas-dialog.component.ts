@@ -36,6 +36,6 @@ export class ConsultasDialogComponent {
   }
 
   onConfirm(): void {
-    this.dialogRef.close(this.selectedConsulta.id !== -1 ? this.selectedConsulta : undefined);
+    this.dialogRef.close(this.selectedConsulta);
   }
 }
