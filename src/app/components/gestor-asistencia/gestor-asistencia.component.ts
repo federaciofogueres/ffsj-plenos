@@ -172,6 +172,11 @@ export class GestorAsistenciaComponent {
     console.log('QR code scanned:', resultString);
     this.qrResultStringDecoded = this.encoderService.decrypt(this.qrResultString);
     let asistenciaQR: Asistencia = JSON.parse(this.qrResultStringDecoded);
+    if (asistenciaQR.idPleno !== this.idPleno) {
+      this.ffsjAlertService.danger('El QR no pertenece a este pleno');
+      this.loading = false;
+      return;
+    }
     const bodyAsistencia: AsistenciaPlenoFormattedModel | undefined = this.asistencias.find((a) => a.id === asistenciaQR.idAsociado && !a.confirmadoPorSecretaria);
     console.log(bodyAsistencia);
     
