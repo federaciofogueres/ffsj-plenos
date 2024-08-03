@@ -1,21 +1,67 @@
 @if (loading) {
     <lib-ffsj-spinner></lib-ffsj-spinner>
 } @else {
-    <div class="container d-flex flex-column plenos-container">
-        <span class="h5 mb-3">
+    <div class="container d-flex flex-column gap-3 h-100">
+        <span class="h5">
             Selecciona un pleno para ver más información.
         </span>
-        @for(pleno of plenos; track $index) {
-            <div class="card mb-3" (click)="gestionaPleno(pleno.id)">
-                <div class="card-body">
-                  <h5 class="card-title">{{ pleno.titulo }}</h5>
-                  <p class="card-text">{{ pleno.informacion_extra }}</p>
-                  <p>{{ pleno.fecha }}</p>
-                </div>
+        @if (showPlenos === 'inactive') {
+            <span class="h3">
+                Plenos anteriores
+            </span>
+            <button class="btn btn-foc-rojo" (click)="showPlenos = 'active'">
+                Ver plenos activos
+            </button>
+            <div class="plenos-container">
+                @for(pleno of inactivePlenos; track $index) {
+                    <div class="card mb-3" (click)="gestionaPleno(pleno.id)" [ngClass]="activePlenos.includes(pleno) ? 'active' : 'inactive'">
+                        <div class="card-body d-flex flex-column">
+                            <span class="h2">
+                                {{ pleno.titulo }}
+                            </span>
+                            <span>
+                                {{ pleno.informacion_extra }}
+                            </span>
+                            <div class="d-flex">
+                                <i class="bi bi-calendar-date-fill me-2" style="font-size: 1rem;"></i>
+                                <p>{{ pleno.fecha }}</p>
+                            </div>
+                        </div>
+                    </div>
+                } @empty {
+                    <div class="alert alert-danger" role="alert">
+                        No hay plenos pasados disponibles para el usuario con id: {{idAsociado}}.
+                    </div>
+                }
             </div>
-        } @empty {
-            <div class="alert alert-danger" role="alert">
-                No hay plenos disponibles para el usuario con id: {{idAsociado}}.
+        } @else if (showPlenos === 'active') {
+            <span class="h3">
+                Plenos activos
+            </span>
+            <button class="btn btn-foc-rojo" (click)="showPlenos = 'inactive'">
+                Ver plenos pasados
+            </button>
+            <div class="plenos-container">
+                @for(pleno of activePlenos; track $index) {
+                    <div class="card mb-3 active" (click)="gestionaPleno(pleno.id)">
+                        <div class="card-body d-flex flex-column">
+                            <span class="h2">
+                                {{ pleno.titulo }}
+                            </span>
+                            <span>
+                                {{ pleno.informacion_extra }}
+                            </span>
+                            <div class="d-flex">
+                                <i class="bi bi-calendar-date-fill me-2" style="font-size: 1rem;"></i>
+                                <p>{{ pleno.fecha }}</p>
+                            </div>
+                        </div>
+                    </div>
+                } @empty {
+                    <div class="alert alert-danger" role="alert">
+                        No hay plenos activos disponibles para el usuario con id: {{idAsociado}}.
+                    </div>
+                }
             </div>
         }
     </div>

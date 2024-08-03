@@ -1,4 +1,17 @@
+@import '../../../variables.scss';
 .plenos-container {
-    height: calc(100vh - 240px);
-    overflow: auto;
+    height: calc(100% - 195px);
+    overflow-y: auto;
+}
+
+.active {
+    background-color: lighten($color: green, $amount: 15);
+    border-color: green;
+    color: white;
+}
+
+.inactive {
+    background-color: lighten($color: $rojo, $amount: 30);
+    border-color: $rojo;
+    color: white;
 }

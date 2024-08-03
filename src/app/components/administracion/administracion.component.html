@@ -1,18 +1,19 @@
 @if (loading) {
 
 } @else {
-    <div class="container">
+    <div class="container h-100">
         @if(mostrarFormulario) {
             <app-formulario-pleno
                 [pleno]="pleno"
                 (back)="mostrarFormularioAction(false)"
             ></app-formulario-pleno>
         } @else {
-            <div class="d-flex flex-column">
+            <div class="d-flex flex-column h-100">
                 <span class="h6 mb-3">
                     Elige un pleno para ver su información o editarlo
                 </span>
                 <app-plenos
+                    class="container-size"
                     [seleccionaPleno]="true"
                     (plenoSeleccionado)="plenoSeleccionado($event)"
                 ></app-plenos>

@@ -1,1 +1,6 @@
 @import '../../../variables.scss';
+
+.container-size {
+    display: block;
+    height: calc(100% - 35px);
+}

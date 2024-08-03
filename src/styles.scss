@@ -4,5 +4,32 @@
 /* Importing Bootstrap SCSS file. */
 @import 'bootstrap/scss/bootstrap';
 
-html, body { height: 100%; }
-body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+html,body {
+    font-family: Roboto, "Helvetica Neue", sans-serif;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    align-content: stretch;
+    align-items: stretch;
+    height: 100vh;
+    opacity: 1 !important;
+  }
+
+router-outlet + * {
+    width: 100%;
+    opacity: 1 !important;
+    // background-color: green;
+    height: calc(100% - 127px);
+    display: block;
+}
+
+app-root{
+  order: 0;
+  flex: 1 1 auto;
+  align-self: auto;
+  display: block;
+  opacity: 1 !important;
+  // background-color: black;
+  height: calc(100vh - 56px);
+}
