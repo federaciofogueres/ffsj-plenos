@@ -3,8 +3,24 @@
         [fullscreen]="true"
     ></lib-ffsj-spinner>
 } @else {
-
     <div class="d-flex flex-column">
+
+        <div class="d-flex justify-content-between">
+            <span class="h3">
+                Consultas
+            </span>
+            <div class="dropdown">
+                <button class="btn text-dark" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false" style="padding: unset;">
+                    <i class="bi bi-gear-fill" style="font-size: 1.5rem;"></i>
+                </button>
+                <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                    <li><a class="dropdown-item" (click)="router.navigateByUrl('/gestor-consultas')"><i class="bi bi-envelope-paper-fill me-2"></i>Gestión consultas asociadas</a></li>
+                    <li><a class="dropdown-item" (click)="guardarConsultas()"><i class="bi bi-floppy-fill me-2"></i>Procesar guardado de consultas</a></li>
+                    <li><a class="dropdown-item" (click)="back.emit()"><i class="bi bi-box-arrow-left me-2"></i>Volver atrás</a></li>
+                </ul>
+            </div>
+        </div>
+
         <div class="form-floating">
             <select class="form-select" id="floatingSelect" aria-label="Floating label select example" (change)="changeSelected($event)">
                 @for (function of consultas; track $index) {
@@ -12,15 +28,6 @@
                 }
             </select>
             <label for="floatingSelect">Selección de consulta</label>
-        </div>
-    
-        <div class="d-flex justify-content-between mt-3">
-            <button class="btn btn-primary btn-foc-naranja" (click)="agregarConsulta()">
-                Agregar consulta
-            </button>
-            <button class="btn btn-primary btn-foc-naranja" (click)="guardarConsultas()">
-                Guardar consultas
-            </button>
         </div>
     
         @if (consultasSeleccionadas.length > 0) {

@@ -10,7 +10,7 @@
         </span>
     </button>
     @if (mostrarFormulario) {
-        <div class="position-fixed" style="top: 70px; right: 12px;">
+        <div class="position-absolute" style="top: 4.875rem; right: 0.75rem;">
             <button class="btn btn-primary btn-foc-rojo" (click)="mostrarFormularioAction(false)">
                 <i class="bi bi-x-lg me-2" style="font-size: 1rem;"></i>
                 <span>Cerrar</span>
@@ -64,7 +64,7 @@
             }
         </div>
     }@else {
-        <div class="position-fixed" style="top: 70px; right: 12px;">
+        <div class="position-absolute" style="top: 4.875rem; right: 0.75rem;">
             <button class="btn btn-primary btn-foc-naranja" (click)="mostrarFormularioAction(true)">
                 <i class="bi bi-plus-circle me-2" style="font-size: 1rem;"></i>
                 <span>Nuevo</span>

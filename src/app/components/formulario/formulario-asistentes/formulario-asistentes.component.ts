@@ -1,4 +1,5 @@
-import { Component, Input } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Router } from '@angular/router';
 import { FfsjSpinnerComponent } from 'ffsj-web-components';
 import { catchError, forkJoin, of } from 'rxjs';
 import * as XLSX from 'xlsx';
@@ -18,6 +19,7 @@ import { CensoService } from '../../../services/censo.service';
 export class FormularioAsistentesComponent {
 
   @Input() pleno: Pleno | null = null;
+  @Output() back: EventEmitter<void> = new EventEmitter<void>();
 
   asociados: Asociado[] = [];
   asociadosFiltrados: Asociado[] = [];
@@ -30,7 +32,8 @@ export class FormularioAsistentesComponent {
 
   constructor(
     private censoService: CensoService,
-    private asistenciaService: AsistenciaService
+    private asistenciaService: AsistenciaService,
+    protected router: Router
   ) { }
 
   ngOnInit() {
@@ -114,8 +117,9 @@ export class FormularioAsistentesComponent {
     }
   }
 
-  changeSelected(event: any) {
-    this.nuevoAsistente = this.asociados.find(a => a.nif == event.target.value)!;
+  async changeSelected(event: any) {
+    this.nuevoAsistente = await this.asociados.find(a => a.nif == event.target.value)!;
+    this.agregar();
   }
 
   agregar(asistenteNif?: string) {

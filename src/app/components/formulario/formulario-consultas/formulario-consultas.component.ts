@@ -1,7 +1,8 @@
 import { CommonModule } from '@angular/common';
-import { Component, Input } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
-import { FfsjSpinnerComponent } from 'ffsj-web-components';
+import { Router } from '@angular/router';
+import { FfsjAlertService, FfsjSpinnerComponent } from 'ffsj-web-components';
 import { catchError, forkJoin, of } from 'rxjs';
 import { ConsultasService, Pleno } from '../../../../api';
 import { Consulta } from '../../../../external-api/consulta';
@@ -22,6 +23,7 @@ import { ConsultasInfoService } from '../../../services/consultas.service';
 export class FormularioConsultasComponent {
 
   @Input() pleno: Pleno | null = null;
+  @Output() back: EventEmitter<void> = new EventEmitter<void>();
 
   loading: boolean = false;
 
@@ -35,7 +37,9 @@ export class FormularioConsultasComponent {
     private fb: FormBuilder,
     private consultasInfoService: ConsultasInfoService,
     private consultasService: ConsultasService,
-    private consultasPlenoService: ConsultasPlenoService
+    private consultasPlenoService: ConsultasPlenoService,
+    protected router: Router,
+    private ffsjAlertService: FfsjAlertService
   ) { }
 
   ngOnInit(): void {
@@ -72,6 +76,7 @@ export class FormularioConsultasComponent {
 
   changeSelected(event: any) {
     this.consultaSeleccionada = this.consultas.find(consulta => consulta.id === parseInt(event.target.value))!;
+    this.agregarConsulta();
   }
 
   agregarConsulta() {
@@ -112,11 +117,12 @@ export class FormularioConsultasComponent {
     forkJoin(observables).subscribe(results => {
       if (results.includes(null)) {
         console.log('error');
+        this.ffsjAlertService.danger('Error al guardar las consultas');
       } else {
         console.log('Todas las consultas se han guardado correctamente');
-        this.consultasSeleccionadas = [];
-        this.loadInfo();
       }
+      this.consultasSeleccionadas = [];
+      this.loadInfo();
     });
   }
 

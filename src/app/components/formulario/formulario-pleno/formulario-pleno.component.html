@@ -5,103 +5,95 @@
 } @else {
   @switch (formShow) {
     @case ('pleno') {
-      <button class="btn btn-primary btn-foc-rojo" (click)="back.emit()">
-        <i class="bi bi-chevron-left"></i>
-        <span>
-            Volver
-        </span>
-      </button>
-      <form [formGroup]="plenoForm">
-          <div class="d-flex flex-column gap-2 scrollable my-3">
-      
-              <div class="form-group">
-                <label for="id">ID:</label>
-                <input type="number" formControlName="id" class="form-control" isDisabled>
-              </div>
-              
-              <div class="form-group">
-                <label for="fecha">Fecha:</label>
-                <input type="datetime-local" formControlName="fecha" class="form-control">
-              </div>
-      
-              <div class="form-group">
-                <label for="titulo">Título:</label>
-                <input type="text" formControlName="titulo" class="form-control">
-              </div>
-      
-              <div class="form-group">
-                <label for="informacionExtra">Información Extra:</label>
-                <input type="text" formControlName="informacion_extra" class="form-control">
-              </div>
-      
-              <div class="form-group">
-                <label for="firma">Firma:</label>
-                <input type="text" formControlName="firma" class="form-control">
-              </div>
-      
-              <button class="btn btn-primary btn-foc-naranja" (click)="formShow = 'ordenDelDia'">
-                Orden del día
-              </button>
-      
-              <button class="btn btn-primary btn-foc-naranja" (click)="formShow = 'asistentes'">
-                Asistentes del pleno
-              </button>
-
-              <button class="btn btn-primary btn-foc-naranja" (click)="router.navigateByUrl('/gestor-asistencia')">
-                Confirmación de asistentes
-              </button>
-
-              <button class="btn btn-primary btn-foc-naranja" (click)="formShow = 'consultas'">
-                Consultas asociadas
-              </button>
-
-              <button class="btn btn-primary btn-foc-naranja" (click)="router.navigateByUrl('/gestor-consultas')">
-                Gestión consultas asociadas
-              </button>
-
-              <button class="btn btn-primary btn-foc-naranja" (click)="router.navigateByUrl('/gestion-asamblea')">
-                Gestión asamblea
-              </button>
-              
-              @if (pleno) {
-                <button class="btn btn-primary btn-foc-rojo mt-3" (click)="procesar()">
-                    Editar
-                </button>
-              } @else {
-                <button class="btn btn-primary btn-foc-rojo mt-3" (click)="procesar()">
-                  Crear
-                </button>
-              }
-      
-          </div>
-      
-      </form>
-    }
-    @case ('ordenDelDia') {
-      @if (mostrarFormulario) {
-        <div class="position-fixed" style="top: 70px; right: 12px;">
-            <button class="btn btn-primary btn-foc-rojo" (click)="mostrarFormularioAction(false)">
-                <i class="bi bi-x-lg me-2" style="font-size: 1rem;"></i>
-                <span>Cerrar</span>
-            </button>
-        </div>
-        <app-formulario-punto-del-dia
-            [pleno]="pleno"
-            [puntoOrdenDelDia]="puntoSeleccionado"
-            (back)="mostrarFormularioAction(false)"
-        ></app-formulario-punto-del-dia>
-    } @else {
-        <button class="btn btn-primary btn-foc-rojo" (click)="formShow = 'pleno'">
+        <div class="d-flex justify-content-between">
+          <button class="btn btn-primary btn-foc-rojo" (click)="back.emit()">
             <i class="bi bi-chevron-left"></i>
             <span>
                 Volver
             </span>
-        </button>
-        <div class="position-fixed" style="top: 70px; right: 12px;">
-            <button class="btn btn-primary btn-foc-naranja" (click)="mostrarFormularioAction(true)">
-                <i class="bi bi-plus-circle me-2" style="font-size: 1rem;"></i>
-                <span>Nuevo</span>
+          </button>
+          <div class="dropdown">
+            <button class="btn text-dark" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false" style="padding: unset;">
+                <i class="bi bi-gear-fill" style="font-size: 1.5rem;"></i>
             </button>
+            <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                <li><a class="dropdown-item" (click)="formShow = 'ordenDelDia'"><i class="bi bi-list-ol me-2"></i>Orden del día</a></li>
+                <li><a class="dropdown-item" (click)="formShow = 'asistentes'"><i class="bi bi-person-fill me-2"></i>Asistentes</a></li>
+                <li><a class="dropdown-item" (click)="formShow = 'consultas'"><i class="bi bi-envelope-paper-fill me-2"></i>Consultas asociadas</a></li>
+                <li><a class="dropdown-item" (click)="router.navigateByUrl('/gestion-asamblea')"><i class="bi bi-clipboard2-data-fill me-2"></i>Gestión asamblea</a></li>
+            </ul>
+          </div>
+        </div>
+        <div class="scrollable my-3">
+          <form [formGroup]="plenoForm" class="d-flex flex-column gap-2 ">
+        
+            <div class="form-group">
+              <label for="id">ID:</label>
+              <input type="number" formControlName="id" class="form-control" isDisabled>
+            </div>
+            
+            <div class="form-group">
+              <label for="fecha">Fecha:</label>
+              <input type="datetime-local" formControlName="fecha" class="form-control">
+            </div>
+    
+            <div class="form-group">
+              <label for="titulo">Título:</label>
+              <input type="text" formControlName="titulo" class="form-control">
+            </div>
+    
+            <div class="form-group">
+              <label for="informacionExtra">Información Extra:</label>
+              <input type="text" formControlName="informacion_extra" class="form-control">
+            </div>
+    
+            <div class="form-group">
+              <label for="firma">Firma:</label>
+              <input type="text" formControlName="firma" class="form-control">
+            </div>
+            
+            @if (pleno) {
+              <button class="btn btn-primary btn-foc-rojo mt-3" (click)="procesar()">
+                  Editar
+              </button>
+            } @else {
+              <button class="btn btn-primary btn-foc-rojo mt-3" (click)="procesar()">
+                Crear
+              </button>
+            }
+
+          </form>
+
+        </div>
+    }
+    @case ('ordenDelDia') {
+      @if (mostrarFormulario) {
+        <div class="d-flex flex-column gap-2">
+          <div class="position-absolute" style="top: 4.875rem; right: 0.75rem;">
+              <button class="btn btn-primary btn-foc-rojo" (click)="mostrarFormularioAction(false)">
+                  <i class="bi bi-x-lg me-2" style="font-size: 1rem;"></i>
+                  <span>Cerrar</span>
+              </button>
+          </div>
+          <app-formulario-punto-del-dia
+              [pleno]="pleno"
+              [puntoOrdenDelDia]="puntoSeleccionado"
+              (back)="mostrarFormularioAction(false)"
+          ></app-formulario-punto-del-dia>
+        </div>
+    } @else {
+      <div class="d-flex flex-column gap-2">
+        <div class="d-flex justify-content-between">
+          <button class="btn btn-primary btn-foc-rojo" (click)="formShow = 'pleno'">
+              <i class="bi bi-chevron-left"></i>
+              <span>
+                  Volver
+              </span>
+          </button>
+          <button class="btn btn-primary btn-foc-naranja" (click)="mostrarFormularioAction(true)">
+              <i class="bi bi-plus-circle me-2" style="font-size: 1rem;"></i>
+              <span>Nuevo</span>
+          </button>
         </div>
         <div class="d-flex flex-column">
             @if (puntosOrdenDelDia.length > 0) {
@@ -123,16 +115,20 @@
                 </div>
             }
         </div>
+      </div>
       }
     }
     @case ('consultas') {
       <app-formulario-consultas
         [pleno]="pleno"
+        (back)="formShow = 'pleno'"
       ></app-formulario-consultas>
     }
     @case ('asistentes') {
       <app-formulario-asistentes
+        class="h-100 d-block"
         [pleno]="pleno"
+        (back)="formShow = 'pleno'"
       ></app-formulario-asistentes>
     }
   }

@@ -3,42 +3,47 @@
         [fullscreen]="true"
     ></lib-ffsj-spinner>
 } @else {
-
-    <div class="d-flex flex-column gap-3">
+    <div class="d-flex flex-column gap-3 h-100">
         <div class="d-flex justify-content-between">
-            <div class="form-floating">
-                <input list="asociadosList" type="text" class="form-control" id="searchBox" placeholder="Buscar..." (input)="changeSelected($event)">
-                <label for="searchBox">Busca y selecciona por nif</label>
-                <datalist id="asociadosList">
-                    @for (asociado of asociadosFiltrados; track $index) {
-                        <option [value]="asociado.nif">{{ asociado.nombre }}, {{asociado.apellidos}}</option>
-                    }
-                </datalist>
+            <span class="h3">
+                @if(showList === 'nuevos') {
+                    Nuevos asistentes al pleno
+                } @else if (showList === 'asistentes') {
+                    Asistentes invitados al pleno
+                }
+            </span>
+            <div class="dropdown">
+                <button class="btn text-dark" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false" style="padding: unset;">
+                    <i class="bi bi-gear-fill" style="font-size: 1.5rem;"></i>
+                </button>
+                <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                    <li><a class="dropdown-item" (click)="router.navigateByUrl('/gestor-asistencia')"><i class="bi bi-person-fill-check me-2"></i>Confirmación de asistentes</a></li>
+                    <li><a class="dropdown-item" (click)="showList = 'asistentes'"><i class="bi bi-person-lines-fill me-2"></i>Ver asistentes invitados</a></li>
+                    <li><a class="dropdown-item" (click)="showList = 'nuevos'"><i class="bi bi-person-fill-add me-2"></i>Añadir nuevos asistentes</a></li>
+                    <li><a class="dropdown-item" (click)="fileInput.click()"><i class="bi bi-cloud-arrow-up-fill me-2"></i>Subir excel</a></li>
+                    <li><a class="dropdown-item" (click)="back.emit()"><i class="bi bi-box-arrow-left me-2"></i>Volver atrás</a></li>
+                    <input #fileInput style="display: none" type="file" (change)="handleFile($event)" multiple="false" />
+                </ul>
             </div>
-        
-            <input #fileInput style="display: none" type="file" (change)="handleFile($event)" multiple="false" />
-            <button class="btn btn-primary btn-foc-rojo" (click)="fileInput.click()">
-                <i class="bi bi-cloud-arrow-up-fill me-2"></i>Subir Excel
-            </button>
         </div>
-    
-        <div class="d-flex justify-content-between">
-            <button class="btn btn-primary btn-foc-naranja" (click)="agregar()">
-                Agregar asistente
-            </button>
-            <button class="btn btn-primary btn-foc-naranja" (click)="guardar()">
-                Guardar asistentes
-            </button>
-        </div>
-
         @if(showList === 'nuevos') {
-            <button class="btn btn-primary btn-foc-naranja" (click)="showList = 'asistentes'">
-                Ver asistentes invitados
-            </button>
+
+            <div class="d-flex justify-content-between">
+                <div class="form-floating">
+                    <input list="asociadosList" type="text" class="form-control" id="searchBox" placeholder="Buscar..." (input)="changeSelected($event)">
+                    <label for="searchBox">Busca y selecciona por nif</label>
+                    <datalist id="asociadosList">
+                        @for (asociado of asociadosFiltrados; track $index) {
+                            <option [value]="asociado.nif">{{ asociado.nombre }}, {{asociado.apellidos}}</option>
+                        }
+                    </datalist>
+                </div>
+                <button class="btn btn-primary btn-foc-naranja" (click)="guardar()">
+                    Procesar invitación
+                </button>
+            </div>
+
             @if (nuevosAsistentes.length > 0) {
-                <span class="h5 my-3" style="display: block; width: 100%; text-justify: inter-word; text-justify: inter-word">
-                    Listado de nuevos asistentes al pleno
-                </span>
                 <div class="d-flex flex-column listado-asistentes">
                     @for (asistente of nuevosAsistentes; track $index) {
                         <div class="card mb-3">
@@ -55,12 +60,6 @@
                 </div>
             }
         } @else if (showList === 'asistentes') {
-            <button class="btn btn-primary btn-foc-naranja" (click)="showList = 'nuevos'">
-                Ver nuevos asistentes
-            </button>
-            <span class="h5">
-                Asistentes invitados al pleno
-            </span>
             <div class="d-flex flex-column listado-asistentes">
                 @for (asistente of asistentes; track $index) {
                     <div class="card mb-3">
@@ -75,9 +74,6 @@
                 }
             </div>
         }
-    
-
-
 
     </div>
 
