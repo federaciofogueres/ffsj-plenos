@@ -1,0 +1,9 @@
+<div class="container">
+    <h1 mat-dialog-title>Detectada más de una acreditación</h1>
+    <span>
+        ATENCIÓN: Se ha detectado que el usuario tiene más de una acreditación para la asamblea. Sus votos en la asamblea tendrán {{data.asistencias}} veces el valor de un voto.
+    </span>
+    <div mat-dialog-actions>
+        <button mat-button (click)="onConfirm()">Aceptar</button>
+    </div>
+</div>

@@ -1,9 +1,11 @@
 import { Component } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FfsjSpinnerComponent } from 'ffsj-web-components';
 import { AsistenciaService, Pleno, PuntoOrdenDelDia, ResponseAsistencias } from '../../../api';
 import { OrdenDiaModel } from '../../models/orden-dia.model';
 import { PlenoExtraService } from '../../services/pleno-extra.service';
+import { AvisoNumeroAsistenciasAsambleaDialogComponent } from '../dialogs/aviso-numero-asistencias-asamblea/aviso-numero-asistencias-asamblea.component';
 import { OrdenDiaComponent } from '../orden-dia/orden-dia.component';
 
 @Component({
@@ -39,7 +41,8 @@ export class PlenoComponent {
     private route: ActivatedRoute,
     private asistenciaService: AsistenciaService,
     private router: Router,
-    private plenoExtraService: PlenoExtraService
+    private plenoExtraService: PlenoExtraService,
+    private dialog: MatDialog
   ) { }
 
   ngOnInit() {
@@ -53,6 +56,12 @@ export class PlenoComponent {
       next: (response: ResponseAsistencias) => {
         console.log(response);
         if (response.status.status === 200) {
+          if (response.asistencias.length > 1) {
+            const dialogRef = this.dialog.open(AvisoNumeroAsistenciasAsambleaDialogComponent, {
+              data: { asistencias: response.asistencias.length },
+              panelClass: 'custom-dialog-container'
+            });
+          }
           this.plenoExtraService.loadPlenoInfo().then((response) => {
             this.pleno = response.pleno;
             this.puntos = response.puntos;

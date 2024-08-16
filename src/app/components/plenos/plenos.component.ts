@@ -58,18 +58,20 @@ export class PlenosComponent {
   loadPlenos() {
     this.idAsociado = parseInt(this.cookieService.get('idUsuario'));
     this.asistenciaService.asistenciaIdGet(this.idAsociado).subscribe({
-      next: async (response: any) => { // Añadir async aquí
+      next: async (response: any) => {
         console.log('Asistencia:', response);
         const plenosPromises = response.asistencias.map((asistencia: any) => 
           this.plenosService.plenoIdGet(asistencia.idPleno).toPromise().then((response: any) => {
             console.log('Pleno:', response);
             if (response.status.status === 200) {
-              let pleno = response.plenos[0]
+              let pleno = response.plenos[0];
               pleno.fecha = this.formatDate(new Date(pleno.fecha));
-              if (this.isActivePleno(pleno.fecha)) {
-                this.activePlenos.push(pleno);
-              } else {
-                this.inactivePlenos.push(pleno);
+              if (!this.activePlenos.some(p => p.id === pleno.id) && !this.inactivePlenos.some(p => p.id === pleno.id)) {
+                if (this.isActivePleno(pleno.fecha)) {
+                  this.activePlenos.push(pleno);
+                } else {
+                  this.inactivePlenos.push(pleno);
+                }
               }
             }
           }).catch((error: any) => {
@@ -77,14 +79,13 @@ export class PlenosComponent {
           })
         );
   
-        await Promise.all(plenosPromises); // Esperar a que todas las promesas se resuelvan
-        this.loading = false; // Mover esta línea aquí
-        //TO-DO: Revisar esto
+        await Promise.all(plenosPromises);
+
+        // Ordenar los arrays por id
+        this.activePlenos.sort((a, b) => a.id - b.id);
+        this.inactivePlenos.sort((a, b) => a.id - b.id);
+
         this.cookieService.set('idAsociado', response.idAsociado);
-      },
-      error: (error: any) => {
-        console.log('Error:', error);
-        this.mensajeError = error.error.message;
         this.loading = false;
       }
     });
