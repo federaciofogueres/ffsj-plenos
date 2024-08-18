@@ -71,16 +71,21 @@ export class GestionConsultasComponent {
 
   searchAsistente(event: any) {
     const search = event.target.value.toLowerCase();
-    let filtrados = this.filterItems(this.filtro);
+    let filtrados = this.filterItems();
     this.showItems = filtrados.filter(asistencia => 
       `${asistencia.apellidos} ${asistencia.nombre}`.toLowerCase().includes(search)
     );
-   }
+  }
 
-  filterItems(filtro: FiltroCargo, items?: AsistenciaPlenoFormattedModel[]) {
+  filterByCargo(filtro: FiltroCargo) {
     this.filtro = filtro;
+    this.showItems = this.filterItems();
+  }
+
+  filterItems(items?: AsistenciaPlenoFormattedModel[]) {
     let toFilter = !!items ? [...items] : this.showUsers === 'asistentes' ? [...this.asistencias] : [...this.autorizados];
-    return toFilter.filter(asistencia => asistencia.idCargo === this.filtro.id).sort((a, b) => {
+    let itemsFiltered = this.filtro.id === -1 ? toFilter : toFilter.filter(asistencia => asistencia.idCargo === this.filtro.id);
+    return itemsFiltered.sort((a, b) => {
       const nameA = `${a.apellidos} ${a.nombre} `.toLowerCase();
       const nameB = `${b.apellidos} ${b.nombre}`.toLowerCase();
       return nameA.localeCompare(nameB);
@@ -158,7 +163,7 @@ export class GestionConsultasComponent {
 
   changeShow(event: string) {
     this.showUsers = event;
-    this.showItems = this.filterItems(this.filtro);
+    this.showItems = this.filterItems();
   }
 
   loadAutorizados() {
@@ -174,7 +179,7 @@ export class GestionConsultasComponent {
           this.asistencias = this.asistencias.filter(asistencia => 
             !autorizadosIds.includes(asistencia.idAsistencia)
           )
-          this.showItems = this.filterItems(this.filtro);
+          this.showItems = this.filterItems();
           console.log(this.asistencias, this.autorizados);
           
         }
@@ -198,7 +203,7 @@ export class GestionConsultasComponent {
         item.isExpanded = false;
         this.autorizados.push(item);
         this.asistencias = this.asistencias.filter(asistencia => asistencia.idAsistencia !== item.idAsistencia);
-        this.showItems = this.filterItems(this.filtro);
+        this.showItems = this.filterItems();
       },
       error: (error) => {
         this.ffsjAlertService.danger('Error al confirmar la autorización: ' + error);
@@ -212,7 +217,7 @@ export class GestionConsultasComponent {
         item.isExpanded = false;
         this.autorizados = this.autorizados.filter(asistencia => asistencia.idAsistencia !== item.idAsistencia);
         this.asistencias.push(item);
-        this.showItems = this.filterItems(this.filtro);
+        this.showItems = this.filterItems();
       },
       error: (error) => {
         this.ffsjAlertService.danger('Error al eliminar la autorización: ' + error);

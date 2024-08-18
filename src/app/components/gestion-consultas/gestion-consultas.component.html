@@ -47,10 +47,11 @@
                                 {{filtro.cargo}}
                             </button>
                             <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton" style="cursor: pointer;">
-                                <li><a class="dropdown-item" (click)="filterItems({ id: 1, cargo: 'Presidentes de fogueres' })">Presidentes fogueres</a></li>
-                                <li><a class="dropdown-item" (click)="filterItems({ id: 19, cargo: 'Presidentes de barracas' })">Presidentes barracas</a></li>
-                                <li><a class="dropdown-item" (click)="filterItems({ id: 4, cargo: 'Delegados de fogueres' })">Delegados (fogueres)</a></li>
-                                <li><a class="dropdown-item" (click)="filterItems({ id: 20, cargo: 'Delegados de barracas' })">Delegados (barracas)</a></li>
+                                <li><a class="dropdown-item" (click)="filterByCargo({ id: 1, cargo: 'Presidentes de fogueres' })">Presidentes fogueres</a></li>
+                                <li><a class="dropdown-item" (click)="filterByCargo({ id: 19, cargo: 'Presidentes de barracas' })">Presidentes barracas</a></li>
+                                <li><a class="dropdown-item" (click)="filterByCargo({ id: 4, cargo: 'Delegados de fogueres' })">Delegados (fogueres)</a></li>
+                                <li><a class="dropdown-item" (click)="filterByCargo({ id: 20, cargo: 'Delegados de barracas' })">Delegados (barracas)</a></li>
+                                <li><a class="dropdown-item" (click)="filterByCargo({ id: -1, cargo: 'Todo' })">Todo</a></li>
                             </ul>
                         </div>
                     </div>
