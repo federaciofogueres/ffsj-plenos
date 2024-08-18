@@ -16,6 +16,10 @@ import { ConsultasInfoService } from '../../services/consultas.service';
 import { PlenoExtraService } from '../../services/pleno-extra.service';
 import { ConsultasDialogComponent } from '../dialogs/consultas-dialog/consultas-dialog.component';
 
+export interface FiltroCargo {
+  id: number;
+  cargo: string;
+}
 @Component({
   selector: 'app-gestor-asistencia',
   standalone: true,
@@ -36,7 +40,13 @@ export class GestorAsistenciaComponent {
   fromQr: boolean = true;
 
   private idPleno = -1;
-  protected asistencias: AsistenciaPlenoFormattedModel[] = [];
+  private asistencias: AsistenciaPlenoFormattedModel[] = [];
+  protected showItems: AsistenciaPlenoFormattedModel[] = [];
+
+  filtro: FiltroCargo = {
+    id: -1,
+    cargo: 'Todos'
+  }
 
   protected loading: boolean = false;
 
@@ -68,6 +78,29 @@ export class GestorAsistenciaComponent {
     }
   }
 
+  searchAsistente(event: any) {
+    const search = event.target.value.toLowerCase();
+    let filtrados = this.filterItems();
+    this.showItems = filtrados.filter(asistencia => 
+      `${asistencia.apellidos} ${asistencia.nombre}`.toLowerCase().includes(search)
+    );
+  }
+
+  filterByCargo(filtro: FiltroCargo) {
+    this.filtro = filtro;
+    this.showItems = this.filterItems();
+  }
+
+  filterItems(items?: AsistenciaPlenoFormattedModel[]) {
+    let toFilter = !!items ? [...items] : [...this.asistencias];
+    let itemsFiltered = this.filtro.id === -1 ? toFilter : toFilter.filter(asistencia => asistencia.idCargo === this.filtro.id);
+    return itemsFiltered.sort((a, b) => {
+      const nameA = `${a.apellidos} ${a.nombre} `.toLowerCase();
+      const nameB = `${b.apellidos} ${b.nombre}`.toLowerCase();
+      return nameA.localeCompare(nameB);
+    });
+  }
+
   loadConsultas() {
     this.consultasPlenoService.getConsultasFromPlenoAsync(this.idPleno!)
     .then((consultas: any) => {
@@ -79,7 +112,8 @@ export class GestorAsistenciaComponent {
   async loadAsistencia() {
     this.loading = true;
     this.asistenciaPlenoService.loadAsistencia(this.idPleno).then((asistencias: any) => {
-      this.asistencias = asistencias;
+      this.asistencias = this.filterItems(asistencias);
+      this.showItems = [...this.asistencias];
     }).catch((error) => {
       this.ffsjAlertService.danger('Error al cargar las asistencias: ' + error);
     }).finally(() => {
@@ -132,7 +166,7 @@ export class GestorAsistenciaComponent {
       idAsociado: asistencia.idAsociado,
       delegado: Boolean(asistencia.delegado),
       asistenciaConfirmada: true,
-      asistenciaConfirmadaPorSecretaria: true,
+      asistenciaConfirmadaPorSecretaria: !Boolean(asistencia.confirmadoPorSecretaria),
       idAsistencia: asistencia.idAsistencia,
       idAsociacion: asistencia.idAsociacion,
       idCargo: asistencia.idCargo
@@ -143,12 +177,13 @@ export class GestorAsistenciaComponent {
           this.ffsjAlertService.danger('Error al confirmar la asistencia: ' + data.status.message);
         } else {
           this.asistencias = this.asistencias.map((a) => {
-            if (a.nif === asistencia.nif) {
+            if (a.idAsistencia === asistencia.idAsistencia) {
               a.confirmadoPorSecretaria = !a.confirmadoPorSecretaria;
               a.confirmadoPorUsuario = Boolean(a.confirmadoPorUsuario);
             }
             return a;
           });
+          this.showItems = this.filterItems();
           this.ffsjAlertService.success('Asistencia confirmada correctamente');
         }
       },

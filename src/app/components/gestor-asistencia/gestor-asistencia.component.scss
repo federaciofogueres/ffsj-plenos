@@ -1,10 +1,19 @@
 @import '../../../variables.scss';
 
-.card-header{
-    background-color: $salmon;
+.container-asistencias {
+    height: calc(100vh - 320px);
+    overflow: auto;
 }
 
-.container-asistencias {
-    height: calc(100vh - 250px);
-    overflow: auto;
+.card-small, .card-header {
+    width: 10rem;
+    height: 10rem;
+}
+
+.confirmado {
+    background-color: fade-out($color: green, $amount: 0.8);
+}
+
+.no-confirmado {
+    background-color: lighten($color: red, $amount: 30);
 }

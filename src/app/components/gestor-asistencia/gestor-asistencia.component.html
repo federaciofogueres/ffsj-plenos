@@ -4,7 +4,7 @@
     ></lib-ffsj-spinner>
 } @else if (scanQRMode) {
 
-    <!-- <button (click)="onCodeResult('U2FsdGVkX18pjj2XjR5hprOlSTWg4EFYNjrPp123QQ26mFYX73YMchisJ/iE1ze8lK76nxUI37+L28JsbuJ6zRTUJfKJFhSM0qtwu3CN/R7j23blIJL7fApMS4ytfG7yfRAkABsESqDiulQcsUJOzTPUFcb21gf+T78bjmyaLdQ=')">
+    <!-- <button (click)="onCodeResult('U2FsdGVkX185DzySvYSSgWQy5w08pK2761s3JnDOmu/CLbDYbrWRs/RkscX/k6jQHVT8UQx7ft+oV+aX8QoM14DutZioD5Z/f6gv/zdo2tEIiiGThhBLtBLasegOwh3PRhdA+gmXTo8IqBfkpeQ32OBKfBHcE5403y1kGp7IpOeJV1wFXF3UiSaTNuwVAm855+MvA9RptfS7UkPctqY6l3WgWSsG6g7XR6aiutb0PW8MEZ59oCR9zRhWjIVjIdkC')">
         mocked
     </button> -->
 
@@ -26,13 +26,42 @@
                 Escanear QR
             </button>
         </div>
-        <div class="d-flex flex-column gap-2 container-asistencias">
-            @for (item of asistencias; track $index) {
+        <div class="input-group m-2 mb-3 w-auto">
+            <span class="input-group-text" id="basic-addon1">
+                <i class="bi bi-person-circle"></i>
+            </span>
+            <input type="text" class="form-control" placeholder="Búsqueda por nombre, apellido o DNI/NIE/SIP" (input)="searchAsistente($event)">
+        </div>
+        <div class="d-flex align-items-center">
+            <span>
+                Selecciona un cargo:
+            </span>
+            <div class="dropdown ms-2">
+                <button class="btn text-dark" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false" style="padding: unset;">
+                    {{filtro.cargo}}
+                </button>
+                <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton" style="cursor: pointer;">
+                    <li><a class="dropdown-item" (click)="filterByCargo({ id: 1, cargo: 'Presidentes de fogueres' })">Presidentes fogueres</a></li>
+                    <li><a class="dropdown-item" (click)="filterByCargo({ id: 19, cargo: 'Presidentes de barracas' })">Presidentes barracas</a></li>
+                    <li><a class="dropdown-item" (click)="filterByCargo({ id: 4, cargo: 'Delegados de fogueres' })">Delegados (fogueres)</a></li>
+                    <li><a class="dropdown-item" (click)="filterByCargo({ id: 20, cargo: 'Delegados de barracas' })">Delegados (barracas)</a></li>
+                    <li><a class="dropdown-item" (click)="filterByCargo({ id: -1, cargo: 'Todo' })">Todo</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="d-flex flex-wrap justify-content-center gap-3 container-asistencias">
+            @for (item of showItems; track $index) {
                 @if (item.confirmadoPorUsuario) {
-                    <div class="card">
-                        <div class="d-flex align-items-center justify-content-between card-header btn btn-primary btn-foc-salmon" type="button" data-bs-toggle="collapse" [attr.data-bs-target]="'#asistencia' + $index">
+                    <div class="card card-small">
+                        <div class="d-flex flex-column text-center card-header" 
+                            [ngClass]="item.confirmadoPorSecretaria ? 'confirmado' : 'no-confirmado'" 
+                            style="justify-content: space-evenly;" 
+                        >
                             <span class="h4 mb-0">
-                                {{item.nombre | titlecase}} {{item.apellidos | titlecase}}
+                                {{item.nombre | titlecase}}
+                            </span>
+                            <span class="h6">
+                                {{item.apellidos | titlecase}}
                             </span>
                             @if(item.confirmadoPorSecretaria) {
                                 <button class="btn btn-danger" (click)="confirmarAsistencia(item)">
@@ -42,12 +71,6 @@
                                 <button class="btn btn-primary" (click)="confirmarAsistencia(item)">
                                     Confirmar
                                 </button>
-                            }
-                        </div>
-                        <div id="asistencia{{$index}}" class="collapse card-body">
-                            <p>NIF: {{item.nif}}</p>
-                            @if (item.delegado) {
-                                <p>Asistencia delegada</p>
                             }
                         </div>
                     </div>
