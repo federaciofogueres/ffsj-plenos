@@ -12,6 +12,7 @@ export class PlenoExtraService {
 
     private idPleno = -1;
     private idUsuario = -1;
+    private asistenciasUsuario: number[] = [];
     private ordenDia: OrdenDiaModel = {
         titulo: '',
         firma: '',
@@ -45,6 +46,15 @@ export class PlenoExtraService {
 
     getIdPleno() {
         return this.idPleno;
+    }
+
+    setAsistencias(asistencias: number[]) {
+        this.asistenciasUsuario = asistencias;
+        this.cookieService.set('asistencias', JSON.stringify(asistencias));
+    }
+
+    getAsistencias() {
+        return this.asistenciasUsuario.length > 0 ? this.asistenciasUsuario : JSON.parse(this.cookieService.get('asistencias'));
     }
 
     getIdUsuario(token?: string) {

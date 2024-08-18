@@ -57,6 +57,8 @@ export class PlenoComponent {
         console.log(response);
         if (response.status.status === 200) {
           if (response.asistencias.length > 1) {
+            let asistencias = response.asistencias.map(asistencia => asistencia.idAsistencia);
+            this.plenoExtraService.setAsistencias(asistencias);
             const dialogRef = this.dialog.open(AvisoNumeroAsistenciasAsambleaDialogComponent, {
               data: { asistencias: response.asistencias.length },
               panelClass: 'custom-dialog-container'
