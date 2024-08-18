@@ -97,10 +97,13 @@ export class GestorAsistenciaComponent {
     });
     let asistenciaBody: Asistencia = {
       idPleno: this.idPleno,
-      idAsociado: asistencia.id,
+      idAsociado: asistencia.idAsociado,
       delegado: Boolean(asistencia.delegado),
       asistenciaConfirmada: true,
-      asistenciaConfirmadaPorSecretaria: asistencia.confirmadoPorSecretaria
+      asistenciaConfirmadaPorSecretaria: asistencia.confirmadoPorSecretaria,
+      idAsistencia: asistencia.idAsistencia,
+      idAsociacion: asistencia.idAsociacion,
+      idCargo: asistencia.idCargo
     }
     this.asistenciaService.asistenciaIdPlenoAsociadosIdAsociadoPut(asistenciaBody, this.idPleno, asistenciaBody.idAsociado).subscribe({
       next: (data: any) => {
@@ -128,7 +131,7 @@ export class GestorAsistenciaComponent {
               if (result) {
                 console.log('129 -> ', result);
                 
-                this.consultasInfoService.consultasIdConsultaAutorizadosPost({idConsulta: result.id, idAsociado: asistenciaBody.idAsociado}, result.id).subscribe({
+                this.consultasInfoService.consultasIdConsultaAutorizadosPost({idConsulta: result.id, idAsistencia: asistenciaBody.idAsociado}, result.id).subscribe({
                   next: (data: any) => {
                     console.log('133 -> ', data);
                     if (data.status.status !== 200) {
@@ -177,7 +180,7 @@ export class GestorAsistenciaComponent {
       this.loading = false;
       return;
     }
-    const bodyAsistencia: AsistenciaPlenoFormattedModel | undefined = this.asistencias.find((a) => a.id === asistenciaQR.idAsociado && !a.confirmadoPorSecretaria);
+    const bodyAsistencia: AsistenciaPlenoFormattedModel | undefined = this.asistencias.find((a) => a.idAsistencia === asistenciaQR.idAsociado && !a.confirmadoPorSecretaria);
     console.log(bodyAsistencia);
     
     if (bodyAsistencia) {

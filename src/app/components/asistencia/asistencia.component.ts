@@ -42,7 +42,10 @@ export class AsistenciaComponent {
     idAsociado: 0,
     delegado: false,
     asistenciaConfirmada: false,
-    asistenciaConfirmadaPorSecretaria: false
+    asistenciaConfirmadaPorSecretaria: false,
+    idAsistencia: 0,
+    idAsociacion: 0,
+    idCargo: 0
   };
 
   showDelegacionAsistenciaForm = false;

@@ -5,6 +5,10 @@ export interface AsistenciaPlenoFormattedModel {
     delegado: boolean;
     confirmadoPorUsuario: boolean;
     confirmadoPorSecretaria: boolean;
-    id: number;
+    idAsociado: number;
+    idAsistencia: number;
+    idCargo: number;
+    idAsociacion: number;
     autorizado?: boolean;
+    isExpanded?: boolean;
   }

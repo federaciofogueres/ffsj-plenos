@@ -12,5 +12,5 @@
 
 export interface Autorizacion { 
     idConsulta: number;
-    idAsociado: number;
+    idAsistencia: number;
 }

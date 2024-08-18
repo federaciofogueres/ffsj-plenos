@@ -18,7 +18,7 @@ export class AsistenciaPlenoService {
     try {
       const data = await firstValueFrom(this.asistenciaService.plenosIdPlenoAsistenciaGet(idPleno));
       if (data.status.status === 200 && data.asistencias.length > 0) {
-        const asistenciasPromises = data.asistencias.map(async (asistencia) => {
+        const asistenciasPromises = data.asistencias.map(async (asistencia: any) => {
           const response = await firstValueFrom(this.censoService.asociadosGetById(asistencia.idAsociado));
           if (response && response.status && response.status.status !== 200) {
             throw new Error('Error al cargar la asistencia: ' + response.status.message);
@@ -34,7 +34,11 @@ export class AsistenciaPlenoService {
             delegado: asistencia.delegado,
             confirmadoPorUsuario: asistencia.asistenciaConfirmada,
             confirmadoPorSecretaria: asistencia.asistenciaConfirmadaPorSecretaria,
-            id: asociado.id
+            idAsociado: asociado.id,
+            idAsistencia: asistencia.idAsistencia,
+            idCargo: asistencia.idCargo,
+            idAsociacion: asistencia.idAsociacion,
+            isExpanded: false
           };
         });
         return await Promise.all(asistenciasPromises);

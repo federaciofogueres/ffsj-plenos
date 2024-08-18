@@ -1,34 +1,54 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, EventEmitter, Output } from '@angular/core';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { FfsjAlertService, FfsjSpinnerComponent } from 'ffsj-web-components';
 import { catchError, forkJoin, from, switchMap, tap, throwError } from 'rxjs';
 import * as XLSX from 'xlsx';
 import { ConsultasService } from '../../../api';
+import { Autorizacion } from '../../../external-api/autorizacion';
 import { Consulta } from '../../../external-api/consulta';
 import { AsistenciaPlenoFormattedModel } from '../../models/asistencia-pleno.model';
 import { AsistenciaPlenoService } from '../../services/asistencia-pleno.service';
 import { ConsultasInfoService } from '../../services/consultas.service';
 import { PlenoExtraService } from '../../services/pleno-extra.service';
 
+export interface FiltroCargo {
+  id: number;
+  cargo: string;
+}
+
 @Component({
   selector: 'app-gestion-consultas',
   standalone: true,
   imports: [
     FfsjSpinnerComponent,
-    CommonModule
+    CommonModule,
+    ReactiveFormsModule,
+    FormsModule
   ],
   templateUrl: './gestion-consultas.component.html',
   styleUrl: './gestion-consultas.component.scss'
 })
 export class GestionConsultasComponent {
 
+  @Output() back: EventEmitter<void> = new EventEmitter<void>();
+
+  filtro: FiltroCargo = {
+    id: 1,
+    cargo: 'Presidentes de fogueres'
+  }
+
   loading: boolean = false;
   idPleno: number = -1;
 
   showUsers: string = 'asistentes';
 
+  showItems: AsistenciaPlenoFormattedModel[] = [];
+
   asistencias: AsistenciaPlenoFormattedModel[] = [];
   autorizados: AsistenciaPlenoFormattedModel[] = [];
+
+  filtrados: AsistenciaPlenoFormattedModel[] = [];
 
   consultas: Consulta[] = [];
   consultaSeleccionada!: Consulta;
@@ -47,6 +67,24 @@ export class GestionConsultasComponent {
     if (this.idPleno !== -1) {
       this.loadInfoConsulta();
     }
+  }
+
+  searchAsistente(event: any) {
+    const search = event.target.value.toLowerCase();
+    let filtrados = this.filterItems(this.filtro);
+    this.showItems = filtrados.filter(asistencia => 
+      `${asistencia.apellidos} ${asistencia.nombre}`.toLowerCase().includes(search)
+    );
+   }
+
+  filterItems(filtro: FiltroCargo, items?: AsistenciaPlenoFormattedModel[]) {
+    this.filtro = filtro;
+    let toFilter = !!items ? [...items] : this.showUsers === 'asistentes' ? [...this.asistencias] : [...this.autorizados];
+    return toFilter.filter(asistencia => asistencia.idCargo === this.filtro.id).sort((a, b) => {
+      const nameA = `${a.apellidos} ${a.nombre} `.toLowerCase();
+      const nameB = `${b.apellidos} ${b.nombre}`.toLowerCase();
+      return nameA.localeCompare(nameB);
+    });
   }
 
   loadInfoConsulta() {
@@ -118,17 +156,29 @@ export class GestionConsultasComponent {
     this.loadInfoConsulta();
   }
 
+  changeShow(event: string) {
+    this.showUsers = event;
+    this.showItems = this.filterItems(this.filtro);
+  }
+
   loadAutorizados() {
     this.consultasInfoService.consultasIdConsultaAutorizadosGet(this.consultaSeleccionada.id).subscribe({
       next: (response: any) => {
         console.log(response);
-        const autorizadosIds = response.autorizaciones.map((autorizacion: any) => autorizacion.idAsociado);
-        this.autorizados = this.asistencias.filter(asistencia => 
-          autorizadosIds.includes(asistencia.id)
-        );
-        this.asistencias = this.asistencias.filter(asistencia => 
-          !autorizadosIds.includes(asistencia.id)
-        );
+        if(Array.isArray(response.autorizaciones)) {
+          const autorizadosIds = response.autorizaciones.map((autorizacion: any) => autorizacion.idAsistencia);
+          this.autorizados = this.asistencias.filter(asistencia => 
+            autorizadosIds.includes(asistencia.idAsistencia)
+          )
+
+          this.asistencias = this.asistencias.filter(asistencia => 
+            !autorizadosIds.includes(asistencia.idAsistencia)
+          )
+          this.showItems = this.filterItems(this.filtro);
+          console.log(this.asistencias, this.autorizados);
+          
+        }
+
         this.loading = false;
       },
       error: (error) => {
@@ -139,14 +189,16 @@ export class GestionConsultasComponent {
   }
 
   autorizar(item: AsistenciaPlenoFormattedModel) {
-    let body = {
+    let body: Autorizacion = {
       idConsulta: this.consultaSeleccionada.id,
-      idAsociado: item.id
+      idAsistencia: item.idAsistencia
     }
     this.consultasInfoService.consultasIdConsultaAutorizadosPost(body, this.consultaSeleccionada.id).subscribe({
       next: () => {
+        item.isExpanded = false;
         this.autorizados.push(item);
-        this.asistencias = this.asistencias.filter(asistencia => asistencia.id !== item.id);
+        this.asistencias = this.asistencias.filter(asistencia => asistencia.idAsistencia !== item.idAsistencia);
+        this.showItems = this.filterItems(this.filtro);
       },
       error: (error) => {
         this.ffsjAlertService.danger('Error al confirmar la autorización: ' + error);
@@ -155,10 +207,12 @@ export class GestionConsultasComponent {
   }
 
   eliminarAutorizacion(item: AsistenciaPlenoFormattedModel) {
-    this.consultasInfoService.consultasIdConsultaAutorizadosIdAsociadoDelete(this.consultaSeleccionada.id, item.id).subscribe({
+    this.consultasInfoService.consultasIdConsultaAutorizadosIdAsistenciaDelete(this.consultaSeleccionada.id, item.idAsistencia).subscribe({
       next: () => {
-        this.autorizados = this.autorizados.filter(asistencia => asistencia.id !== item.id);
+        item.isExpanded = false;
+        this.autorizados = this.autorizados.filter(asistencia => asistencia.idAsistencia !== item.idAsistencia);
         this.asistencias.push(item);
+        this.showItems = this.filterItems(this.filtro);
       },
       error: (error) => {
         this.ffsjAlertService.danger('Error al eliminar la autorización: ' + error);
@@ -190,5 +244,9 @@ export class GestionConsultasComponent {
       }
     });
   }
+
+  // toggleCard(item: any) {
+  //   item.isExpanded = !item.isExpanded;
+  // }
 
 }

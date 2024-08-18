@@ -3,19 +3,25 @@
         [fullscreen]="true"
     ></lib-ffsj-spinner>
 } @else {
-    <div class="container">
-        <span class="h3">
-            Usuarios autorizados en las votaciones
-        </span>
+    <div class="container pt-2 w-100">
         <div class="d-flex justify-content-between">
-            <button class="btn btn-primary btn-foc-naranja mb-3" (click)="loadInfoConsulta()">
-                Refrescar
-            </button>
-            <button class="btn btn-primary btn-foc-rojo" (click)="fileInput.click()">
-                <i class="bi bi-cloud-arrow-up-fill me-2"></i>Subir Excel
-            </button>
+            <span class="h3">
+                Usuarios autorizados en las votaciones
+            </span>
+            <div class="dropdown">
+                <button class="btn text-dark" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false" style="padding: unset;">
+                    <i class="bi bi-gear-fill" style="font-size: 1.5rem;"></i>
+                </button>
+                <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                    <li><a class="dropdown-item" (click)="loadInfoConsulta()"><i class="bi bi-arrow-clockwise me-2"></i>Refrescar</a></li>
+                    <li><a class="dropdown-item" (click)="fileInput.click()"><i class="bi bi-cloud-arrow-up-fill me-2"></i>Subir excel</a></li>
+                    <li><a class="dropdown-item" (click)="changeShow('autorizados')"><i class="bi bi-person-fill-add me-2"></i>Ver autorizados</a></li>
+                    <li><a class="dropdown-item" (click)="changeShow('asistentes')"><i class="bi bi-person-fill-add me-2"></i>Ver asistentes</a></li>
+                    <li><a class="dropdown-item" (click)="back.emit()"><i class="bi bi-box-arrow-left me-2"></i>Volver atrás</a></li>
+                    <input #fileInput style="display: none" type="file" (change)="handleFile($event)" multiple="false" />
+                </ul>
+            </div>
         </div>
-        <input #fileInput style="display: none" type="file" (change)="handleFile($event)" multiple="false" />
         <div class="d-flex flex-column gap-2">
             <div class="form-floating">
                 <select class="form-select" id="floatingSelect" aria-label="Floating label select example" (change)="changeSelected($event)">
@@ -25,63 +31,74 @@
                 </select>
                 <label for="floatingSelect">Selección de consulta</label>
             </div>
-            @if (showUsers === 'asistentes') {
-                <div class="d-flex justify-content-between">
-                    <span class="h4">
-                        Asistentes al pleno
-                    </span>
-                    <button class="btn btn-foc-naranja" (click)="showUsers = 'autorizados'">
-                        Ver autorizados
-                    </button>
-                </div>
-                @for (item of asistencias; track $index) {
-                    @if (item.confirmadoPorUsuario) {
-                        <div class="card">
-                            <div class="d-flex align-items-center justify-content-between card-header btn btn-primary btn-foc-salmon" type="button" data-bs-toggle="collapse" [attr.data-bs-target]="'#asistencia' + $index">
-                                <span class="h4 mb-0">
-                                    {{item.nombre | titlecase}} {{item.apellidos | titlecase}}
-                                </span>
-                                <button class="btn btn-success" (click)="autorizar(item)">
-                                    Autorizar
-                                </button>
-                            </div>
-                            <div id="asistencia{{$index}}" class="collapse card-body">
-                                <p>NIF: {{item.nif}}</p>
-                                @if (item.delegado) {
-                                    <p>Asistencia delegada</p>
-                                }
-                            </div>
-                        </div>
-                    }
-                }
-            } @else if (showUsers === 'autorizados') {
-                <div class="d-flex justify-content-between">
-                    <span class="h4">
-                        Autorizados a la consulta
-                    </span>
-                    <button class="btn btn-foc-naranja" (click)="showUsers = 'asistentes'">
-                        Ver asistentes
-                    </button>
-                </div>
-                @for (item of autorizados; track $index) {
-                    <div class="card">
-                        <div class="d-flex align-items-center justify-content-between card-header btn btn-primary btn-foc-salmon" type="button" data-bs-toggle="collapse" [attr.data-bs-target]="'#asistencia' + $index">
-                            <span class="h4 mb-0">
-                                {{item.nombre | titlecase}} {{item.apellidos | titlecase}}
-                            </span>
-                            <button class="btn btn-danger" (click)="eliminarAutorizacion(item)">
-                                Eliminar
+                <div class="d-flex flex-column flex-md-row justify-content-between">
+                    <div class="input-group m-2 mb-3 w-auto">
+                        <span class="input-group-text" id="basic-addon1">
+                            <i class="bi bi-person-circle"></i>
+                        </span>
+                        <input type="text" class="form-control" placeholder="Búsqueda por nombre, apellido o DNI/NIE/SIP" (input)="searchAsistente($event)">
+                    </div>
+                    <div class="d-flex align-items-center">
+                        <span>
+                            Selecciona un cargo:
+                        </span>
+                        <div class="dropdown ms-2">
+                            <button class="btn text-dark" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false" style="padding: unset;">
+                                {{filtro.cargo}}
                             </button>
-                        </div>
-                        <div id="asistencia{{$index}}" class="collapse card-body">
-                            <p>NIF: {{item.nif}}</p>
-                            @if (item.delegado) {
-                                <p>Asistencia delegada</p>
-                            }
+                            <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton" style="cursor: pointer;">
+                                <li><a class="dropdown-item" (click)="filterItems({ id: 1, cargo: 'Presidentes de fogueres' })">Presidentes fogueres</a></li>
+                                <li><a class="dropdown-item" (click)="filterItems({ id: 19, cargo: 'Presidentes de barracas' })">Presidentes barracas</a></li>
+                                <li><a class="dropdown-item" (click)="filterItems({ id: 4, cargo: 'Delegados de fogueres' })">Delegados (fogueres)</a></li>
+                                <li><a class="dropdown-item" (click)="filterItems({ id: 20, cargo: 'Delegados de barracas' })">Delegados (barracas)</a></li>
+                            </ul>
                         </div>
                     </div>
-                }
-            }
+                </div>
+                <div class="d-flex flex-wrap justify-content-center usuarios-list gap-3">
+                    @for (item of showItems; track $index) {
+                        @if (item.confirmadoPorUsuario) {
+                            <div class="card card-small">
+                                <div class="d-flex flex-column text-center card-header" 
+                                     [ngClass]="{'collapsed': item.isExpanded}" 
+                                     style="justify-content: space-evenly;" 
+                                     type="button" 
+                                     data-bs-toggle="collapse" 
+                                     [attr.data-bs-target]="'#asistencia' + $index" 
+                                >
+                                    <span class="h5 mb-0">
+                                        {{item.nombre | titlecase}}
+                                    </span>
+                                    <span class="h6">
+                                        {{item.apellidos | titlecase}}
+                                    </span>
+                                    @if (showUsers === 'asistentes') {
+                                        <button class="btn btn-success" style="z-index: 1;" (click)="autorizar(item); $event.stopPropagation()">
+                                            Autorizar
+                                        </button>
+                                    } @else {
+                                        <button class="btn btn-danger" style="z-index: 1;" (click)="eliminarAutorizacion(item); $event.stopPropagation()">
+                                            Eliminar
+                                        </button>
+                                    }
+                                </div>
+                                <!-- <div id="asistencia{{$index}}" 
+                                     class="collapse card-body" 
+                                     [ngClass]="{'collapsed': item.isExpanded}"
+                                >
+                                    <p>NIF: {{item.nif}}</p>
+                                    @if (item.delegado) {
+                                        <p>Asistencia delegada</p>
+                                    }
+                                </div> -->
+                            </div>
+                        }
+                    } @empty {
+                        <div class="alert alert-warning m-0" style="height: 3.25rem;" role="alert">
+                            No hay asistentes
+                        </div>
+                    }
+                </div>
         </div>
     </div>
 }

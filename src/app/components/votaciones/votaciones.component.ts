@@ -67,7 +67,7 @@ export class VotacionesComponent {
 
   async checkAutorizado(idConsulta: number): Promise<boolean> {
     try {
-        const response: any = await this.consultaInfoService.consultasIdConsultaAutorizadosIdAsociadoGet(idConsulta, this.plenoExtraService.getIdUsuario()).toPromise();
+        const response: any = await this.consultaInfoService.consultasIdConsultaAutorizadosIdAsistenciaGet(idConsulta, this.plenoExtraService.getIdUsuario()).toPromise();
         if (response!.status.status === 200) {
             return response!.autorizaciones.some((auth: any) => auth.idConsulta === idConsulta);
         }

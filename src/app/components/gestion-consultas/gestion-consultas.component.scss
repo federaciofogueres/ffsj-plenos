@@ -1,5 +1,27 @@
 @import '../../../variables.scss';
 
-.card-header{
-    background-color: $salmon;
+.usuarios-list {
+    height: calc(100vh - 320px);
+    overflow-y: auto;
+}
+
+.card-small, .card-header {
+    width: 10rem;
+    height: 10rem;
+}
+
+.card-body {
+    height: 0;
+}
+
+.card-header.collapsed {
+    height: 0;
+    overflow: hidden;
+    transition: height 0.3s ease;
+}
+
+.card-body.collapsed {
+    height: 10rem;
+    overflow: hidden;
+    transition: height 0.3s ease;
 }
