@@ -1,19 +1,23 @@
-<div class="container">
+<div class="container d-flex flex-column">
     <h1 mat-dialog-title>Autorizar usuario</h1>
+    <span class="h3">
+        Datos del usuario
+    </span>
     <span>
+        <strong>Nombre:</strong> {{data.asistencia.nombre}} {{data.asistencia.apellidos}}
+    </span>
+    <span>
+        Cargo: {{cargo}}
+    </span>
+    <span class="h6 mt-2">
         Selecciona la consulta que deseas autorizar para el usuario
     </span>
     <div mat-dialog-content>
-        <mat-form-field>
-        <mat-label>Consulta</mat-label>
-        <mat-select [(value)]="selectedConsulta">
-            @for (consulta of data.consultas; track $index) {
-                <mat-option [value]="consulta">
-                    {{consulta.titulo}}
-                </mat-option>
-            }
-        </mat-select>
-        </mat-form-field>
+        @for (consulta of data.consultas; track consulta; let i = $index) {
+            <mat-checkbox (change)="processConsulta(consulta)">
+                {{consulta.titulo}}
+            </mat-checkbox>
+        }
     </div>
     <div mat-dialog-actions>
         <button mat-button (click)="onCancel()">Cancelar</button>
