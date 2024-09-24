@@ -50,8 +50,8 @@ export class PlenosComponent {
 
   isActivePleno(plenoDate: Date): boolean {
     const now = new Date();
-    const twoHoursBefore = new Date(now.getTime() - 2 * 60 * 60 * 1000);
-    const fourHoursAfter = new Date(now.getTime() + 4 * 60 * 60 * 1000);
+    const twoHoursBefore = new Date(now.getTime() - 5 * 60 * 60 * 1000);
+    const fourHoursAfter = new Date(now.getTime() + 5 * 60 * 60 * 1000);
     return plenoDate >= twoHoursBefore && plenoDate <= fourHoursAfter;
   }
 
@@ -65,9 +65,11 @@ export class PlenosComponent {
             console.log('Pleno:', response);
             if (response.status.status === 200) {
               let pleno = response.plenos[0];
-              pleno.fecha = this.formatDate(new Date(pleno.fecha));
+              let plenoFecha = new Date(pleno.fecha)
+              plenoFecha.setHours(plenoFecha.getHours() - 2);
+              pleno.fecha = this.formatDate(plenoFecha);
               if (!this.activePlenos.some(p => p.id === pleno.id) && !this.inactivePlenos.some(p => p.id === pleno.id)) {
-                if (this.isActivePleno(pleno.fecha)) {
+                if (this.isActivePleno(plenoFecha)) {
                   this.activePlenos.push(pleno);
                 } else {
                   this.inactivePlenos.push(pleno);
