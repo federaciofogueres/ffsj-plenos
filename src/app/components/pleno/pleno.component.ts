@@ -63,6 +63,8 @@ export class PlenoComponent {
               data: { asistencias: response.asistencias.length },
               panelClass: 'custom-dialog-container'
             });
+          } else {
+            this.plenoExtraService.setAsistencias([response.asistencias[0].idAsistencia]);
           }
           this.plenoExtraService.loadPlenoInfo().then((response) => {
             this.pleno = response.pleno;

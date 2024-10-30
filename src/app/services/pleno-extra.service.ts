@@ -54,7 +54,8 @@ export class PlenoExtraService {
     }
 
     getAsistencias() {
-        return this.asistenciasUsuario.length > 0 ? this.asistenciasUsuario : JSON.parse(this.cookieService.get('asistencias'));
+        const asistencias = this.cookieService.get('asistencias');
+        return this.asistenciasUsuario.length > 0 ? this.asistenciasUsuario : (asistencias ? JSON.parse(asistencias) : []);
     }
 
     getIdUsuario(token?: string) {
