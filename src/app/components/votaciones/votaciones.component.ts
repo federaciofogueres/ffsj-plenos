@@ -103,6 +103,7 @@ export class VotacionesComponent {
       },
       error: (error) => {
         console.error(error);
+        this.loading = false;
       }
     });
   }
@@ -110,10 +111,10 @@ export class VotacionesComponent {
   goToVotacion(votacion: Consulta) {
     console.log('Ir a votación', votacion);
     this.cookieService.set('href', 'https://plenos.hogueras.es');
-    // this.cookieService.set('href', 'http://localhost:4201');
+    // this.cookieService.set('href', 'http://localhost:4200');
     
     window.location.href = 'https://consultas.hogueras.es/consultas/' + votacion.id;
-    // window.location.href = 'http://localhost:4200';
+    // window.location.href = 'http://localhost:49724/consultas/' + votacion.id;
   }
 
 }
