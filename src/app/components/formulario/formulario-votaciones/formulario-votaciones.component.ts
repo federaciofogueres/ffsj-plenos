@@ -72,6 +72,7 @@ export class FormularioVotacionesComponent {
   create() {
     this.votacionForm.value.id = 0;
     this.votacionForm.value.idPunto = this.punto!.id;
+    this.votacionForm.value.fecha = new Date(this.votacionForm.get('fecha')?.value);
     this.votacionesService.votacionesPost(this.votacionForm.value).subscribe({
       next: (response: any) => {
         if (response.status.status === 200) {
